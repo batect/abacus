@@ -1,9 +1,10 @@
-name: Build
+name: Pipeline
 
 on: [push]
 
 jobs:
   build:
+    name: "Build, Test and Deploy"
     runs-on: ubuntu-latest
 
     steps:
@@ -42,3 +43,14 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Log in to GCP
+        run: ./batect gcp-login-service-account
+        if: github.repository == 'batect/abacus' && github.ref == 'master'
+        env:
+          GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Setup Terraform
+        run: ./batect setup-terraform
+        if: github.repository == 'batect/abacus' && github.ref == 'master'

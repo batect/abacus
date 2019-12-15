@@ -1,4 +1,5 @@
 .batect/app/abacus
+.gcloud/
 .go-cache/
 .idea/
 

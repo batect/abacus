@@ -12,3 +12,7 @@ update_configs:
   - package_manager: docker
     directory: .batect/build-env
     update_schedule: daily
+
+  - package_manager: docker
+    directory: .batect/terraform
+    update_schedule: daily

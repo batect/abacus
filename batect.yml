@@ -15,6 +15,21 @@ containers:
       enabled: true
       home_directory: /home/container-user
 
+  terraform:
+    build_directory: .batect/terraform
+    volumes:
+      - local: .
+        container: /code
+        options: cached
+      - local: .gcloud
+        container: /root/.config/gcloud
+        options: cached
+    working_directory: /code
+    environment:
+      GOOGLE_PROJECT: batect-abacus
+      GOOGLE_REGION: us-west2
+      GOOGLE_BILLING_ACCOUNT_ID: 011BAD-787BE0-783C44
+
   app:
     build_directory: .batect/app
     environment:
@@ -101,3 +116,48 @@ tasks:
     run:
       container: build-env
       command: sh -c 'go get -u && go mod tidy'
+
+  setup-terraform:
+    description: Initialise Terraform.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: infra/scripts/initialize.sh
+
+  apply-terraform:
+    description: Run Terraform to provision infrastructure.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: terraform apply -input=false -auto-approve infra/tf
+
+  destroy-terraform:
+    description: Run Terraform to provision infrastructure.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: terraform destroy -input=false -auto-approve infra/tf
+
+  terraform-shell:
+    description: Start a shell in the Terraform environment.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: bash
+
+  gcp-login-personal:
+    description: Login to GCP using your personal credentials.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: sh -c "gcloud auth login && gcloud auth application-default login"
+
+  gcp-login-service-account:
+    description: Login to GCP using your personal credentials.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: infra/scripts/login.sh
+      environment:
+        GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
+        GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
