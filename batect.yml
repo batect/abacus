@@ -22,7 +22,7 @@ containers:
         container: /code
         options: cached
       - local: .gcloud
-        container: /root/.config/gcloud
+        container: /home/container-user/.config/gcloud
         options: cached
     working_directory: /code
     environment:
