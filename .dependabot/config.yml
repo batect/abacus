@@ -4,3 +4,11 @@ update_configs:
   - package_manager: go:modules
     directory: /
     update_schedule: daily
+
+  - package_manager: docker
+    directory: .batect/app
+    update_schedule: daily
+
+  - package_manager: docker
+    directory: .batect/build-env
+    update_schedule: daily
