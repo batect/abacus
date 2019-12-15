@@ -97,14 +97,14 @@ tasks:
           container: 8080
 
   lint:
-    description: Check for linting errors.
+    description: Check for linting errors in Golang files.
     group: Linting tasks
     run:
       container: build-env
       command: golangci-lint run --enable-all --build-tags unitTests --build-tags journeyTests server/...
 
   lintFix:
-    description: Fix linting errors.
+    description: Fix linting errors in Golang files.
     group: Linting tasks
     run:
       container: build-env
@@ -169,3 +169,16 @@ tasks:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
 
+  lintTerraform:
+    description: Check for linting errors in Terraform files.
+    group: Linting tasks
+    run:
+      container: terraform
+      command: terraform fmt -diff -check -recursive infra/tf
+
+  lintFixTerraform:
+    description: Fix linting errors in Terraform files.
+    group: Linting tasks
+    run:
+      container: terraform
+      command: terraform fmt -recursive infra/tf
