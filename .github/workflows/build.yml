@@ -10,6 +10,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - name: Cache batect
         uses: actions/cache@v1
         with:
