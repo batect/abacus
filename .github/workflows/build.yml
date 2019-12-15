@@ -34,3 +34,7 @@ jobs:
 
       - name: Run unit tests
         run: ./batect unitTest
+
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
