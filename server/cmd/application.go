@@ -13,6 +13,7 @@ import (
 
 func main() {
 	initLogging()
+
 	srv := createServer(getPort())
 	runServer(srv)
 }
@@ -37,7 +38,7 @@ func createServer(port string) *http.Server {
 	mux.HandleFunc("/ping", api.Ping)
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", port),
+		Addr:    fmt.Sprintf(":%s", port),
 		Handler: mux,
 	}
 
