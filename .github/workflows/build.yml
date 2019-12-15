@@ -54,3 +54,7 @@ jobs:
       - name: Setup Terraform
         run: ./batect setup-terraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+
+      - name: Apply Terraform
+        run: ./batect apply-terraform
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'

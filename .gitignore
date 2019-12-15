@@ -2,6 +2,7 @@
 .gcloud/
 .go-cache/
 .idea/
+.terraform/
 
 vendor/
 

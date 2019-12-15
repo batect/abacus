@@ -134,6 +134,13 @@ tasks:
       container: terraform
       command: terraform apply -input=false -auto-approve infra/tf
 
+  plan-terraform:
+    description: Plan changes required to bring infrastructure to desired state.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: terraform plan -input=false infra/tf
+
   destroy-terraform:
     description: Run Terraform to provision infrastructure.
     group: Infrastructure management tasks
