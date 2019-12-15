@@ -15,6 +15,14 @@ jobs:
           path: ~/.batect/cache
           key: batect-${{ hashFiles('batect') }}
 
+      - name: Cache Golang dependencies
+        uses: actions/cache@v1
+        with:
+          path: .go-cache
+          key: golang-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            golang-
+
       - name: Download dependencies
         run: ./batect setup
 
