@@ -1,1 +1,3 @@
+.batect/app/abacus
+.go-cache/
 .idea/

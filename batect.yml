@@ -1,0 +1,107 @@
+containers:
+  build-env:
+    build_directory: .batect/build-env
+    volumes:
+      - local: .
+        container: /code
+        options: cached
+      - local: .go-cache
+        container: /go
+        options: delegated
+    working_directory: /code
+    environment:
+      GOCACHE: /go/cache
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+
+  app:
+    build_directory: .batect/app
+    environment:
+      PORT: 8080
+
+tasks:
+  setup:
+    description: Download all dependencies used by the application.
+    group: Setup tasks
+    run:
+      container: build-env
+      command: sh -c 'go mod download && go get github.com/onsi/ginkgo/ginkgo'
+
+  build:
+    description: Build the application.
+    group: Build tasks
+    run:
+      container: build-env
+      command: go build -o .batect/app/abacus ./server/cmd
+      environment:
+        CGO_ENABLED: 0
+        GOOS: linux
+
+  unitTest:
+    description: Run the unit tests.
+    group: Test tasks
+    run:
+      container: build-env
+      command: ginkgo -tags unitTests
+      environment:
+        REPORT_PATH: test-results/unitTests
+
+  continuousUnitTest:
+    description: Run the unit tests, and re-run them when any code changes are detected.
+    group: Test tasks
+    run:
+      container: build-env
+      command: sh -c 'ginkgo; ginkgo watch'
+
+  journeyTest:
+    description: Run the journey tests.
+    group: Test tasks
+    prerequisites:
+      - build
+    dependencies:
+      - app
+    run:
+      container: build-env
+      command: ginkgo -tags journeyTests
+      environment:
+        REPORT_PATH: test-results/journeyTests
+
+  shell:
+    description: Start a shell in the development environment.
+    group: Utility tasks
+    run:
+      container: build-env
+      command: bash
+
+  run:
+    description: Run the application.
+    group: Test tasks
+    prerequisites:
+      - build
+    run:
+      container: app
+      ports:
+        - local: 8080
+          container: 8080
+
+  lint:
+    description: Check for linting errors.
+    group: Linting tasks
+    run:
+      container: build-env
+      command: golangci-lint run --enable-all server/...
+
+  lintFix:
+    description: Fix linting errors.
+    group: Linting tasks
+    run:
+      container: build-env
+      command: golangci-lint run --enable-all --fix server/...
+
+  update:
+    description: Update to latest minor or patch update of all dependencies.
+    group: Dependency management tasks
+    run:
+      container: build-env
+      command: sh -c 'go get -u && go mod tidy'
