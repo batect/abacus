@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"net/http"
+
+	"github.com/batect/abacus/server/api"
+)
 
 func main() {
-	fmt.Println("Hello world")
+	http.HandleFunc("/ping", api.Ping)
+	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
 }

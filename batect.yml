@@ -61,7 +61,7 @@ tasks:
       - app
     run:
       container: build-env
-      command: ginkgo -tags journeyTests
+      command: ginkgo -tags journeyTests server/...
 
   shell:
     description: Start a shell in the development environment.
