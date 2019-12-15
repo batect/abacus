@@ -1,4 +1,4 @@
-name: CI
+name: Build
 
 on: [push]
 
@@ -8,11 +8,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+
+      - name: Cache batect
+        uses: actions/cache@v1
+        with:
+          path: ~/.batect/cache
+          key: batect-${{ hashFiles('batect') }}
+
       - name: Download dependencies
         run: ./batect setup
+
       - name: Build application
         run: ./batect build
+
       - name: Lint code
         run: ./batect lint
+
       - name: Run unit tests
         run: ./batect unitTest
