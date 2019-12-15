@@ -45,16 +45,16 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Log in to GCP
-        run: ./batect gcp-login-service-account
+        run: ./batect gcpLoginServiceAccount
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Setup Terraform
-        run: ./batect setup-terraform
+        run: ./batect setupTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Apply Terraform
-        run: ./batect apply-terraform
+        run: ./batect applyTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
