@@ -1,0 +1,18 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download dependencies
+        run: ./batect setup
+      - name: Build application
+        run: ./batect build
+      - name: Lint code
+        run: ./batect lint
+      - name: Run unit tests
+        run: ./batect unitTest
