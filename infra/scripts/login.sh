@@ -2,4 +2,12 @@
 
 set -euo pipefail
 
-gcloud auth activate-service-account "$GCP_SERVICE_ACCOUNT_EMAIL" --key-file <( echo "$GCP_SERVICE_ACCOUNT_KEY" )
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CREDS_DIR="$SCRIPT_DIR/../../.creds"
+CREDS_PATH="$CREDS_DIR/gcp_service_account.json"
+
+mkdir -p "$CREDS_DIR"
+echo "$GCP_SERVICE_ACCOUNT_KEY" > "$CREDS_PATH"
+
+gcloud auth activate-service-account "$GCP_SERVICE_ACCOUNT_EMAIL" --key-file "$CREDS_PATH"
+

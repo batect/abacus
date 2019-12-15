@@ -152,15 +152,8 @@ tasks:
       container: terraform
       command: bash
 
-  gcpLoginPersonal:
-    description: Login to GCP using your personal credentials.
-    group: Infrastructure management tasks
-    run:
-      container: terraform
-      command: sh -c "gcloud auth login && gcloud auth application-default login"
-
-  gcpLoginServiceAccount:
-    description: Login to GCP using your personal credentials.
+  gcpLogin:
+    description: Login to GCP using a service account.
     group: Infrastructure management tasks
     run:
       container: terraform
