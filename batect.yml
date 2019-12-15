@@ -22,16 +22,13 @@ containers:
         container: /code
         options: cached
       - local: .gcloud
-        container: /home/container-user/.config/gcloud
+        container: /root/.config/gcloud
         options: cached
     working_directory: /code
     environment:
       GOOGLE_PROJECT: batect-abacus
       GOOGLE_REGION: us-west2
       GOOGLE_BILLING_ACCOUNT_ID: 011BAD-787BE0-783C44
-    run_as_current_user:
-      enabled: true
-      home_directory: /home/container-user
 
   app:
     build_directory: .batect/app
