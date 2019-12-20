@@ -28,7 +28,7 @@ containers:
     environment:
       GOOGLE_PROJECT: batect-abacus
       GOOGLE_REGION: us-west2
-      GOOGLE_BILLING_ACCOUNT_ID: 011BAD-787BE0-783C44
+      GOOGLE_BILLING_ACCOUNT_ID: 011113-23F385-542CC5
 
   app:
     build_directory: .batect/app
