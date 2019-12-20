@@ -44,6 +44,9 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Lint Terraform files
+        run: ./batect lintTerraform
+
       - name: Log in to GCP
         run: ./batect gcpLogin
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
