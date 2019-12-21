@@ -1,6 +1,6 @@
 provider "google" {
   version     = "~> 3.2.0"
-  credentials = ".creds/gcp_service_account.json"
+  credentials = "${path.module}/../../.creds/gcp_service_account_bootstrap_infra.json"
 }
 
 provider "null" {

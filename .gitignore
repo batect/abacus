@@ -8,3 +8,5 @@
 vendor/
 
 coverage.txt
+generated.auto.tfvars
+*.tfstate

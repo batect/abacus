@@ -124,28 +124,32 @@ tasks:
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: infra/scripts/initialize.sh
+      command: sh -c 'terraform init -input=false -reconfigure -backend-config="bucket=$GOOGLE_PROJECT-terraform-state"'
+      working_directory: /code/infra/app
 
   applyTerraform:
     description: Run Terraform to provision infrastructure.
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: terraform apply -input=false -auto-approve infra/tf
+      command: terraform apply -input=false -auto-approve
+      working_directory: /code/infra/app
 
   planTerraform:
     description: Plan changes required to bring infrastructure to desired state.
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: terraform plan -input=false infra/tf
+      command: terraform plan -input=false
+      working_directory: /code/infra/app
 
   destroyTerraform:
     description: Run Terraform to provision infrastructure.
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: terraform destroy -input=false -auto-approve infra/tf
+      command: terraform destroy -input=false -auto-approve
+      working_directory: /code/infra/app
 
   terraformShell:
     description: Start a shell in the Terraform environment.
@@ -159,7 +163,7 @@ tasks:
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: infra/scripts/login.sh
+      command: infra/scripts/login.sh app
       environment:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
@@ -169,11 +173,61 @@ tasks:
     group: Linting tasks
     run:
       container: terraform
-      command: terraform fmt -diff -check -recursive infra/tf
+      command: terraform fmt -diff -check -recursive infra
 
   lintFixTerraform:
     description: Fix linting errors in Terraform files.
     group: Linting tasks
     run:
       container: terraform
-      command: terraform fmt -recursive infra/tf
+      command: terraform fmt -recursive infra
+
+  setupBootstrapTerraform:
+    description: Initialise Terraform.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: terraform init -input=false -reconfigure
+      working_directory: /code/infra/bootstrap
+
+  applyBootstrapTerraform:
+    description: Run Terraform to provision infrastructure.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve"
+      working_directory: /code/infra/bootstrap
+
+  planBootstrapTerraform:
+    description: Plan changes required to bring infrastructure to desired state.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform plan -input=false"
+      working_directory: /code/infra/bootstrap
+
+  destroyBootstrapTerraform:
+    description: Run Terraform to provision infrastructure.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform destroy -input=false -auto-approve"
+      working_directory: /code/infra/bootstrap
+
+  gcpBootstrapLogin:
+    description: Login to GCP using a service account.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: infra/scripts/login.sh bootstrap
+      environment:
+        GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
+        GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
+
+  importBootstrapState:
+    description: Import existing state of bootstrap infrastructure.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: ./scripts/import_state.sh
+      working_directory: /code/infra/bootstrap
