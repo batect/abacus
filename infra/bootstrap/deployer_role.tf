@@ -32,7 +32,6 @@ resource "google_project_iam_custom_role" "deployer" {
 
     // Required to manage Container Registry storage bucket, and maintain state in Cloud Storage
     "storage.buckets.getIamPolicy",
-    "storage.buckets.setIamPolicy",
     "storage.buckets.get",
     "storage.buckets.list",
     "storage.objects.create",
