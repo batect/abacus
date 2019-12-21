@@ -11,6 +11,9 @@ function main() {
   import google_storage_bucket.state "$GOOGLE_PROJECT/batect-abacus-terraform-state"
   import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
+
+  # HACK: workaround for https://github.com/terraform-providers/terraform-provider-google/issues/5250
+  sed -i 's#"role": "roles/deployer"#"role": "projects/batect-abacus/roles/deployer"#g' terraform.tfstate
 }
 
 function import() {
