@@ -24,6 +24,8 @@ containers:
       - local: .gcloud
         container: /root/.config/gcloud
         options: cached
+      - local: /var/run/docker.sock
+        container: /var/run/docker.sock
     working_directory: /code
     environment:
       GOOGLE_PROJECT: batect-abacus

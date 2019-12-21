@@ -39,7 +39,6 @@ function createStateBucket {
     echo "State bucket does not exist, creating it..."
     gsutil mb -p "$GOOGLE_PROJECT" -c regional -l "$GOOGLE_REGION" "gs://$STATE_BUCKET_NAME"
     gsutil uniformbucketlevelaccess set on "gs://$STATE_BUCKET_NAME"
-    gsutil iam ch "group:$GOOGLE_PROJECT-deployers@googlegroups.com:roles/storage.objectAdmin" "gs://$STATE_BUCKET_NAME"
 }
 
 function runTerraformInit {

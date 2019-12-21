@@ -27,6 +27,19 @@ resource "google_project_iam_custom_role" "deployer" {
     "run.services.setIamPolicy",
     "run.services.update",
 
+    // Required to manage Container Registry storage bucket, and maintain state in Cloud Storage
+    "storage.buckets.getIamPolicy",
+    "storage.buckets.setIamPolicy",
+    "storage.buckets.get",
+    "storage.buckets.list",
+    "storage.objects.create",
+    "storage.objects.delete",
+    "storage.objects.get",
+    "storage.objects.getIamPolicy",
+    "storage.objects.list",
+    "storage.objects.setIamPolicy",
+    "storage.objects.update",
+
     // Required to check this IAM role is in sync with configuration
     "iam.roles.get",
     "resourcemanager.projects.getIamPolicy",
