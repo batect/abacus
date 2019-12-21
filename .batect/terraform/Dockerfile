@@ -8,7 +8,7 @@ RUN apk add --no-cache \
     python2
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
-ENV CLOUD_SDK_VERSION=273.0.0
+ENV CLOUD_SDK_VERSION=274.0.0
 
 RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
     tar xzf google-cloud-sdk-${CLOUD_SDK_VERSION}-linux-x86_64.tar.gz && \
@@ -16,10 +16,7 @@ RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cl
 
 ENV PATH /google-cloud-sdk/bin:$PATH
 
-RUN gcloud components install \
-    beta \
-    kubectl \
-    docker-credential-gcr
+RUN gcloud components install docker-credential-gcr
 
 ENV TERRAFORM_VERSION=0.12.18
 RUN wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
