@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-KNOWN_RESOURCES=$(terraform state list)
+KNOWN_RESOURCES=$([ ! -f terraform.tfstate ] || terraform state list)
 
 function main() {
   import google_project.project "$GOOGLE_PROJECT"
@@ -15,7 +15,7 @@ function import() {
   if haveStateFor "$1"; then
     echo "Already imported state for $1, skipping."
   else
-    terraform import -input=false -backup=- -state=terraform.tfstate "$1" "$2"
+    terraform import -input=false -backup=- "$1" "$2"
   fi
 }
 
