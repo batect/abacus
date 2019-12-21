@@ -7,7 +7,7 @@ resource "google_project_iam_custom_role" "deployer" {
   role_id     = "deployer"
   title       = "Deployer"
   description = "Permissions required to deploy the application"
-  project = google_project.project.project_id
+  project     = google_project.project.project_id
 
   permissions = [
     // Bare minimum required for Terraform to use GCP provider
