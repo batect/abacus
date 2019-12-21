@@ -1,3 +1,6 @@
+.gcp_cloud_sdk_version: &gcp_cloud_sdk_version 274.0.0
+.gcp_project: &gcp_project batect-abacus
+
 containers:
   build-env:
     build_directory: .batect/build-env
@@ -17,6 +20,25 @@ containers:
 
   terraform:
     build_directory: .batect/terraform
+    build_args:
+      CLOUD_SDK_VERSION: *gcp_cloud_sdk_version
+    volumes:
+      - local: .
+        container: /code
+        options: cached
+      - local: .gcloud
+        container: /root/.config/gcloud
+        options: cached
+    working_directory: /code
+    environment:
+      GOOGLE_PROJECT: *gcp_project
+      GOOGLE_REGION: us-west2
+      GOOGLE_BILLING_ACCOUNT_ID: 011113-23F385-542CC5
+
+  push-env:
+    build_directory: .batect/push-env
+    build_args:
+      CLOUD_SDK_VERSION: *gcp_cloud_sdk_version
     volumes:
       - local: .
         container: /code
@@ -28,9 +50,7 @@ containers:
         container: /var/run/docker.sock
     working_directory: /code
     environment:
-      GOOGLE_PROJECT: batect-abacus
-      GOOGLE_REGION: us-west2
-      GOOGLE_BILLING_ACCOUNT_ID: 011113-23F385-542CC5
+      GOOGLE_PROJECT: *gcp_project
 
   app:
     build_directory: .batect/app
@@ -239,3 +259,10 @@ tasks:
       container: terraform
       command: terraform plan -detailed-exitcode
       working_directory: /code/infra/bootstrap
+
+  pushImage:
+    description: Push the application image to GCP.
+    group: Deployment tasks
+    run:
+      container: push-env
+      command: ./infra/scripts/pushImage.sh

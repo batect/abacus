@@ -66,6 +66,10 @@ jobs:
         run: ./batect checkBootstrapState
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
+      - name: Push image
+        run: ./batect pushImage
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+
       - name: Setup Terraform
         run: ./batect setupTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'

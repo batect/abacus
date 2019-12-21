@@ -17,7 +17,8 @@ RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cl
 
 ENV PATH /google-cloud-sdk/bin:$PATH
 
-ENV TERRAFORM_VERSION=0.12.18
-RUN wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
-    unzip /tmp/terraform.zip -d /usr/local/bin && \
-    rm /tmp/terraform.zip
+RUN apk add --no-cache \
+    docker \
+    git
+
+RUN gcloud components install docker-credential-gcr
