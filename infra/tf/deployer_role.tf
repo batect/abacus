@@ -10,6 +10,9 @@ resource "google_project_iam_custom_role" "deployer" {
     // Bare minimum required for Terraform to use GCP provider
     "resourcemanager.projects.get",
 
+    // Required to check if Terraform state bucket exists
+    "storage.buckets.get",
+
     // Required to manage GCP project services
     "serviceusage.services.disable",
     "serviceusage.services.enable",
