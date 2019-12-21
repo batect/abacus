@@ -231,3 +231,11 @@ tasks:
       container: terraform
       command: ./scripts/import_state.sh
       working_directory: /code/infra/bootstrap
+
+  checkBootstrapState:
+    description: Check that the bootstrap infrastructure matches the desired state.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: terraform plan -detailed-exitcode
+      working_directory: /code/infra/bootstrap

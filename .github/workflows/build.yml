@@ -48,11 +48,23 @@ jobs:
         run: ./batect lintTerraform
 
       - name: Log in to GCP
-        run: ./batect gcpLogin
+        run: ./batect gcpLogin && ./batect gcpBootstrapLogin
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Setup bootstrapping Terraform
+        run: ./batect setupBootstrapTerraform
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+
+      - name: Import current bootstrapping state
+        run: ./batect importBootstrapState
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+
+      - name: Check bootstrapping state
+        run: ./batect checkBootstrapState
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Setup Terraform
         run: ./batect setupTerraform
