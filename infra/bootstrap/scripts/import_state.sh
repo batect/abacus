@@ -9,6 +9,8 @@ function main() {
   import google_project_iam_custom_role.deployer "projects/$GOOGLE_PROJECT/roles/deployer"
   import google_project_iam_binding.deployer "$GOOGLE_PROJECT roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/batect-abacus-terraform-state"
+  import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"
+  import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
 }
 
 function import() {

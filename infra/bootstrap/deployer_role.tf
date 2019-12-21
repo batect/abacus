@@ -1,6 +1,7 @@
 resource "google_project_service" "iam" {
-  service = "iam.googleapis.com"
-  project = google_project.project.project_id
+  service            = "iam.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 resource "google_project_iam_custom_role" "deployer" {
