@@ -3,7 +3,7 @@ resource "google_project_service" "cloud_run" {
 }
 
 resource "google_cloud_run_service" "service" {
-  name = "abacus"
+  name     = "abacus"
   location = "us-central1"
 
   template {
@@ -34,8 +34,8 @@ data "google_iam_policy" "allow_invoke_by_all" {
 }
 
 resource "google_cloud_run_service_iam_policy" "allow_invoke_by_all" {
-  location    = google_cloud_run_service.service.location
-  service     = google_cloud_run_service.service.name
+  location = google_cloud_run_service.service.location
+  service  = google_cloud_run_service.service.name
 
   policy_data = data.google_iam_policy.allow_invoke_by_all.policy_data
 }

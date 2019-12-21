@@ -3,8 +3,8 @@ resource "google_project_service" "iam" {
 }
 
 resource "google_project_iam_custom_role" "deployer" {
-  role_id = "deployer"
-  title = "Deployer"
+  role_id     = "deployer"
+  title       = "Deployer"
   description = "Permissions required to deploy the application"
   permissions = [
     // Bare minimum required for Terraform to use GCP provider
@@ -33,7 +33,7 @@ resource "google_project_iam_custom_role" "deployer" {
 }
 
 resource "google_project_iam_binding" "deployer" {
-  role = google_project_iam_custom_role.deployer.id
+  role    = google_project_iam_custom_role.deployer.id
   members = ["group:batect-abacus-deployers@googlegroups.com"]
 }
 
