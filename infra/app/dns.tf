@@ -4,7 +4,7 @@ data "google_dns_managed_zone" "app" {
 
 locals {
   dns_name_without_trailing_dot = trimsuffix(data.google_dns_managed_zone.app.dns_name, ".")
-  service_dns_resource_records = google_cloud_run_domain_mapping.service.status.0.resource_records
+  service_dns_resource_records  = google_cloud_run_domain_mapping.service.status.0.resource_records
 }
 
 // Due to https://github.com/terraform-providers/terraform-provider-google/issues/5173, this
