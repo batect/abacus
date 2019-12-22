@@ -40,6 +40,7 @@ resource "google_project_iam_custom_role" "deployer" {
     // Required to check this IAM role is in sync with configuration
     "iam.roles.get",
     "resourcemanager.projects.getIamPolicy",
+    "iam.serviceAccounts.getIamPolicy",
   ]
 
   depends_on = [google_project_service.iam]
