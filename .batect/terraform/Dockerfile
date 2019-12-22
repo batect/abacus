@@ -21,3 +21,7 @@ ENV TERRAFORM_VERSION=0.12.18
 RUN wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
     rm /tmp/terraform.zip
+
+RUN apk add --no-cache \
+    bind-tools \
+    jq
