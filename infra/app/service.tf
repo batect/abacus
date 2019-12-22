@@ -11,7 +11,7 @@ resource "google_cloud_run_service" "service" {
       service_account_name = "${google_project_service.cloud_run.project}-app@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
 
       containers {
-        image                = var.image_reference
+        image = var.image_reference
       }
     }
   }
