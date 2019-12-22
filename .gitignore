@@ -9,5 +9,6 @@ vendor/
 
 coverage.txt
 generated.auto.tfvars
+image.auto.tfvars
 *.tfstate
 *.tfstate.backup

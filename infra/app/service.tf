@@ -8,8 +8,10 @@ resource "google_cloud_run_service" "service" {
 
   template {
     spec {
+      service_account_name = "${google_project_service.cloud_run.project}-app@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+
       containers {
-        image = "gcr.io/cloudrun/hello"
+        image                = var.image_reference
       }
     }
   }
