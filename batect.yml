@@ -265,4 +265,4 @@ tasks:
     group: Deployment tasks
     run:
       container: push-env
-      command: ./infra/scripts/pushImage.sh
+      command: ./infra/scripts/push_image.sh
