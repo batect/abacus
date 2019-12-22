@@ -24,6 +24,10 @@ resource "google_project_iam_custom_role" "deployer" {
     "run.services.getIamPolicy",
     "run.services.setIamPolicy",
     "run.services.update",
+    // These permissions are not documented anywhere but are required to manage domain mappings for Cloud Run services.
+    "run.domainmappings.create",
+    "run.domainmappings.delete",
+    "run.domainmappings.get",
 
     // Required to manage Container Registry storage bucket, and maintain state in Cloud Storage
     "storage.buckets.getIamPolicy",
