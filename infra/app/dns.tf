@@ -1,0 +1,33 @@
+data "google_dns_managed_zone" "app" {
+  name = "app-zone"
+}
+
+locals {
+  dns_name_without_trailing_dot = trimsuffix(data.google_dns_managed_zone.app.dns_name, ".")
+  service_dns_resource_records = google_cloud_run_domain_mapping.service.status.0.resource_records
+}
+
+// Due to https://github.com/terraform-providers/terraform-provider-google/issues/5173, this
+// mapping must be manually created and then imported with `terraform import`.
+resource "google_cloud_run_domain_mapping" "service" {
+  location = google_cloud_run_service.service.location
+  name     = "api.${local.dns_name_without_trailing_dot}"
+
+  metadata {
+    namespace = google_project_service.cloud_run.project
+  }
+
+  spec {
+    route_name = google_cloud_run_service.service.name
+  }
+}
+
+resource "google_dns_record_set" "service" {
+  count = length(local.service_dns_resource_records)
+
+  name         = "${google_cloud_run_domain_mapping.service.name}."
+  type         = local.service_dns_resource_records[count.index].type
+  ttl          = 300
+  rrdatas      = [local.service_dns_resource_records[count.index].rrdata]
+  managed_zone = data.google_dns_managed_zone.app.name
+}

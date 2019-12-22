@@ -32,7 +32,7 @@ containers:
     working_directory: /code
     environment:
       GOOGLE_PROJECT: *gcp_project
-      GOOGLE_REGION: us-west2
+      GOOGLE_REGION: us-central1
       GOOGLE_BILLING_ACCOUNT_ID: 011113-23F385-542CC5
 
   push-env:

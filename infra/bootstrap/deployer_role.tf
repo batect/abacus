@@ -29,6 +29,15 @@ resource "google_project_iam_custom_role" "deployer" {
     "run.domainmappings.delete",
     "run.domainmappings.get",
 
+    // Required to manage Cloud DNS entries
+    "dns.changes.create",
+    "dns.changes.get",
+    "dns.managedZones.get",
+    "dns.resourceRecordSets.create",
+    "dns.resourceRecordSets.delete",
+    "dns.resourceRecordSets.list",
+    "dns.resourceRecordSets.update",
+
     // Required to manage Container Registry storage bucket, and maintain state in Cloud Storage
     "storage.buckets.getIamPolicy",
     "storage.buckets.get",
