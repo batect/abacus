@@ -18,14 +18,14 @@
 // limitations under the License and the Condition.
 // +build unitTests
 
-package middleware_test
+package middleware
 
 import (
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
-	"github.com/batect/abacus/server/middleware"
 	stackdriver "github.com/icco/logrus-stackdriver-formatter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -44,7 +44,7 @@ var _ = Describe("Logging middleware", func() {
 
 	Context("when the request starts", func() {
 		BeforeEach(func() {
-			m := middleware.LoggerMiddleware(logger, http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
+			m := LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
 			m.ServeHTTP(nil, createTestRequest())
 		})
 
@@ -60,7 +60,7 @@ var _ = Describe("Logging middleware", func() {
 			Expect(hook.LastEntry().Message).To(Equal("Processing request."))
 		})
 
-		It("adds the expected context information to the message", func() {
+		It("adds the expected HTTP request information to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
 				RequestMethod: "PUT",
 				RequestURL:    "/blah",
@@ -71,14 +71,18 @@ var _ = Describe("Logging middleware", func() {
 				Protocol:      "HTTP/1.1",
 			}))))
 		})
+
+		It("adds the expected trace ID to the message", func() {
+			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("trace", "projects/my-project/traces/abc-123-def"))
+		})
 	})
 
 	Context("when the request logs a message", func() {
 		BeforeEach(func() {
-			m := middleware.LoggerMiddleware(logger, http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+			m := LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 				hook.Reset()
 
-				logger := middleware.LoggerFromContext(r.Context())
+				logger := LoggerFromContext(r.Context())
 				logger.Info("Inside request.")
 			}))
 
@@ -89,7 +93,7 @@ var _ = Describe("Logging middleware", func() {
 			Expect(hook.Entries).To(HaveLen(1))
 		})
 
-		It("adds the expected context information to the message", func() {
+		It("adds the expected HTTP request information to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
 				RequestMethod: "PUT",
 				RequestURL:    "/blah",
@@ -100,6 +104,10 @@ var _ = Describe("Logging middleware", func() {
 				Protocol:      "HTTP/1.1",
 			}))))
 		})
+
+		It("adds the expected trace ID to the message", func() {
+			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("trace", "projects/my-project/traces/abc-123-def"))
+		})
 	})
 })
 
@@ -108,5 +116,5 @@ func createTestRequest() *http.Request {
 	req.Header.Set("User-Agent", "Tests/1.2.3")
 	req.Header.Set("Referer", "referrer.com")
 
-	return req
+	return req.WithContext(context.WithValue(req.Context(), traceIDKey, "abc-123-def"))
 }

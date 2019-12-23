@@ -55,13 +55,21 @@ func getEnvOrDefault(name string, fallback string) string {
 }
 
 func getPort() string {
-	port := os.Getenv("PORT")
+	return getEnvOrExit("PORT")
+}
 
-	if port == "" {
-		logrus.Fatal("PORT environment variable is not set.")
+func getProjectID() string {
+	return getEnvOrExit("GOOGLE_PROJECT")
+}
+
+func getEnvOrExit(name string) string {
+	value := os.Getenv(name)
+
+	if value == "" {
+		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
 	}
 
-	return port
+	return value
 }
 
 func createServer(port string) *http.Server {
@@ -69,8 +77,10 @@ func createServer(port string) *http.Server {
 	mux.HandleFunc("/ping", api.Ping)
 
 	srv := &http.Server{
-		Addr:    fmt.Sprintf(":%s", port),
-		Handler: middleware.LoggerMiddleware(logrus.StandardLogger(), mux),
+		Addr: fmt.Sprintf(":%s", port),
+		Handler: middleware.TracingMiddleware(
+			middleware.LoggerMiddleware(logrus.StandardLogger(), getProjectID(), mux),
+		),
 	}
 
 	return srv

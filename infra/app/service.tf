@@ -31,6 +31,11 @@ resource "google_cloud_run_service" "service" {
 
       containers {
         image = var.image_reference
+
+        env {
+          name = "GOOGLE_PROJECT"
+          value = google_project_service.cloud_run.project
+        }
       }
     }
   }

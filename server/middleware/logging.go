@@ -21,6 +21,7 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -29,20 +30,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type contextKey int
-
-const (
-	loggerKey contextKey = iota
-)
-
 // Based on https://github.com/TV4/logrus-stackdriver-formatter#http-request-context and
 // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
-func loggerForRequest(logger logrus.FieldLogger, req *http.Request) logrus.FieldLogger {
+func loggerForRequest(logger logrus.FieldLogger, projectID string, req *http.Request) logrus.FieldLogger {
 	remoteIP := req.RemoteAddr
 
 	if strings.Contains(remoteIP, ":") {
 		remoteIP = remoteIP[:strings.LastIndex(remoteIP, ":")]
 	}
+
+	traceID := TraceIDFromContext(req.Context())
 
 	return logger.WithFields(logrus.Fields{
 		"httpRequest": &stackdriver.HTTPRequest{
@@ -54,6 +51,7 @@ func loggerForRequest(logger logrus.FieldLogger, req *http.Request) logrus.Field
 			Referer:       req.Header.Get("Referer"),
 			Protocol:      req.Proto,
 		},
+		"trace": fmt.Sprintf("projects/%s/traces/%s", projectID, traceID),
 	})
 }
 
@@ -65,9 +63,9 @@ func LoggerFromContext(ctx context.Context) logrus.FieldLogger {
 	return ctx.Value(loggerKey).(logrus.FieldLogger)
 }
 
-func LoggerMiddleware(baseLogger logrus.FieldLogger, next http.Handler) http.Handler {
+func LoggerMiddleware(baseLogger logrus.FieldLogger, projectID string, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		logger := loggerForRequest(baseLogger, req)
+		logger := loggerForRequest(baseLogger, projectID, req)
 		logger.Info("Processing request.")
 
 		ctx := newContextWithLogger(req.Context(), logger)
