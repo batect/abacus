@@ -26,7 +26,7 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	stackdriver "github.com/icco/logrus-stackdriver-formatter"
+	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"

@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"strings"
 
-	stackdriver "github.com/icco/logrus-stackdriver-formatter"
+	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 

@@ -28,7 +28,7 @@ import (
 
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
-	stackdriver "github.com/icco/logrus-stackdriver-formatter"
+	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 
