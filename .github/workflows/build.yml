@@ -33,6 +33,9 @@ jobs:
       - name: Lint code
         run: ./batect lint
 
+      - name: Check code files have license header
+        run: ./batect checkLicenseHeader
+
       - name: Run unit tests
         run: ./batect unitTest
 

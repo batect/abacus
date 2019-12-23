@@ -139,6 +139,13 @@ tasks:
       container: build-env
       command: sh -c 'go get -u && go mod tidy'
 
+  checkLicenseHeader:
+    description: Check that all files have the required license header.
+    group: Linting tasks
+    run:
+      container: build-env
+      command: ./scripts/check_licenses.sh
+
   setupTerraform:
     description: Initialise Terraform.
     group: Infrastructure management tasks
