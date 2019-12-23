@@ -28,6 +28,7 @@ import (
 
 	stackdriver "github.com/TV4/logrus-stackdriver-formatter"
 	"github.com/batect/abacus/server/api"
+	"github.com/batect/abacus/server/middleware"
 	"github.com/sirupsen/logrus"
 )
 
@@ -69,7 +70,7 @@ func createServer(port string) *http.Server {
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", port),
-		Handler: mux,
+		Handler: middleware.LoggerMiddleware(logrus.StandardLogger(), mux),
 	}
 
 	return srv
