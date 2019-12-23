@@ -76,6 +76,18 @@ resource "google_project_iam_custom_role" "deployer" {
     "monitoring.uptimeCheckConfigs.get",
     "monitoring.uptimeCheckConfigs.update",
 
+    // Required to manage Stackdriver notification channels
+    "monitoring.notificationChannels.create",
+    "monitoring.notificationChannels.delete",
+    "monitoring.notificationChannels.get",
+    "monitoring.notificationChannels.update",
+
+    // Required to manage Stackdriver alert policies
+    "monitoring.alertPolicies.create",
+    "monitoring.alertPolicies.delete",
+    "monitoring.alertPolicies.get",
+    "monitoring.alertPolicies.update",
+
     // Required to check this IAM role is in sync with configuration
     "iam.roles.get",
     "resourcemanager.projects.getIamPolicy",
