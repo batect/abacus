@@ -26,9 +26,9 @@ import (
 	"os"
 	"os/signal"
 
-	stackdriver "github.com/TV4/logrus-stackdriver-formatter"
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
+	stackdriver "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 

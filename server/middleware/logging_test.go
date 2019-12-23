@@ -26,8 +26,10 @@ import (
 	"strings"
 
 	"github.com/batect/abacus/server/middleware"
+	stackdriver "github.com/icco/logrus-stackdriver-formatter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gstruct"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 )
@@ -59,15 +61,15 @@ var _ = Describe("Logging middleware", func() {
 		})
 
 		It("adds the expected context information to the message", func() {
-			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", map[string]interface{}{
-				"requestMethod": "PUT",
-				"requestUrl":    "/blah",
-				"requestSize":   int64(4),
-				"userAgent":     "Tests/1.2.3",
-				"remoteIp":      "192.0.2.1",
-				"referrer":      "referrer.com",
-				"protocol":      "HTTP/1.1",
-			}))
+			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
+				RequestMethod: "PUT",
+				RequestURL:    "/blah",
+				RequestSize:   "4",
+				UserAgent:     "Tests/1.2.3",
+				RemoteIP:      "192.0.2.1",
+				Referer:       "referrer.com",
+				Protocol:      "HTTP/1.1",
+			}))))
 		})
 	})
 
@@ -88,15 +90,15 @@ var _ = Describe("Logging middleware", func() {
 		})
 
 		It("adds the expected context information to the message", func() {
-			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", map[string]interface{}{
-				"requestMethod": "PUT",
-				"requestUrl":    "/blah",
-				"requestSize":   int64(4),
-				"userAgent":     "Tests/1.2.3",
-				"remoteIp":      "192.0.2.1",
-				"referrer":      "referrer.com",
-				"protocol":      "HTTP/1.1",
-			}))
+			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
+				RequestMethod: "PUT",
+				RequestURL:    "/blah",
+				RequestSize:   "4",
+				UserAgent:     "Tests/1.2.3",
+				RemoteIP:      "192.0.2.1",
+				Referer:       "referrer.com",
+				Protocol:      "HTTP/1.1",
+			}))))
 		})
 	})
 })

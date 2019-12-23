@@ -22,8 +22,10 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"strconv"
 	"strings"
 
+	stackdriver "github.com/icco/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 
@@ -43,14 +45,14 @@ func loggerForRequest(logger logrus.FieldLogger, req *http.Request) logrus.Field
 	}
 
 	return logger.WithFields(logrus.Fields{
-		"httpRequest": map[string]interface{}{
-			"requestMethod": req.Method,
-			"requestUrl":    req.URL.String(),
-			"requestSize":   req.ContentLength,
-			"userAgent":     req.Header.Get("User-Agent"),
-			"remoteIp":      remoteIP,
-			"referrer":      req.Header.Get("Referer"),
-			"protocol":      req.Proto,
+		"httpRequest": &stackdriver.HTTPRequest{
+			RequestMethod: req.Method,
+			RequestURL:    req.URL.String(),
+			RequestSize:   strconv.FormatInt(req.ContentLength, 10),
+			UserAgent:     req.Header.Get("User-Agent"),
+			RemoteIP:      remoteIP,
+			Referer:       req.Header.Get("Referer"),
+			Protocol:      req.Proto,
 		},
 	})
 }
