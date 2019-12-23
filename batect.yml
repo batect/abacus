@@ -152,7 +152,7 @@ tasks:
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: terraform apply -input=false -auto-approve
+      command: sh -c "terraform apply -input=false -auto-approve && echo && ./scripts/wait_for_cloud_run.sh"
       working_directory: /code/infra/app
 
   planTerraform:
