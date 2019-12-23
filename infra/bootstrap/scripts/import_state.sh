@@ -7,7 +7,7 @@ KNOWN_RESOURCES=$([ ! -f terraform.tfstate ] || terraform state list)
 function main() {
   import google_project.project "$GOOGLE_PROJECT"
   import google_project_iam_custom_role.deployer "projects/$GOOGLE_PROJECT/roles/deployer"
-  import google_project_iam_binding.deployer "$GOOGLE_PROJECT roles/deployer"
+  import google_project_iam_binding.deployer "$GOOGLE_PROJECT projects/$GOOGLE_PROJECT/roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/$GOOGLE_PROJECT-terraform-state"
   import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"
   import google_project_service.dns "$GOOGLE_PROJECT/dns.googleapis.com"
@@ -15,9 +15,6 @@ function main() {
   import google_service_account.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_service_account_iam_policy.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_dns_managed_zone.app_zone app-zone
-
-  # HACK: workaround for https://github.com/terraform-providers/terraform-provider-google/issues/5250
-  sed -i 's#"role": "roles/deployer"#"role": "projects/batect-abacus/roles/deployer"#g' terraform.tfstate
 }
 
 function import() {
