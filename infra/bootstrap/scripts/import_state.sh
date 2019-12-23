@@ -14,7 +14,7 @@ function main() {
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
   import google_service_account.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_service_account_iam_policy.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
-  import google_dns_managed_zone.app_zone abacus.batect.dev
+  import google_dns_managed_zone.app_zone app-zone
 
   # HACK: workaround for https://github.com/terraform-providers/terraform-provider-google/issues/5250
   sed -i 's#"role": "roles/deployer"#"role": "projects/batect-abacus/roles/deployer"#g' terraform.tfstate
