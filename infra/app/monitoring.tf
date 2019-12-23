@@ -17,26 +17,6 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_monitoring_uptime_check_config" "api_ping" {
-  display_name = "API (ping)"
-  timeout      = "10s"
-  period       = "300s"
-
-  http_check {
-    path         = "/ping"
-    use_ssl      = true
-    validate_ssl = true
-  }
-
-  monitored_resource {
-    type = "uptime_url"
-    labels = {
-      project_id = google_project_service.cloud_run.project
-      host       = google_cloud_run_domain_mapping.service.name
-    }
-  }
-}
-
 resource "google_monitoring_notification_channel" "email" {
   display_name = "Email to alerts@batect.dev"
   type         = "email"
@@ -44,33 +24,4 @@ resource "google_monitoring_notification_channel" "email" {
   labels = {
     email_address = "alerts@batect.dev"
   }
-}
-
-resource "google_monitoring_alert_policy" "api_ping" {
-  display_name = "API ping policy"
-  combiner     = "OR"
-
-  conditions {
-    display_name = "Uptime Health Check on API (ping)"
-
-    condition_threshold {
-      filter          = "metric.type=\"monitoring.googleapis.com/uptime_check/check_passed\" resource.type=\"uptime_url\" metric.label.check_id=\"${google_monitoring_uptime_check_config.api_ping.uptime_check_id}\""
-      comparison      = "COMPARISON_GT"
-      duration        = "300s"
-      threshold_value = 1
-
-      trigger {
-        count = 1
-      }
-
-      aggregations {
-        alignment_period     = "600s"
-        cross_series_reducer = "REDUCE_COUNT_FALSE"
-        group_by_fields      = ["resource.*"]
-        per_series_aligner   = "ALIGN_NEXT_OLDER"
-      }
-    }
-  }
-
-  notification_channels = [google_monitoring_notification_channel.email.name]
 }
