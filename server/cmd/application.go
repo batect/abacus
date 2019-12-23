@@ -48,9 +48,9 @@ func initLogging() {
 func getEnvOrDefault(name string, fallback string) string {
 	if value, ok := os.LookupEnv(name); ok {
 		return value
-	} else {
-		return fallback
 	}
+
+	return fallback
 }
 
 func getPort() string {
