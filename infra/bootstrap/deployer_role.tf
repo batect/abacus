@@ -32,6 +32,7 @@ resource "google_project_iam_custom_role" "deployer" {
     // Required to manage Cloud DNS entries
     "dns.changes.create",
     "dns.changes.get",
+    "dns.dnsKeys.list",
     "dns.managedZones.get",
     "dns.resourceRecordSets.create",
     "dns.resourceRecordSets.delete",
@@ -49,6 +50,12 @@ resource "google_project_iam_custom_role" "deployer" {
     "storage.objects.list",
     "storage.objects.setIamPolicy",
     "storage.objects.update",
+
+    // Required to manage Stackdriver uptime checks
+    "monitoring.uptimeCheckConfigs.create",
+    "monitoring.uptimeCheckConfigs.delete",
+    "monitoring.uptimeCheckConfigs.get",
+    "monitoring.uptimeCheckConfigs.update",
 
     // Required to check this IAM role is in sync with configuration
     "iam.roles.get",
