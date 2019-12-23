@@ -29,7 +29,7 @@ echo "Image pushed to $IMAGE_REFERENCE, generating Terraform variables file..."
 VARS_FILE="$SCRIPT_DIR/../app/image.auto.tfvars"
 
 cat <<EOF > "$VARS_FILE"
-image_reference="$IMAGE_REFERENCE"
+image_reference = "$IMAGE_REFERENCE"
 EOF
 
 echo
