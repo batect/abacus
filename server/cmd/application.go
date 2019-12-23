@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/signal"
 
+	stackdriver "github.com/TV4/logrus-stackdriver-formatter"
 	"github.com/batect/abacus/server/api"
 	"github.com/sirupsen/logrus"
 )
@@ -38,8 +39,18 @@ func main() {
 }
 
 func initLogging() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetReportCaller(true)
+	logrus.SetFormatter(stackdriver.NewFormatter(
+		stackdriver.WithService(getEnvOrDefault("K_SERVICE", "abacus")),
+		stackdriver.WithVersion(getEnvOrDefault("K_REVISION", "local")),
+	))
+}
+
+func getEnvOrDefault(name string, fallback string) string {
+	if value, ok := os.LookupEnv(name); ok {
+		return value
+	} else {
+		return fallback
+	}
 }
 
 func getPort() string {
