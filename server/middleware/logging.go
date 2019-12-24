@@ -39,12 +39,15 @@ func loggerForRequest(logger logrus.FieldLogger, projectID string, req *http.Req
 		remoteIP = remoteIP[:strings.LastIndex(remoteIP, ":")]
 	}
 
+	protocol := "http"
+	host := req.Host
+
 	traceID := TraceIDFromContext(req.Context())
 
 	return logger.WithFields(logrus.Fields{
 		"httpRequest": &stackdriver.HTTPRequest{
 			RequestMethod: req.Method,
-			RequestURL:    req.URL.String(),
+			RequestURL:    fmt.Sprintf("%s://%s%s", protocol, host, req.URL.String()),
 			RequestSize:   strconv.FormatInt(req.ContentLength, 10),
 			UserAgent:     req.Header.Get("User-Agent"),
 			RemoteIP:      remoteIP,

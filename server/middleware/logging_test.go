@@ -63,7 +63,7 @@ var _ = Describe("Logging middleware", func() {
 		It("adds the expected HTTP request information to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
 				RequestMethod: "PUT",
-				RequestURL:    "/blah",
+				RequestURL:    "http://example.com/blah",
 				RequestSize:   "4",
 				UserAgent:     "Tests/1.2.3",
 				RemoteIP:      "192.0.2.1",
@@ -96,7 +96,7 @@ var _ = Describe("Logging middleware", func() {
 		It("adds the expected HTTP request information to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
 				RequestMethod: "PUT",
-				RequestURL:    "/blah",
+				RequestURL:    "http://example.com/blah",
 				RequestSize:   "4",
 				UserAgent:     "Tests/1.2.3",
 				RemoteIP:      "192.0.2.1",
