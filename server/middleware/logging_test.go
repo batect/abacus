@@ -26,10 +26,8 @@ import (
 	"net/http/httptest"
 	"strings"
 
-	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	. "github.com/onsi/gomega/gstruct"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 )
@@ -60,18 +58,6 @@ var _ = Describe("Logging middleware", func() {
 			Expect(hook.LastEntry().Message).To(Equal("Processing request."))
 		})
 
-		It("adds the expected HTTP request information to the message", func() {
-			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
-				RequestMethod: "PUT",
-				RequestURL:    "http://example.com/blah",
-				RequestSize:   "4",
-				UserAgent:     "Tests/1.2.3",
-				RemoteIP:      "192.0.2.1",
-				Referer:       "referrer.com",
-				Protocol:      "HTTP/1.1",
-			}))))
-		})
-
 		It("adds the expected trace ID to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("trace", "projects/my-project/traces/abc-123-def"))
 		})
@@ -93,18 +79,6 @@ var _ = Describe("Logging middleware", func() {
 			Expect(hook.Entries).To(HaveLen(1))
 		})
 
-		It("adds the expected HTTP request information to the message", func() {
-			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("httpRequest", PointTo(Equal(stackdriver.HTTPRequest{
-				RequestMethod: "PUT",
-				RequestURL:    "http://example.com/blah",
-				RequestSize:   "4",
-				UserAgent:     "Tests/1.2.3",
-				RemoteIP:      "192.0.2.1",
-				Referer:       "referrer.com",
-				Protocol:      "HTTP/1.1",
-			}))))
-		})
-
 		It("adds the expected trace ID to the message", func() {
 			Expect(hook.LastEntry().Data).To(HaveKeyWithValue("trace", "projects/my-project/traces/abc-123-def"))
 		})
@@ -113,8 +87,6 @@ var _ = Describe("Logging middleware", func() {
 
 func createTestRequest() *http.Request {
 	req := httptest.NewRequest("PUT", "/blah", strings.NewReader("test"))
-	req.Header.Set("User-Agent", "Tests/1.2.3")
-	req.Header.Set("Referer", "referrer.com")
 
 	return req.WithContext(context.WithValue(req.Context(), traceIDKey, "abc-123-def"))
 }

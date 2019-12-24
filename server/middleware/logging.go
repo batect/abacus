@@ -23,37 +23,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
 
-	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
 
-// Based on https://github.com/TV4/logrus-stackdriver-formatter#http-request-context and
-// https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#HttpRequest
 func loggerForRequest(logger logrus.FieldLogger, projectID string, req *http.Request) logrus.FieldLogger {
-	remoteIP := req.RemoteAddr
-
-	if strings.Contains(remoteIP, ":") {
-		remoteIP = remoteIP[:strings.LastIndex(remoteIP, ":")]
-	}
-
-	protocol := "http"
-	host := req.Host
-
 	traceID := TraceIDFromContext(req.Context())
 
 	return logger.WithFields(logrus.Fields{
-		"httpRequest": &stackdriver.HTTPRequest{
-			RequestMethod: req.Method,
-			RequestURL:    fmt.Sprintf("%s://%s%s", protocol, host, req.URL.String()),
-			RequestSize:   strconv.FormatInt(req.ContentLength, 10),
-			UserAgent:     req.Header.Get("User-Agent"),
-			RemoteIP:      remoteIP,
-			Referer:       req.Header.Get("Referer"),
-			Protocol:      req.Proto,
-		},
 		"trace": fmt.Sprintf("projects/%s/traces/%s", projectID, traceID),
 	})
 }
