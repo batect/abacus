@@ -17,19 +17,16 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+package storage
 
-import (
-	"fmt"
-	"net/http"
-)
+import "context"
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
-	}
+type nullSessionStore struct{}
 
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+func NewNullSessionStore() SessionStore {
+	return &nullSessionStore{}
+}
+
+func (n *nullSessionStore) Store(ctx context.Context, session Session) error {
+	return nil
 }

@@ -19,17 +19,13 @@
 
 package api
 
-import (
-	"fmt"
-	"net/http"
-)
+import "net/http"
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
+func requireMethod(w http.ResponseWriter, req *http.Request, method string) bool {
+	if req.Method != method {
+		methodNotAllowed(w, method)
+		return false
 	}
 
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+	return true
 }

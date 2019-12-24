@@ -17,19 +17,23 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+package storage
 
 import (
-	"fmt"
-	"net/http"
+	"context"
+	"time"
 )
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
-	}
+type SessionStore interface {
+	Store(ctx context.Context, session Session) error
+}
 
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+type Session struct {
+	SessionID          string            `json:"sessionId" validate:"required,uuid"`
+	UserID             string            `json:"userId" validate:"required,uuid"`
+	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
+	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required"`
+	ApplicationID      string            `json:"applicationId" validate:"required"`
+	ApplicationVersion string            `json:"applicationVersion" validate:"required"`
+	Metadata           map[string]string `json:"metadata"`
 }

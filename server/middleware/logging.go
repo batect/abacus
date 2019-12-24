@@ -55,7 +55,7 @@ func loggerForRequest(logger logrus.FieldLogger, projectID string, req *http.Req
 	})
 }
 
-func newContextWithLogger(ctx context.Context, logger logrus.FieldLogger) context.Context {
+func NewContextWithLogger(ctx context.Context, logger logrus.FieldLogger) context.Context {
 	return context.WithValue(ctx, loggerKey, logger)
 }
 
@@ -68,7 +68,7 @@ func LoggerMiddleware(baseLogger logrus.FieldLogger, projectID string, next http
 		logger := loggerForRequest(baseLogger, projectID, req)
 		logger.Info("Processing request.")
 
-		ctx := newContextWithLogger(req.Context(), logger)
+		ctx := NewContextWithLogger(req.Context(), logger)
 		next.ServeHTTP(w, req.WithContext(ctx))
 	})
 }

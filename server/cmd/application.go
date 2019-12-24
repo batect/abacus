@@ -28,6 +28,7 @@ import (
 
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
+	"github.com/batect/abacus/server/storage"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 )
@@ -54,27 +55,10 @@ func getEnvOrDefault(name string, fallback string) string {
 	return fallback
 }
 
-func getPort() string {
-	return getEnvOrExit("PORT")
-}
-
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
-}
-
-func getEnvOrExit(name string) string {
-	value := os.Getenv(name)
-
-	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
-	}
-
-	return value
-}
-
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ping", api.Ping)
+	mux.Handle("/v1/sessions", api.NewIngestHandler(storage.NewNullSessionStore()))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),

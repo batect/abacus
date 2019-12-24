@@ -17,19 +17,16 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+package storage_test
 
 import (
-	"fmt"
-	"net/http"
+	"testing"
+
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
-	}
-
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+func TestCmd(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Storage Suite")
 }

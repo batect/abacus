@@ -17,19 +17,17 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+package testutils
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/batect/abacus/server/middleware"
+	"github.com/sirupsen/logrus/hooks/test"
 )
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
-	}
+func RequestWithTestLogger(req *http.Request) (*http.Request, *test.Hook) {
+	logger, hook := test.NewNullLogger()
 
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+	return req.WithContext(middleware.NewContextWithLogger(req.Context(), logger)), hook
 }

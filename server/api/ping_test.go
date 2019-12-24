@@ -30,12 +30,39 @@ import (
 )
 
 var _ = Describe("Ping endpoint", func() {
-	Context("when invoked", func() {
-		var resp *httptest.ResponseRecorder
+	var resp *httptest.ResponseRecorder
 
+	BeforeEach(func() {
+		resp = httptest.NewRecorder()
+	})
+
+	Context("when invoked with a HTTP method other than GET", func() {
 		BeforeEach(func() {
-			resp = httptest.NewRecorder()
-			api.Ping(resp, nil)
+			req := httptest.NewRequest("POST", "/ping", nil)
+			api.Ping(resp, req)
+		})
+
+		It("returns a HTTP 405 response", func() {
+			Expect(resp.Code).To(Equal(http.StatusMethodNotAllowed))
+		})
+
+		It("returns a JSON error payload", func() {
+			Expect(resp.Body).To(MatchJSON(`{"message":"This endpoint only supports GET requests"}`))
+		})
+
+		It("sets the response Content-Type header", func() {
+			Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+		})
+
+		It("sets the response Allow header", func() {
+			Expect(resp.Result().Header).To(HaveKeyWithValue("Allow", []string{"GET"}))
+		})
+	})
+
+	Context("when invoked with a HTTP GET", func() {
+		BeforeEach(func() {
+			req := httptest.NewRequest("GET", "/ping", nil)
+			api.Ping(resp, req)
 		})
 
 		It("returns a HTTP 200 response", func() {

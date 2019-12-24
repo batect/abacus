@@ -17,19 +17,28 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+package main
 
 import (
-	"fmt"
-	"net/http"
+	"os"
+
+	"github.com/sirupsen/logrus"
 )
 
-func Ping(w http.ResponseWriter, req *http.Request) {
-	if !requireMethod(w, req, http.MethodGet) {
-		return
+func getPort() string {
+	return getEnvOrExit("PORT")
+}
+
+func getProjectID() string {
+	return getEnvOrExit("GOOGLE_PROJECT")
+}
+
+func getEnvOrExit(name string) string {
+	value := os.Getenv(name)
+
+	if value == "" {
+		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
 	}
 
-	if _, err := fmt.Fprint(w, "pong"); err != nil {
-		panic(err)
-	}
+	return value
 }
