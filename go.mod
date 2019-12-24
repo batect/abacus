@@ -3,7 +3,7 @@ module github.com/batect/abacus
 go 1.13
 
 require (
-	github.com/charleskorn/logrus-stackdriver-formatter v0.2.2
+	github.com/charleskorn/logrus-stackdriver-formatter v0.2.3
 	github.com/go-playground/validator/v10 v10.0.1
 	github.com/google/uuid v1.1.1
 	github.com/onsi/ginkgo v1.11.0
