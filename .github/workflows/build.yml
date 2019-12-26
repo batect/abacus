@@ -51,7 +51,7 @@ jobs:
         run: ./batect lintTerraform
 
       - name: Log in to GCP
-        run: ./batect gcpLogin && ./batect gcpBootstrapLogin
+        run: ./batect setupGCPServiceAccount && ./batect setupGCPBootstrapServiceAccount
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
