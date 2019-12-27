@@ -18,18 +18,19 @@
 // limitations under the License and the Condition.
 // +build unitTests
 
-package storage
+package storage_test
 
 import (
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/batect/abacus/server/storage"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("A session", func() {
-	session := Session{
+	session := storage.Session{
 		SessionID:          "11112222-3333-4444-5555-666677778888",
 		UserID:             "99990000-3333-4444-5555-666677778888",
 		SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),

@@ -3,6 +3,9 @@
 set -euo pipefail
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CREDS_FILE="$SCRIPT_DIR/../../../.creds/application_service_account_personal.json"
+CREDS_DIR="$SCRIPT_DIR/../../../.creds"
+APP_CREDS_FILE="$CREDS_DIR/application_service_account_personal.json"
+TEST_DRIVER_CREDS_FILE="$CREDS_DIR/test_driver_service_account_personal.json"
 
-terraform output application_service_account_key > "$CREDS_FILE"
+terraform output application_service_account_key > "$APP_CREDS_FILE"
+terraform output test_driver_service_account_key > "$TEST_DRIVER_CREDS_FILE"
