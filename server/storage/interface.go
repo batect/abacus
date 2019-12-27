@@ -25,7 +25,7 @@ import (
 )
 
 type SessionStore interface {
-	Store(ctx context.Context, session Session) error
+	Store(ctx context.Context, session *Session) error
 }
 
 type Session struct {

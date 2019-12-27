@@ -58,7 +58,7 @@ func getEnvOrDefault(name string, fallback string) string {
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/ping", api.Ping)
-	mux.Handle("/v1/sessions", api.NewIngestHandler(storage.NewNullSessionStore()))
+	mux.Handle("/v1/sessions", createIngestHandler())
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
@@ -68,6 +68,16 @@ func createServer(port string) *http.Server {
 	}
 
 	return srv
+}
+
+func createIngestHandler() http.Handler {
+	store, err := storage.NewBigQuerySessionStore(getProjectID(), getDatasetID(), getSessionsTableID(), getCredentialsFilePath())
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create session store.")
+	}
+
+	return api.NewIngestHandler(store)
 }
 
 func runServer(srv *http.Server) {

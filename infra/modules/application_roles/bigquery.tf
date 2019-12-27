@@ -24,7 +24,9 @@ resource "google_project_iam_custom_role" "app_bigquery_access" {
   project     = var.project_id
 
   permissions = [
-    "bigquery.tables.updateData"
+    "bigquery.datasets.get",
+    "bigquery.tables.get",
+    "bigquery.tables.updateData",
   ]
 
   depends_on = [google_project_service.iam]

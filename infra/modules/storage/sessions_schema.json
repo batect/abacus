@@ -20,7 +20,7 @@
     "mode": "REQUIRED"
   },
   {
-    "name": "applicationName",
+    "name": "applicationId",
     "type": "STRING",
     "mode": "REQUIRED"
   },

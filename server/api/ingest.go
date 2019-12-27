@@ -49,7 +49,7 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if err := h.sessionStore.Store(req.Context(), session); err != nil {
+	if err := h.sessionStore.Store(req.Context(), &session); err != nil {
 		middleware.LoggerFromContext(req.Context()).WithError(err).Error("Storing session failed")
 
 		resp := errorResponse{Message: "Could not process request"}

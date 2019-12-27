@@ -45,7 +45,7 @@ resource "google_bigquery_table" "sessions" {
   schema = file("${path.module}/sessions_schema.json")
 
   clustering = [
-    "applicationName",
+    "applicationId",
     "applicationVersion",
   ]
 }

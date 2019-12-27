@@ -344,12 +344,12 @@ type mockStore struct {
 	StoredSessions []storage.Session
 }
 
-func (m *mockStore) Store(_ context.Context, session storage.Session) error {
+func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
 	if m.ErrorToReturn != nil {
 		return m.ErrorToReturn
 	}
 
-	m.StoredSessions = append(m.StoredSessions, session)
+	m.StoredSessions = append(m.StoredSessions, *session)
 
 	return nil
 }

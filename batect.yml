@@ -1,5 +1,6 @@
 .gcp_cloud_sdk_version: &gcp_cloud_sdk_version 274.0.0
 .gcp_project: &gcp_project batect-abacus
+.personal_gcp_project: &personal_gcp_project charles-batect-abacus
 
 containers:
   build-env:
@@ -54,9 +55,16 @@ containers:
 
   app:
     build_directory: .batect/app
+    volumes:
+      - local: .creds/application_service_account_personal.json
+        container: /creds/gcp.json
+        options: ro
     environment:
       PORT: 8080
-      GOOGLE_PROJECT: local
+      GOOGLE_PROJECT: *personal_gcp_project
+      GOOGLE_CREDENTIALS_FILE: /creds/gcp.json
+      DATASET_ID: abacus
+      SESSIONS_TABLE_ID: sessions
 
 tasks:
   setup:
@@ -308,7 +316,7 @@ tasks:
       working_directory: /code/infra/personal
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal
-        GOOGLE_PROJECT: charles-batect-abacus
+        GOOGLE_PROJECT: *personal_gcp_project
 
   applyPersonalTerraform:
     description: Run Terraform to provision infrastructure.
@@ -319,7 +327,7 @@ tasks:
       working_directory: /code/infra/personal
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal
-        GOOGLE_PROJECT: charles-batect-abacus
+        GOOGLE_PROJECT: *personal_gcp_project
 
   planPersonalTerraform:
     description: Plan changes required to bring infrastructure to desired state.
@@ -330,7 +338,7 @@ tasks:
       working_directory: /code/infra/personal
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal
-        GOOGLE_PROJECT: charles-batect-abacus
+        GOOGLE_PROJECT: *personal_gcp_project
 
   destroyPersonalTerraform:
     description: Run Terraform to provision infrastructure.
@@ -341,7 +349,7 @@ tasks:
       working_directory: /code/infra/personal
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal
-        GOOGLE_PROJECT: charles-batect-abacus
+        GOOGLE_PROJECT: *personal_gcp_project
 
   setupGCPPersonalServiceAccount:
     description: Store credentials used to access GCP when setting up a personal development environment
@@ -353,4 +361,4 @@ tasks:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal
-        GOOGLE_PROJECT: charles-batect-abacus
+        GOOGLE_PROJECT: *personal_gcp_project
