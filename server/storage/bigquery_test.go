@@ -49,8 +49,8 @@ var _ = Describe("A session", func() {
 			Expect(err).ToNot(HaveOccurred())
 		})
 
-		It("uses the session ID as the insert ID", func() {
-			Expect(insertID).To(Equal(session.SessionID))
+		It("does not return an insert ID", func() {
+			Expect(insertID).To(BeEmpty())
 		})
 
 		It("converts the session to the format expected by BigQuery", func() {

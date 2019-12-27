@@ -82,5 +82,5 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 		"metadata":           metadata,
 	}
 
-	return row, s.SessionID, nil
+	return row, "", nil
 }
