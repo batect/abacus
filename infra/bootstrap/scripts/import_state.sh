@@ -7,6 +7,7 @@ KNOWN_RESOURCES=$([ ! -f terraform.tfstate ] || terraform state list)
 function main() {
   import google_project.project "$GOOGLE_PROJECT"
   import google_project_iam_custom_role.deployer "projects/$GOOGLE_PROJECT/roles/deployer"
+  import module.application_roles.google_project_iam_custom_role.app_bigquery_access "projects/$GOOGLE_PROJECT/roles/app_bigquery_access"
   import google_project_iam_binding.deployer "$GOOGLE_PROJECT projects/$GOOGLE_PROJECT/roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/$GOOGLE_PROJECT-terraform-state"
   import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"

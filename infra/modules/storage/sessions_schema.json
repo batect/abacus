@@ -1,0 +1,49 @@
+[
+  {
+    "name": "sessionId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "sessionStartTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "sessionEndTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "userId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "applicationName",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "applicationVersion",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "metadata",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "key",
+        "type": "STRING",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "value",
+        "type": "STRING",
+        "mode": "REQUIRED"
+      }
+    ]
+  }
+]

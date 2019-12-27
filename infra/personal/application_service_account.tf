@@ -17,28 +17,24 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_service_account" "app" {
-  account_id   = "batect-abacus-app"
-  display_name = "App service account"
-  project      = google_project.project.project_id
-  depends_on   = [google_project_service.iam]
-}
-
-data "google_iam_policy" "app_service_account" {
-  binding {
-    role = "roles/iam.serviceAccountUser"
-
-    members = ["group:batect-abacus-deployers@googlegroups.com"]
-  }
-}
-
-resource "google_service_account_iam_policy" "app" {
-  service_account_id = google_service_account.app.name
-  policy_data        = data.google_iam_policy.app_service_account.policy_data
-}
-
 module "application_roles" {
   source = "../modules/application_roles"
 
   project_id = google_project.project.project_id
+}
+
+resource "google_service_account" "application" {
+  account_id   = "application"
+  display_name = "Service account used by application in personal environment"
+
+  depends_on = [google_project_service.iam]
+}
+
+resource "google_service_account_key" "application_key" {
+  service_account_id = google_service_account.application.name
+}
+
+output "application_service_account_key" {
+  value     = base64decode(google_service_account_key.application_key.private_key)
+  sensitive = true
 }

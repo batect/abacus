@@ -21,13 +21,17 @@ resource "google_project_service" "cloud_run" {
   service = "run.googleapis.com"
 }
 
+locals {
+  service_service_account_email = "${google_project_service.cloud_run.project}-app@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+}
+
 resource "google_cloud_run_service" "service" {
   name     = "abacus"
   location = "us-central1"
 
   template {
     spec {
-      service_account_name = "${google_project_service.cloud_run.project}-app@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+      service_account_name = local.service_service_account_email
 
       containers {
         image = var.image_reference
@@ -35,6 +39,16 @@ resource "google_cloud_run_service" "service" {
         env {
           name  = "GOOGLE_PROJECT"
           value = google_project_service.cloud_run.project
+        }
+
+        env {
+          name  = "DATASET_ID"
+          value = module.storage.dataset_id
+        }
+
+        env {
+          name  = "SESSIONS_TABLE_ID"
+          value = module.storage.sessions_table_id
         }
       }
     }
