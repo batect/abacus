@@ -103,7 +103,7 @@ tasks:
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo -tags integrationTests server/...
+      command: ginkgo -tags integrationTests -slowSpecThreshold 10 server/...
       environment:
         GOOGLE_PROJECT: *personal_gcp_project
         GOOGLE_CREDENTIALS_FILE: /code/.creds/application_service_account_personal.json
