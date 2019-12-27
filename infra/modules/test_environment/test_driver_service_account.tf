@@ -34,11 +34,11 @@ output "test_driver_service_account_key" {
 }
 
 resource "google_project_iam_member" "test_driver_bigquery_user" {
-  role    = "roles/bigquery.user"
-  member  = "serviceAccount:${google_service_account.test_driver.email}"
+  role   = "roles/bigquery.user"
+  member = "serviceAccount:${google_service_account.test_driver.email}"
 }
 
 resource "google_project_iam_member" "test_driver_bigquery_editor" {
-  role    = "roles/bigquery.dataEditor"
-  member  = "serviceAccount:${google_service_account.test_driver.email}"
+  role   = "roles/bigquery.dataEditor"
+  member = "serviceAccount:${google_service_account.test_driver.email}"
 }

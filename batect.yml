@@ -336,7 +336,7 @@ tasks:
     group: Personal infrastructure tasks
     run:
       container: terraform
-      command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve && ./scripts/setup_application_key.sh"
+      command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve && /code/infra/modules/test_environment/scripts/setup_application_key.sh"
       working_directory: /code/infra/personal
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: personal

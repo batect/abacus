@@ -17,9 +17,10 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-module "storage" {
-  source = "../modules/storage"
+variable "project_name" {
+  type = string
+}
 
-  application_service_account_email = google_service_account.application.email
-  application_bigquery_iam_role     = module.application_roles.bigquery_iam_role
+variable "billing_account_id" {
+  type = string
 }

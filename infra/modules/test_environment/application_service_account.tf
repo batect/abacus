@@ -18,7 +18,7 @@
 // limitations under the License and the Condition.
 
 module "application_roles" {
-  source = "../modules/application_roles"
+  source = "../application_roles"
 
   project_id = google_project.project.project_id
 }
