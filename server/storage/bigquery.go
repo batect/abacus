@@ -22,7 +22,6 @@ package storage
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"cloud.google.com/go/bigquery"
 	"google.golang.org/api/option"
@@ -75,8 +74,8 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 	row := map[string]bigquery.Value{
 		"sessionId":          s.SessionID,
 		"userId":             s.UserID,
-		"sessionStartTime":   s.SessionStartTime.Format(time.RFC3339Nano),
-		"sessionEndTime":     s.SessionEndTime.Format(time.RFC3339Nano),
+		"sessionStartTime":   s.SessionStartTime,
+		"sessionEndTime":     s.SessionEndTime,
 		"applicationId":      s.ApplicationID,
 		"applicationVersion": s.ApplicationVersion,
 		"metadata":           metadata,

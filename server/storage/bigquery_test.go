@@ -58,8 +58,8 @@ var _ = Describe("A session", func() {
 			Expect(row).To(Equal(map[string]bigquery.Value{
 				"sessionId":          session.SessionID,
 				"userId":             session.UserID,
-				"sessionStartTime":   "2019-01-02T03:04:05.678Z",
-				"sessionEndTime":     "2019-01-02T09:04:05.678Z",
+				"sessionStartTime":   session.SessionStartTime,
+				"sessionEndTime":     session.SessionEndTime,
 				"applicationId":      session.ApplicationID,
 				"applicationVersion": session.ApplicationVersion,
 				"metadata": []map[string]bigquery.Value{
