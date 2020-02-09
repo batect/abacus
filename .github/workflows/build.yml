@@ -24,9 +24,6 @@ jobs:
           restore-keys: |
             golang-
 
-      - name: Show version information
-        run: ./batect --version && docker version
-
       - name: Download dependencies
         run: ./batect setup
 
