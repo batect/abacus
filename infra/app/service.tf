@@ -40,16 +40,6 @@ resource "google_cloud_run_service" "service" {
           name  = "GOOGLE_PROJECT"
           value = google_project_service.cloud_run.project
         }
-
-        env {
-          name  = "DATASET_ID"
-          value = module.storage.dataset_id
-        }
-
-        env {
-          name  = "SESSIONS_TABLE_ID"
-          value = module.storage.sessions_table_id
-        }
       }
     }
   }

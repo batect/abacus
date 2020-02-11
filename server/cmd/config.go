@@ -20,6 +20,7 @@
 package main
 
 import (
+	"net/url"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -33,16 +34,31 @@ func getProjectID() string {
 	return getEnvOrExit("GOOGLE_PROJECT")
 }
 
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
+func getHoneycombBaseUrl() url.URL {
+	return getURLFromEnvOrExit("HONEYCOMB_BASE_URL")
 }
 
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
+func getHoneycombDatasetName() string {
+	return getEnvOrExit("HONEYCOMB_DATASET_NAME")
 }
 
-func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
+func getHoneycombAPIKey() string {
+	return getEnvOrExit("HONEYCOMB_API_KEY")
+}
+
+func getURLFromEnvOrExit(name string) url.URL {
+	value := getEnvOrExit(name)
+
+	var parsed *url.URL
+	var err error
+
+	parsed, err = url.Parse(value)
+
+	if err != nil {
+		logrus.WithField("variable", name).WithField("value", value).WithError(err).Fatal("Environment variable is not a valid URL.")
+	}
+
+	return *parsed
 }
 
 func getEnvOrExit(name string) string {
