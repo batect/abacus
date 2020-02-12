@@ -5,6 +5,7 @@
 .idea/
 .terraform/
 
+node_modules/
 vendor/
 
 coverage.txt
