@@ -16,6 +16,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
+// +build unitTests
 
 package storage_test
 
