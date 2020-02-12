@@ -111,6 +111,8 @@ func httpPut(url string, body string, contentType string) *http.Response {
 func getFirstEventSentToHoneycomb() string {
 	resp, err := http.Get("http://honeycomb-fake:3000/fake/events/batect-abacus-test/0")
 	Expect(err).NotTo(HaveOccurred())
+	defer resp.Body.Close()
+
 	Expect(resp.StatusCode).To(Equal(http.StatusOK))
 
 	return readAllBytes(resp.Body)
