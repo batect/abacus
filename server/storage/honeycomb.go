@@ -64,6 +64,7 @@ func (h *honeycombSessionStore) Store(ctx context.Context, session *Session) err
 
 	req.Header.Set("X-Honeycomb-Team", h.apiKey)
 	req.Header.Set("X-Honeycomb-Event-Time", session.SessionStartTime.UTC().Format(time.RFC3339Nano))
+	req.Header.Set("Content-Type", "application/json")
 
 	var resp *http.Response
 

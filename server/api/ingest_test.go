@@ -281,8 +281,7 @@ var _ = Describe("Ingest endpoint", func() {
 						"userId": "99990000-3333-4444-5555-666677778888", 
 						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-						"applicationId": 
-						"my-app", 
+						"applicationId": "my-app", 
 						"applicationVersion": "1.0.0"
 					}`)
 				})

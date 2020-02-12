@@ -62,9 +62,11 @@ containers:
     environment:
       PORT: 8080
       GOOGLE_PROJECT: *personal_gcp_project
-      HONEYCOMB_BASE_URL: http://honeycomb-fake
+      HONEYCOMB_BASE_URL: http://honeycomb-fake:3000
       HONEYCOMB_DATASET_NAME: batect-abacus-test
       HONEYCOMB_API_KEY: local-fake-api-key
+    dependencies:
+      - honeycomb-fake
 
   honeycomb-fake:
     build_directory: .batect/honeycomb-fake

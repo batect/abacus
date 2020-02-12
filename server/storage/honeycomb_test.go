@@ -117,6 +117,10 @@ var _ = Describe("Honeycomb session storage", func() {
 			Expect(requestSent.Header).To(HaveKeyWithValue("X-Honeycomb-Event-Time", []string{"2019-01-02T03:04:05.678000001Z"}))
 		})
 
+		It("includes a Content-Type header in the request", func() {
+			Expect(requestSent.Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+		})
+
 		It("includes the session in the request body", func() {
 			Expect(requestBodySent).To(MatchJSON(`
 				{
