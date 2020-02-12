@@ -13,6 +13,10 @@ update_configs:
     directory: .batect/build-env
     update_schedule: daily
 
+  - package_manager: javascript
+    directory: .batect/honeycomb-fake
+    update_schedule: live
+
   - package_manager: docker
     directory: .batect/push-env
     update_schedule: daily
