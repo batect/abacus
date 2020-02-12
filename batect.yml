@@ -130,14 +130,14 @@ tasks:
     group: Linting tasks
     run:
       container: build-env
-      command: golangci-lint run --enable-all --build-tags unitTests --build-tags integrationTests --build-tags journeyTests server/...
+      command: golangci-lint run server/...
 
   lintFix:
     description: Fix linting errors in Golang files.
     group: Linting tasks
     run:
       container: build-env
-      command: golangci-lint run --enable-all --build-tags unitTests --build-tags integrationTests --build-tags journeyTests --fix server/...
+      command: golangci-lint run --fix server/...
 
   update:
     description: Update to latest minor or patch update of all dependencies.

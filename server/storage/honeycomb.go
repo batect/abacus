@@ -36,8 +36,8 @@ type honeycombSessionStore struct {
 	client         *http.Client
 }
 
-func NewHoneycombSessionStore(baseUrl url.URL, datasetName string, apiKey string) SessionStore {
-	eventsEndpoint := baseUrl.String() + "/1/events/" + datasetName
+func NewHoneycombSessionStore(baseURL url.URL, datasetName string, apiKey string) SessionStore {
+	eventsEndpoint := baseURL.String() + "/1/events/" + datasetName
 
 	return &honeycombSessionStore{
 		eventsEndpoint: eventsEndpoint,
@@ -70,6 +70,8 @@ func (h *honeycombSessionStore) Store(ctx context.Context, session *Session) err
 	if resp, err = h.client.Do(req); err != nil {
 		return fmt.Errorf("request to Honeycomb (%s %s) failed with error: %w", req.Method, req.URL, err)
 	}
+
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		errorMessage, err := ioutil.ReadAll(resp.Body)

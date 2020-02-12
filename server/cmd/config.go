@@ -34,7 +34,7 @@ func getProjectID() string {
 	return getEnvOrExit("GOOGLE_PROJECT")
 }
 
-func getHoneycombBaseUrl() url.URL {
+func getHoneycombBaseURL() url.URL {
 	return getURLFromEnvOrExit("HONEYCOMB_BASE_URL")
 }
 

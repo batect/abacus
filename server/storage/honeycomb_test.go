@@ -48,7 +48,7 @@ var _ = Describe("Honeycomb session storage", func() {
 	}
 
 	var testServer *httptest.Server
-	var testServerUrl url.URL
+	var testServerURL url.URL
 	var store storage.SessionStore
 	var requestSent http.Request
 	var requestBodySent string
@@ -74,9 +74,9 @@ var _ = Describe("Honeycomb session storage", func() {
 			}
 		}))
 
-		testServerUrl = mustParseUrl(testServer.URL)
+		testServerURL = mustParseURL(testServer.URL)
 
-		store = storage.NewHoneycombSessionStore(testServerUrl, "my-dataset", "my-api-key")
+		store = storage.NewHoneycombSessionStore(testServerURL, "my-dataset", "my-api-key")
 	})
 
 	AfterEach(func() {
@@ -97,7 +97,7 @@ var _ = Describe("Honeycomb session storage", func() {
 		})
 
 		It("sends the request to the configured Honeycomb hostname", func() {
-			Expect(requestSent.Host).To(Equal(testServerUrl.Host))
+			Expect(requestSent.Host).To(Equal(testServerURL.Host))
 		})
 
 		It("uses the correct URL, including the dataset name", func() {
@@ -145,7 +145,7 @@ var _ = Describe("Honeycomb session storage", func() {
 		})
 
 		It("returns an error", func() {
-			Expect(err).To(MatchError("request to Honeycomb (POST " + testServerUrl.String() + "/1/events/my-dataset) received error response: HTTP 400: malformed request"))
+			Expect(err).To(MatchError("request to Honeycomb (POST " + testServerURL.String() + "/1/events/my-dataset) received error response: HTTP 400: malformed request"))
 		})
 	})
 
@@ -160,12 +160,16 @@ var _ = Describe("Honeycomb session storage", func() {
 		})
 
 		It("returns an error", func() {
-			Expect(err).To(MatchError("request to Honeycomb (POST " + testServerUrl.String() + "/1/events/my-dataset) failed with error: Post " + testServerUrl.String() + "/1/events/my-dataset: net/http: request canceled (Client.Timeout exceeded while awaiting headers)"))
+			Expect(err).To(MatchError(
+				"request to Honeycomb (POST " + testServerURL.String() +
+					"/1/events/my-dataset) failed with error: Post " + testServerURL.String() +
+					"/1/events/my-dataset: net/http: request canceled (Client.Timeout exceeded while awaiting headers)",
+			))
 		})
 	})
 })
 
-func mustParseUrl(input string) url.URL {
+func mustParseURL(input string) url.URL {
 	var parsed *url.URL
 	var err error
 

@@ -71,7 +71,7 @@ func createServer(port string) *http.Server {
 }
 
 func createIngestHandler() http.Handler {
-	store := storage.NewHoneycombSessionStore(getHoneycombBaseUrl(), getHoneycombDatasetName(), getHoneycombAPIKey())
+	store := storage.NewHoneycombSessionStore(getHoneycombBaseURL(), getHoneycombDatasetName(), getHoneycombAPIKey())
 
 	return api.NewIngestHandler(store)
 }

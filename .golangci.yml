@@ -1,3 +1,55 @@
+run:
+  build-tags:
+    - unitTests
+    - integrationTests
+    - journeyTests
+
 linters-settings:
   lll:
     line-length: 180
+
+  wsl:
+    allow-cuddle-declarations: true
+
+linters:
+  enable:
+    - bodyclose
+    - deadcode
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gofmt
+    - goimports
+    - golint
+    # In new version: - gomnd
+    # In new version: - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    # Disabled: interfacer
+    - lll
+    - maligned
+    - misspell
+    - nakedret
+    - prealloc
+    # In new version: - rowserrcheck
+    - scopelint
+    - staticcheck
+    - structcheck
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - varcheck
+    - whitespace
