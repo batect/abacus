@@ -30,8 +30,8 @@ linters:
     - gofmt
     - goimports
     - golint
-    # In new version: - gomnd
-    # In new version: - goprintffuncname
+    # Disabled: - gomnd
+    - goprintffuncname
     - gosec
     - gosimple
     - govet
@@ -42,7 +42,7 @@ linters:
     - misspell
     - nakedret
     - prealloc
-    # In new version: - rowserrcheck
+    - rowserrcheck
     - scopelint
     - staticcheck
     - structcheck
