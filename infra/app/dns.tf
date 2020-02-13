@@ -18,9 +18,9 @@
 // limitations under the License and the Condition.
 
 locals {
-  cloudflare_zone_id = "b285aeea52df6b888cdee6d2551ebd32" # We can't look this up with a data resource without giving access to all zones in the Cloudflare account :sadface:
-  api_dns_subdomain = "api.abacus"
-  api_dns_fqdn = "${local.api_dns_subdomain}.batect.dev"
+  cloudflare_zone_id           = "b285aeea52df6b888cdee6d2551ebd32" # We can't look this up with a data resource without giving access to all zones in the Cloudflare account :sadface:
+  api_dns_subdomain            = "api.abacus"
+  api_dns_fqdn                 = "${local.api_dns_subdomain}.batect.dev"
   service_dns_resource_records = google_cloud_run_domain_mapping.service.status.0.resource_records
 }
 
@@ -40,9 +40,9 @@ resource "google_cloud_run_domain_mapping" "service" {
 resource "cloudflare_record" "service" {
   count = length(local.service_dns_resource_records)
 
-  name = local.api_dns_subdomain
-  type = local.service_dns_resource_records[count.index].type
-  value = local.service_dns_resource_records[count.index].rrdata
-  ttl = 300
+  name    = local.api_dns_subdomain
+  type    = local.service_dns_resource_records[count.index].type
+  value   = local.service_dns_resource_records[count.index].rrdata
+  ttl     = 300
   zone_id = local.cloudflare_zone_id
 }
