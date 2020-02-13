@@ -10,11 +10,9 @@ function main() {
   import google_project_iam_binding.deployer "$GOOGLE_PROJECT projects/$GOOGLE_PROJECT/roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/$GOOGLE_PROJECT-terraform-state"
   import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"
-  import google_project_service.dns "$GOOGLE_PROJECT/dns.googleapis.com"
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
   import google_service_account.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_service_account_iam_policy.app "projects/$GOOGLE_PROJECT/serviceAccounts/$GOOGLE_PROJECT-app@$GOOGLE_PROJECT.iam.gserviceaccount.com"
-  import google_dns_managed_zone.app_zone app-zone
 }
 
 function import() {

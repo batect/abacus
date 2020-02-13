@@ -298,7 +298,7 @@ tasks:
     group: Infrastructure bootstrapping tasks
     run:
       container: terraform
-      command: sh -c "terraform plan -detailed-exitcode && echo && ./scripts/check_dns_zone.sh"
+      command: terraform plan -detailed-exitcode
       working_directory: /code/infra/bootstrap
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
