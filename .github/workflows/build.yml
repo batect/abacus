@@ -73,6 +73,12 @@ jobs:
         run: ./batect pushImage
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
+      - name: Setup Cloudflare key
+        run: ./batect setupCloudflareKey
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+        env:
+          CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
+
       - name: Setup Terraform
         run: ./batect setupTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'

@@ -218,6 +218,15 @@ tasks:
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
         CLOUDSDK_ACTIVE_CONFIG_NAME: app
 
+  setupCloudflareKey:
+    description: Store credentials used to access Cloudflare when deploying the application.
+    group: Infrastructure management tasks
+    run:
+      container: terraform
+      command: sh -c "echo $CLOUDFLARE_KEY > .creds/cloudflare_key"
+      environment:
+        CLOUDFLARE_KEY: $CLOUDFLARE_KEY
+
   lintTerraform:
     description: Check for linting errors in Terraform files.
     group: Linting tasks
