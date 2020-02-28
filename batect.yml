@@ -9,9 +9,9 @@ containers:
       - local: .
         container: /code
         options: cached
-      - local: .go-cache
+      - type: cache
+        name: go-cache
         container: /go
-        options: delegated
     working_directory: /code
     environment:
       GOCACHE: /go/cache
