@@ -167,8 +167,8 @@ var _ = Describe("Honeycomb session storage", func() {
 		It("returns an error", func() {
 			Expect(err).To(MatchError(
 				"request to Honeycomb (POST " + testServerURL.String() +
-					"/1/events/my-dataset) failed with error: Post " + testServerURL.String() +
-					"/1/events/my-dataset: net/http: request canceled (Client.Timeout exceeded while awaiting headers)",
+					"/1/events/my-dataset) failed with error: Post \"" + testServerURL.String() +
+					"/1/events/my-dataset\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
 			))
 		})
 	})
