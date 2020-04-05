@@ -80,13 +80,11 @@ resource "google_project_iam_custom_role" "deployer" {
 
     // Required to manage BigQuery datasets and tables
     "bigquery.datasets.create",
-    "bigquery.datasets.delete",
     "bigquery.datasets.get",
     "bigquery.datasets.getIamPolicy",
     "bigquery.datasets.setIamPolicy",
     "bigquery.datasets.update",
     "bigquery.tables.create",
-    "bigquery.tables.delete",
     "bigquery.tables.get",
     "bigquery.tables.update",
     "bigquery.tables.updateTag",
