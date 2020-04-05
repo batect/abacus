@@ -98,30 +98,6 @@ tasks:
       container: build-env
       command: ginkgo watch -tags unitTests -race server/...
 
-  integrationTest:
-    description: Run the integration tests.
-    group: Test tasks
-    run:
-      container: build-env
-      command: ginkgo -tags integrationTests -slowSpecThreshold 10 server/...
-      environment:
-        GOOGLE_PROJECT: *personal_gcp_project
-        GOOGLE_CREDENTIALS_FILE: /code/.creds/application_service_account_personal.json
-        GOOGLE_TEST_CREDENTIALS_FILE: /code/.creds/test_driver_service_account_personal.json
-        DATASET_ID: abacus
-        SESSIONS_TABLE_ID: sessions
-
-  journeyTest:
-    description: Run the journey tests.
-    group: Test tasks
-    prerequisites:
-      - build
-    dependencies:
-      - app
-    run:
-      container: build-env
-      command: ginkgo -tags journeyTests server/...
-
   shell:
     description: Start a shell in the development environment.
     group: Utility tasks

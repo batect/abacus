@@ -39,9 +39,6 @@ jobs:
       - name: Run unit tests
         run: ./batect unitTest
 
-      - name: Run journey tests
-        run: ./batect journeyTest
-
       - name: Upload coverage to codecov.io
         uses: codecov/codecov-action@v1
         with:
