@@ -25,14 +25,6 @@ update_configs:
           dependency_type: all
           update_type: all
 
-  - package_manager: javascript
-    directory: .batect/honeycomb-fake
-    update_schedule: live
-    automerged_updates:
-      - match:
-          dependency_type: all
-          update_type: all
-
   - package_manager: docker
     directory: .batect/push-env
     update_schedule: daily
