@@ -17,40 +17,24 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package main
+module "application_roles" {
+  source = "../application_roles"
 
-import (
-	"os"
-
-	"github.com/sirupsen/logrus"
-)
-
-func getPort() string {
-	return getEnvOrExit("PORT")
+  project_id = google_project.project.project_id
 }
 
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
+resource "google_service_account" "application" {
+  account_id   = "application"
+  display_name = "Service account used by application in personal environment"
+
+  depends_on = [google_project_service.iam]
 }
 
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
+resource "google_service_account_key" "application_key" {
+  service_account_id = google_service_account.application.name
 }
 
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
-}
-
-func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
-}
-
-func getEnvOrExit(name string) string {
-	value := os.Getenv(name)
-
-	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
-	}
-
-	return value
+output "application_service_account_key" {
+  value     = base64decode(google_service_account_key.application_key.private_key)
+  sensitive = true
 }

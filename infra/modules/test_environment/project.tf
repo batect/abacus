@@ -17,40 +17,12 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package main
+resource "google_project" "project" {
+  name            = var.project_name
+  project_id      = var.project_name
+  billing_account = var.billing_account_id
 
-import (
-	"os"
-
-	"github.com/sirupsen/logrus"
-)
-
-func getPort() string {
-	return getEnvOrExit("PORT")
-}
-
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
-}
-
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
-}
-
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
-}
-
-func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
-}
-
-func getEnvOrExit(name string) string {
-	value := os.Getenv(name)
-
-	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
-	}
-
-	return value
+  lifecycle {
+    prevent_destroy = true
+  }
 }

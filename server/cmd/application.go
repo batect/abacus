@@ -71,7 +71,11 @@ func createServer(port string) *http.Server {
 }
 
 func createIngestHandler() http.Handler {
-	store := storage.NewHoneycombSessionStore(getHoneycombBaseURL(), getHoneycombDatasetName(), getHoneycombAPIKey())
+	store, err := storage.NewBigQuerySessionStore(getProjectID(), getDatasetID(), getSessionsTableID(), getCredentialsFilePath())
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create session store.")
+	}
 
 	return api.NewIngestHandler(store)
 }

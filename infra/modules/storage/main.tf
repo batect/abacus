@@ -17,40 +17,35 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package main
+resource "google_bigquery_dataset" "default" {
+  dataset_id = "abacus"
+  location   = "US"
 
-import (
-	"os"
+  access {
+    role          = "OWNER"
+    special_group = "projectOwners"
+  }
 
-	"github.com/sirupsen/logrus"
-)
-
-func getPort() string {
-	return getEnvOrExit("PORT")
+  access {
+    role          = var.application_bigquery_iam_role
+    user_by_email = var.application_service_account_email
+  }
 }
 
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
-}
+resource "google_bigquery_table" "sessions" {
+  dataset_id = google_bigquery_dataset.default.dataset_id
+  table_id   = "sessions"
 
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
-}
+  time_partitioning {
+    type                     = "DAY"
+    field                    = "sessionStartTime"
+    require_partition_filter = true
+  }
 
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
-}
+  schema = file("${path.module}/sessions_schema.json")
 
-func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
-}
-
-func getEnvOrExit(name string) string {
-	value := os.Getenv(name)
-
-	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
-	}
-
-	return value
+  clustering = [
+    "applicationId",
+    "applicationVersion",
+  ]
 }

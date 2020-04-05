@@ -17,40 +17,28 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package main
+resource "google_service_account" "test_driver" {
+  account_id   = "test-driver"
+  display_name = "Service account used by test driver in personal environment"
 
-import (
-	"os"
-
-	"github.com/sirupsen/logrus"
-)
-
-func getPort() string {
-	return getEnvOrExit("PORT")
+  depends_on = [google_project_service.iam]
 }
 
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
+resource "google_service_account_key" "test_driver_key" {
+  service_account_id = google_service_account.test_driver.name
 }
 
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
+output "test_driver_service_account_key" {
+  value     = base64decode(google_service_account_key.test_driver_key.private_key)
+  sensitive = true
 }
 
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
+resource "google_project_iam_member" "test_driver_bigquery_user" {
+  role   = "roles/bigquery.user"
+  member = "serviceAccount:${google_service_account.test_driver.email}"
 }
 
-func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
-}
-
-func getEnvOrExit(name string) string {
-	value := os.Getenv(name)
-
-	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
-	}
-
-	return value
+resource "google_project_iam_member" "test_driver_bigquery_editor" {
+  role   = "roles/bigquery.dataEditor"
+  member = "serviceAccount:${google_service_account.test_driver.email}"
 }

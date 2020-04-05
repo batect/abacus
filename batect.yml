@@ -62,14 +62,9 @@ containers:
     environment:
       PORT: 8080
       GOOGLE_PROJECT: *personal_gcp_project
-      HONEYCOMB_BASE_URL: http://honeycomb-fake:3000
-      HONEYCOMB_DATASET_NAME: batect-abacus-test
-      HONEYCOMB_API_KEY: local-fake-api-key
-    dependencies:
-      - honeycomb-fake
-
-  honeycomb-fake:
-    build_directory: .batect/honeycomb-fake
+      GOOGLE_CREDENTIALS_FILE: /creds/gcp.json
+      DATASET_ID: abacus
+      SESSIONS_TABLE_ID: sessions
 
 tasks:
   setup:
@@ -102,6 +97,19 @@ tasks:
     run:
       container: build-env
       command: ginkgo watch -tags unitTests -race server/...
+
+  integrationTest:
+    description: Run the integration tests.
+    group: Test tasks
+    run:
+      container: build-env
+      command: ginkgo -tags integrationTests -slowSpecThreshold 10 server/...
+      environment:
+        GOOGLE_PROJECT: *personal_gcp_project
+        GOOGLE_CREDENTIALS_FILE: /code/.creds/application_service_account_personal.json
+        GOOGLE_TEST_CREDENTIALS_FILE: /code/.creds/test_driver_service_account_personal.json
+        DATASET_ID: abacus
+        SESSIONS_TABLE_ID: sessions
 
   journeyTest:
     description: Run the journey tests.
@@ -320,3 +328,59 @@ tasks:
       command: ./infra/scripts/push_image.sh
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: app
+
+  setupPersonalTerraform:
+    description: Initialise Terraform.
+    group: Personal infrastructure tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform init -input=false -reconfigure"
+      working_directory: /code/infra/personal
+      environment:
+        CLOUDSDK_ACTIVE_CONFIG_NAME: personal
+        GOOGLE_PROJECT: *personal_gcp_project
+
+  applyPersonalTerraform:
+    description: Run Terraform to provision infrastructure.
+    group: Personal infrastructure tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve && /code/infra/modules/test_environment/scripts/setup_application_key.sh"
+      working_directory: /code/infra/personal
+      environment:
+        CLOUDSDK_ACTIVE_CONFIG_NAME: personal
+        GOOGLE_PROJECT: *personal_gcp_project
+
+  planPersonalTerraform:
+    description: Plan changes required to bring infrastructure to desired state.
+    group: Personal infrastructure tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform plan -input=false"
+      working_directory: /code/infra/personal
+      environment:
+        CLOUDSDK_ACTIVE_CONFIG_NAME: personal
+        GOOGLE_PROJECT: *personal_gcp_project
+
+  destroyPersonalTerraform:
+    description: Run Terraform to provision infrastructure.
+    group: Personal infrastructure tasks
+    run:
+      container: terraform
+      command: sh -c "./scripts/generate_vars.sh && terraform destroy -input=false -auto-approve"
+      working_directory: /code/infra/personal
+      environment:
+        CLOUDSDK_ACTIVE_CONFIG_NAME: personal
+        GOOGLE_PROJECT: *personal_gcp_project
+
+  setupGCPPersonalServiceAccount:
+    description: Store credentials used to access GCP when setting up a personal development environment
+    group: Personal infrastructure tasks
+    run:
+      container: terraform
+      command: infra/scripts/setup_service_account.sh personal
+      environment:
+        GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
+        GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
+        CLOUDSDK_ACTIVE_CONFIG_NAME: personal
+        GOOGLE_PROJECT: *personal_gcp_project
