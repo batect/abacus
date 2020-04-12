@@ -24,6 +24,9 @@ locals {
   logging_free_tier_bytes = 50 * local.bytes_in_gb
 
   tracing_free_tier_spans = 2500000
+
+  alert_threshold_percentage = 75
+  alert_threshold_decimal    = local.alert_threshold_percentage / 100
 }
 
 // FIXME: both of these policies are project-scoped but the free tier considers all projects attached to the billing account
@@ -39,7 +42,7 @@ resource "google_monitoring_alert_policy" "stackdriver_logging_free_tier" {
       filter          = "metric.type=\"logging.googleapis.com/billing/monthly_bytes_ingested\" resource.type=\"global\""
       comparison      = "COMPARISON_GT"
       duration        = "1800s"
-      threshold_value = local.logging_free_tier_bytes * 0.75
+      threshold_value = local.logging_free_tier_bytes * local.alert_threshold_decimal
 
       trigger {
         count = 1
@@ -54,7 +57,7 @@ resource "google_monitoring_alert_policy" "stackdriver_logging_free_tier" {
   }
 
   documentation {
-    content = "Free tier limit is ${local.logging_free_tier_bytes} bytes per month. Documentation: https://cloud.google.com/stackdriver/pricing"
+    content = "Free tier limit is ${local.logging_free_tier_bytes} bytes per month. This alert fires at ${local.alert_threshold_percentage}% of the free tier threshold. Documentation: https://cloud.google.com/stackdriver/pricing"
   }
 
   notification_channels = [google_monitoring_notification_channel.email.name]
@@ -71,7 +74,7 @@ resource "google_monitoring_alert_policy" "stackdriver_tracing_free_tier" {
       filter          = "metric.type=\"cloudtrace.googleapis.com/billing/monthly_spans_ingested\" resource.type=\"global\""
       comparison      = "COMPARISON_GT"
       duration        = "1800s"
-      threshold_value = local.tracing_free_tier_spans * 0.75
+      threshold_value = local.tracing_free_tier_spans * local.alert_threshold_decimal
 
       trigger {
         count = 1
@@ -86,7 +89,7 @@ resource "google_monitoring_alert_policy" "stackdriver_tracing_free_tier" {
   }
 
   documentation {
-    content = "Free tier limit is ${local.tracing_free_tier_spans} spans per month. Documentation: https://cloud.google.com/stackdriver/pricing"
+    content = "Free tier limit is ${local.tracing_free_tier_spans} spans per month. This alert fires at ${local.alert_threshold_percentage}% of the free tier threshold. Documentation: https://cloud.google.com/stackdriver/pricing"
   }
 
   notification_channels = [google_monitoring_notification_channel.email.name]
