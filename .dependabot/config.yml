@@ -34,6 +34,14 @@ update_configs:
           update_type: all
 
   - package_manager: docker
+    directory: .batect/smoke-test-env
+    update_schedule: daily
+    automerged_updates:
+      - match:
+          dependency_type: all
+          update_type: all
+
+  - package_manager: docker
     directory: .batect/terraform
     update_schedule: daily
     automerged_updates:

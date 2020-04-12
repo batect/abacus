@@ -86,5 +86,9 @@ jobs:
         run: ./batect --config-vars-file=batect.prod.yml applyTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
+      - name: Run smoke test
+        run: ./batect --config-vars-file=batect.prod.yml smokeTest
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
+
       - name: Cleanup
         run: sudo rm -rf .creds .gcloud

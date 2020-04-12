@@ -63,6 +63,17 @@ containers:
       DATASET_ID: abacus
       SESSIONS_TABLE_ID: sessions
 
+  smoke-test-env:
+    build_directory: .batect/smoke-test-env
+    volumes:
+      - local: .
+        container: /code
+        options: cached
+    working_directory: /code
+    run_as_current_user:
+      enabled: true
+      home_directory: /home/container-user
+
 tasks:
   setup:
     description: Download all dependencies used by the application.
@@ -328,6 +339,15 @@ tasks:
       command: ./infra/scripts/push_image.sh
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
+
+  smokeTest:
+    description: Run a smoke test against a deployed version of the app.
+    group: Test tasks
+    run:
+      container: smoke-test-env
+      command: ./scripts/smoke_test.sh
+      environment:
+        DOMAIN: <{subdomain}.<{rootDomain}
 
 config_variables:
   gcpProject:
