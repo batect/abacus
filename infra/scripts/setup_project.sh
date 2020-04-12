@@ -45,7 +45,11 @@ function createProject() {
   gcloud beta billing projects link "$GOOGLE_PROJECT" --billing-account="$GOOGLE_BILLING_ACCOUNT_ID"
   echo
   echo "Creating deployers group..."
-  gcloud beta identity groups create --organization "$GOOGLE_ORGANIZATION" --labels cloudidentity.googleapis.com/groups.discussion_forum --project "$GOOGLE_PROJECT" --display-name "$GOOGLE_PROJECT deployers" "$GOOGLE_PROJECT-deployers@batect.dev"
+  DEPLOYERS_GROUP_EMAIL="$GOOGLE_PROJECT-deployers@batect.dev"
+  gcloud beta identity groups create --organization "$GOOGLE_ORGANIZATION" --labels cloudidentity.googleapis.com/groups.discussion_forum --project "$GOOGLE_PROJECT" --display-name "$GOOGLE_PROJECT deployers" "$DEPLOYERS_GROUP_EMAIL"
+  echo
+  echo "Adding deployers group to organization viewers..."
+  gcloud organizations add-iam-policy-binding "$GOOGLE_ORGANIZATION" --member "group:$DEPLOYERS_GROUP_EMAIL" --role roles/resourcemanager.organizationViewer
   echo
 }
 
