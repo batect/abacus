@@ -150,6 +150,8 @@ tasks:
       working_directory: /code/infra/app
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
+        ROOT_DOMAIN: <{rootDomain}
+        SUBDOMAIN: <{subdomain}
 
   applyTerraform:
     description: Run Terraform to provision infrastructure.
@@ -160,6 +162,8 @@ tasks:
       working_directory: /code/infra/app
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
+        ROOT_DOMAIN: <{rootDomain}
+        SUBDOMAIN: <{subdomain}
 
   planTerraform:
     description: Plan changes required to bring infrastructure to desired state.
@@ -337,3 +341,10 @@ config_variables:
 
   cloudSdkVersion:
     default: 287.0.0
+
+  rootDomain:
+    description: Root domain name registered with Cloudflare.
+    default: batect.dev
+
+  subdomain:
+    description: Subdomain (under rootDomain) to host the application at.

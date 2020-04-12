@@ -24,3 +24,11 @@ variable "image_reference" {
 variable "cloud_sdk_config_name" {
   type = string
 }
+
+variable "root_domain" {
+  type = string
+}
+
+variable "subdomain" {
+  type = string
+}

@@ -19,12 +19,13 @@ This directory contains two groups of Terraform files:
 
 ## Creating GCP project for the first time
 
-* Create `batect.local.yml` with your GCP project name and billing account ID:
+* Create `batect.local.yml` with the following details:
 
     ```yaml
     gcpProject: my-project # GCP project ID
     gcpOrganizationId: 123456787890 # GCP organisation ID
     gcpBillingAccountId: 111111-222222-333333 # GCP billing account ID to use
+    subdomain: api.abacus.test # Subdomain to for environment, will be <subdomain>.batect.dev (eg. api.abacus.test.batect.dev)
     ```
 
 * Run `./batect setupGCPProject` to create the GCP project

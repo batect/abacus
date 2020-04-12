@@ -19,8 +19,7 @@
 
 locals {
   cloudflare_zone_id = "b285aeea52df6b888cdee6d2551ebd32" # We can't look this up with a data resource without giving access to all zones in the Cloudflare account :sadface:
-  api_dns_subdomain  = "api.abacus"
-  api_dns_fqdn       = "${local.api_dns_subdomain}.batect.dev"
+  api_dns_fqdn       = "${var.subdomain}.${var.root_domain}"
 
   # HACK: We only take the first record because Terraform doesn't support dynamic counts (which would be required in the cloudflare_record below)
   service_dns_resource_record = google_cloud_run_domain_mapping.service.status.0.resource_records.0
@@ -40,7 +39,7 @@ resource "google_cloud_run_domain_mapping" "service" {
 }
 
 resource "cloudflare_record" "service" {
-  name    = local.api_dns_subdomain
+  name    = var.subdomain
   type    = local.service_dns_resource_record.type
   value   = trimsuffix(local.service_dns_resource_record.rrdata, ".")
   ttl     = 300
