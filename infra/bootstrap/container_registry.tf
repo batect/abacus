@@ -19,4 +19,6 @@
 
 resource "google_container_registry" "registry" {
   // Nothing to configure.
+
+  depends_on = [google_project_service.container_registry]
 }

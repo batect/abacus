@@ -51,7 +51,7 @@ jobs:
         run: ./batect --config-vars-file=batect.prod.yml setupGCPServiceAccount && ./batect --config-vars-file=batect.prod.yml setupGCPBootstrapServiceAccount
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
-          GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
+          GCP_SERVICE_ACCOUNT_EMAIL: github-actions@batect-abacus-prod.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Setup bootstrapping Terraform

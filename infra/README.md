@@ -30,6 +30,7 @@ This directory contains two groups of Terraform files:
 
 * Run `./batect setupGCPProject` to create the GCP project
 * Run `./batect createGCPBootstrapServiceAccount` to create a service account for use during bootstrapping
+* Run `./batect setupBootstrapTerraform` to prepare Terraform to bootstrap the new project
 * Run `./batect importBootstrapState` to import the project you just created (this will fail as the other resources have not been created yet)
 * Run `./batect applyBootstrapTerraform` to create remaining bootstrap resources
 * Run `SERVICE_ACCOUNT_NAME=local-deployments ./batect createGCPDeployerServiceAccount` and follow the instructions to save the credentials locally
