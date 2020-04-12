@@ -42,7 +42,7 @@ resource "google_cloud_run_domain_mapping" "service" {
 resource "cloudflare_record" "service" {
   name    = local.api_dns_subdomain
   type    = local.service_dns_resource_record.type
-  value   = local.service_dns_resource_record.rrdata
+  value   = trimsuffix(local.service_dns_resource_record.rrdata, ".")
   ttl     = 300
   zone_id = local.cloudflare_zone_id
 }
