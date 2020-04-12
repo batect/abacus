@@ -23,10 +23,11 @@ resource "google_project_service" "cloud_run" {
 
 locals {
   service_service_account_email = "service@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+  service_name                  = "abacus"
 }
 
 resource "google_cloud_run_service" "service" {
-  name     = "abacus"
+  name     = local.service_name
   location = "us-central1"
 
   template {
@@ -51,6 +52,10 @@ resource "google_cloud_run_service" "service" {
           value = google_bigquery_table.sessions.table_id
         }
       }
+    }
+
+    metadata {
+      name = "${local.service_name}-${var.image_git_sha}"
     }
   }
 

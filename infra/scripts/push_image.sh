@@ -30,6 +30,7 @@ VARS_FILE="$SCRIPT_DIR/../app/image.auto.tfvars"
 
 cat <<EOF > "$VARS_FILE"
 image_reference = "$IMAGE_REFERENCE"
+image_git_sha   = "$HASH"
 EOF
 
 echo
