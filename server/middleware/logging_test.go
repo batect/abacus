@@ -38,6 +38,7 @@ var _ = Describe("Logging middleware", func() {
 
 	BeforeEach(func() {
 		logger, hook = test.NewNullLogger()
+		logger.Level = logrus.DebugLevel
 	})
 
 	Context("when the request starts", func() {
@@ -51,7 +52,7 @@ var _ = Describe("Logging middleware", func() {
 		})
 
 		It("logs that message at info level", func() {
-			Expect(hook.LastEntry().Level).To(Equal(logrus.InfoLevel))
+			Expect(hook.LastEntry().Level).To(Equal(logrus.DebugLevel))
 		})
 
 		It("logs a message indicating that the request is being processed", func() {
