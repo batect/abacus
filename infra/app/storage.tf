@@ -48,4 +48,8 @@ resource "google_bigquery_table" "sessions" {
     "applicationId",
     "applicationVersion",
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
