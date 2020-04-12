@@ -19,5 +19,5 @@
 
 provider "google" {
   version     = "3.15.0"
-  credentials = "${path.module}/../../.creds/gcp_service_account_bootstrap_infra.json"
+  credentials = "${path.module}/../../.creds/gcp_service_account_${var.cloud_sdk_config_name}_infra.json"
 }

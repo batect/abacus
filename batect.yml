@@ -146,10 +146,10 @@ tasks:
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: sh -c 'terraform init -input=false -reconfigure -backend-config="bucket=$GOOGLE_PROJECT-terraform-state"'
+      command: sh -c './scripts/generate_vars.sh && terraform init -input=false -reconfigure -backend-config="bucket=$GOOGLE_PROJECT-terraform-state" -backend-config="credentials=../../.creds/gcp_service_account_${CLOUDSDK_ACTIVE_CONFIG_NAME}_infra.json"'
       working_directory: /code/infra/app
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
   applyTerraform:
     description: Run Terraform to provision infrastructure.
@@ -159,7 +159,7 @@ tasks:
       command: sh -c "terraform apply -input=false -auto-approve && echo && ./scripts/wait_for_cloud_run.sh"
       working_directory: /code/infra/app
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
   planTerraform:
     description: Plan changes required to bring infrastructure to desired state.
@@ -169,7 +169,7 @@ tasks:
       command: terraform plan -input=false
       working_directory: /code/infra/app
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
   destroyTerraform:
     description: Run Terraform to provision infrastructure.
@@ -179,7 +179,7 @@ tasks:
       command: terraform destroy -input=false -auto-approve
       working_directory: /code/infra/app
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
   terraformShell:
     description: Start a shell in the Terraform environment.
@@ -197,7 +197,7 @@ tasks:
       environment:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
   setupCloudflareKey:
     description: Store credentials used to access Cloudflare when deploying the application.
@@ -237,7 +237,7 @@ tasks:
       command: sh -c "./scripts/generate_vars.sh && terraform init -input=false -reconfigure"
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   applyBootstrapTerraform:
     description: Run Terraform to provision infrastructure.
@@ -247,7 +247,7 @@ tasks:
       command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve"
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   planBootstrapTerraform:
     description: Plan changes required to bring infrastructure to desired state.
@@ -257,7 +257,7 @@ tasks:
       command: sh -c "./scripts/generate_vars.sh && terraform plan -input=false"
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   destroyBootstrapTerraform:
     description: Run Terraform to provision infrastructure.
@@ -267,7 +267,7 @@ tasks:
       command: sh -c "./scripts/generate_vars.sh && terraform destroy -input=false -auto-approve"
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   createGCPBootstrapServiceAccount:
     description: Create service account for use when bootstrapping an environment.
@@ -294,7 +294,7 @@ tasks:
       environment:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   importBootstrapState:
     description: Import existing state of bootstrap infrastructure.
@@ -304,17 +304,17 @@ tasks:
       command: ./scripts/import_state.sh
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   checkBootstrapState:
     description: Check that the bootstrap infrastructure matches the desired state.
     group: Infrastructure bootstrapping tasks
     run:
       container: terraform
-      command: terraform plan -detailed-exitcode
+      command: terraform plan -detailed-exitcode -input=false
       working_directory: /code/infra/bootstrap
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
+        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
 
   pushImage:
     description: Push the application image to GCP.
@@ -323,7 +323,7 @@ tasks:
       container: push-env
       command: ./infra/scripts/push_image.sh
       environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: app
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
 config_variables:
   gcpProject:

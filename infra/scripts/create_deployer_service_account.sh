@@ -30,7 +30,7 @@ function main() {
     case $answer in
       "Locally")
         echo "Setting up service account for use with Terraform..."
-        CLOUDSDK_ACTIVE_CONFIG_NAME=app \
+        CLOUDSDK_ACTIVE_CONFIG_NAME=app-$GOOGLE_PROJECT \
         GCP_SERVICE_ACCOUNT_EMAIL="$SERVICE_ACCOUNT_EMAIL" \
         GCP_SERVICE_ACCOUNT_KEY="$SERVICE_ACCOUNT_KEY" \
           "$SCRIPT_DIR/setup_service_account.sh"

@@ -32,3 +32,7 @@ variable "billing_account_id" {
 variable "region" {
   type = string
 }
+
+variable "cloud_sdk_config_name" {
+  type = string
+}

@@ -20,3 +20,7 @@
 variable "image_reference" {
   type = string
 }
+
+variable "cloud_sdk_config_name" {
+  type = string
+}

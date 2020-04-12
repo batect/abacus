@@ -24,7 +24,7 @@ function main() {
   gcloud auth revoke
 
   echo "Setting up service account for use with Terraform..."
-  CLOUDSDK_ACTIVE_CONFIG_NAME=bootstrap \
+  CLOUDSDK_ACTIVE_CONFIG_NAME=bootstrap-$GOOGLE_PROJECT \
   GCP_SERVICE_ACCOUNT_EMAIL="$SERVICE_ACCOUNT_EMAIL" \
   GCP_SERVICE_ACCOUNT_KEY="$SERVICE_ACCOUNT_KEY" \
     "$SCRIPT_DIR/setup_service_account.sh"
