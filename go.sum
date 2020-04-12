@@ -45,6 +45,8 @@ github.com/TV4/logrus-stackdriver-formatter v0.1.0/go.mod h1:wwS7hOiBvP6SBD0UXCa
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/charleskorn/logrus-stackdriver-formatter v0.2.3 h1:lEJeL9VzxEiz1uYHS5kc8XCrNAbF9gaPe8BI30gUZqA=
 github.com/charleskorn/logrus-stackdriver-formatter v0.2.3/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
+github.com/charleskorn/logrus-stackdriver-formatter v0.3.0 h1:UKgA4P7eKY/BLuvfaJMoDVBxd5205D4LcyblaZ0maqg=
+github.com/charleskorn/logrus-stackdriver-formatter v0.3.0/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
