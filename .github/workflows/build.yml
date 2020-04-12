@@ -35,6 +35,8 @@ jobs:
 
       - name: Check code files have license header
         run: ./batect checkLicenseHeader
+        env:
+          TERM: xterm-256color
 
       - name: Run unit tests
         run: ./batect unitTest
@@ -45,7 +47,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Lint Terraform files
-        run: ./batect lintTerraform
+        run: ./batect --config-vars-file=batect.prod.yml lintTerraform
 
       - name: Log in to GCP
         run: ./batect --config-vars-file=batect.prod.yml setupGCPServiceAccount && ./batect --config-vars-file=batect.prod.yml setupGCPBootstrapServiceAccount
