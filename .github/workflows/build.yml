@@ -73,7 +73,7 @@ jobs:
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Setup Cloudflare key
-        run: ./batect setupCloudflareKey
+        run: ./batect --config-vars-file=batect.prod.yml setupCloudflareKey
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
           CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
