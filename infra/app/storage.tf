@@ -17,9 +17,35 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-module "storage" {
-  source = "../modules/storage"
+resource "google_bigquery_dataset" "default" {
+  dataset_id = "abacus"
+  location   = "US"
 
-  application_service_account_email = local.service_service_account_email
-  application_bigquery_iam_role     = "projects/${google_project_service.cloud_run.project}/roles/app_bigquery_access"
+  access {
+    role          = "OWNER"
+    special_group = "projectOwners"
+  }
+
+  access {
+    role          = "projects/${google_project_service.cloud_run.project}/roles/app_bigquery_access"
+    user_by_email = local.service_service_account_email
+  }
+}
+
+resource "google_bigquery_table" "sessions" {
+  dataset_id = google_bigquery_dataset.default.dataset_id
+  table_id   = "sessions"
+
+  time_partitioning {
+    type                     = "DAY"
+    field                    = "sessionStartTime"
+    require_partition_filter = true
+  }
+
+  schema = file("${path.module}/sessions_schema.json")
+
+  clustering = [
+    "applicationId",
+    "applicationVersion",
+  ]
 }

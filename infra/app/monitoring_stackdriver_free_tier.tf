@@ -26,6 +26,8 @@ locals {
   tracing_free_tier_spans = 2500000
 }
 
+// FIXME: both of these policies are project-scoped but the free tier considers all projects attached to the billing account
+
 resource "google_monitoring_alert_policy" "stackdriver_logging_free_tier" {
   display_name = "Stackdriver Logging free tier"
   combiner     = "OR"

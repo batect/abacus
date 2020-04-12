@@ -48,26 +48,26 @@ jobs:
         run: ./batect lintTerraform
 
       - name: Log in to GCP
-        run: ./batect setupGCPServiceAccount && ./batect setupGCPBootstrapServiceAccount
+        run: ./batect --config-vars-file=batect.prod.yml setupGCPServiceAccount && ./batect --config-vars-file=batect.prod.yml setupGCPBootstrapServiceAccount
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: githubactions@batect-abacus.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Setup bootstrapping Terraform
-        run: ./batect setupBootstrapTerraform
+        run: ./batect --config-vars-file=batect.prod.yml setupBootstrapTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Import current bootstrapping state
-        run: ./batect importBootstrapState
+        run: ./batect --config-vars-file=batect.prod.yml importBootstrapState
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Check bootstrapping state
-        run: ./batect checkBootstrapState
+        run: ./batect --config-vars-file=batect.prod.yml checkBootstrapState
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Push image
-        run: ./batect pushImage
+        run: ./batect --config-vars-file=batect.prod.yml pushImage
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Setup Cloudflare key
@@ -77,11 +77,11 @@ jobs:
           CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
 
       - name: Setup Terraform
-        run: ./batect setupTerraform
+        run: ./batect --config-vars-file=batect.prod.yml setupTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Apply Terraform
-        run: ./batect applyTerraform
+        run: ./batect --config-vars-file=batect.prod.yml applyTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
       - name: Cleanup

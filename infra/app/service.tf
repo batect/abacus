@@ -22,7 +22,7 @@ resource "google_project_service" "cloud_run" {
 }
 
 locals {
-  service_service_account_email = "${google_project_service.cloud_run.project}-app@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+  service_service_account_email = "service@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
 }
 
 resource "google_cloud_run_service" "service" {
@@ -43,12 +43,12 @@ resource "google_cloud_run_service" "service" {
 
         env {
           name  = "DATASET_ID"
-          value = module.storage.dataset_id
+          value = google_bigquery_dataset.default.dataset_id
         }
 
         env {
           name  = "SESSIONS_TABLE_ID"
-          value = module.storage.sessions_table_id
+          value = google_bigquery_table.sessions.table_id
         }
       }
     }

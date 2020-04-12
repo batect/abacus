@@ -17,8 +17,8 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_service_account" "app" {
-  account_id   = "batect-abacus-app"
+resource "google_service_account" "service" {
+  account_id   = "service"
   display_name = "App service account"
   project      = google_project.project.project_id
   depends_on   = [google_project_service.iam]
@@ -28,11 +28,26 @@ data "google_iam_policy" "app_service_account" {
   binding {
     role = "roles/iam.serviceAccountUser"
 
-    members = ["group:batect-abacus-deployers@googlegroups.com"]
+    members = ["group:${local.deployers_group_name}"]
   }
 }
 
-resource "google_service_account_iam_policy" "app" {
-  service_account_id = google_service_account.app.name
+resource "google_service_account_iam_policy" "service" {
+  service_account_id = google_service_account.service.name
   policy_data        = data.google_iam_policy.app_service_account.policy_data
+}
+
+resource "google_project_iam_custom_role" "app_bigquery_access" {
+  role_id     = "app_bigquery_access"
+  title       = "BigQuery Access for Application"
+  description = "Permissions required by application to interact with BigQuery"
+  project     = google_project.project.project_id
+
+  permissions = [
+    "bigquery.datasets.get",
+    "bigquery.tables.get",
+    "bigquery.tables.updateData",
+  ]
+
+  depends_on = [google_project_service.iam]
 }

@@ -7,6 +7,7 @@ VARS_FILE="$SCRIPT_DIR/../generated.auto.tfvars"
 
 cat <<EOF > "$VARS_FILE"
 project_name       = "$GOOGLE_PROJECT"
+organization_id    = "$GOOGLE_ORGANIZATION"
 billing_account_id = "$GOOGLE_BILLING_ACCOUNT_ID"
 region             = "$GOOGLE_REGION"
 EOF

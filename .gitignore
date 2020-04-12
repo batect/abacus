@@ -2,13 +2,12 @@
 .batect/caches
 .creds/
 .gcloud/
-.go-cache/
 .idea/
 .terraform/
 
-node_modules/
 vendor/
 
+batect.local.yml
 coverage.txt
 generated.auto.tfvars
 image.auto.tfvars

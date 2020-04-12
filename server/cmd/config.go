@@ -42,7 +42,14 @@ func getSessionsTableID() string {
 }
 
 func getCredentialsFilePath() string {
-	return getEnvOrExit("GOOGLE_CREDENTIALS_FILE")
+	variableName := "GOOGLE_CREDENTIALS_FILE"
+	value := os.Getenv("GOOGLE_CREDENTIALS_FILE")
+
+	if value == "" {
+		logrus.WithField("variable", variableName).Info("Credentials file environment variable is not set, will fallback to default credential sources for GCP connections.")
+	}
+
+	return value
 }
 
 func getEnvOrExit(name string) string {

@@ -18,6 +18,6 @@
 // limitations under the License and the Condition.
 
 provider "google" {
-  version     = "~> 3.2.0"
+  version     = "3.15.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_bootstrap_infra.json"
 }

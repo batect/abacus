@@ -1,7 +1,3 @@
-.gcp_cloud_sdk_version: &gcp_cloud_sdk_version 274.0.0
-.gcp_project: &gcp_project batect-abacus
-.personal_gcp_project: &personal_gcp_project charles-batect-abacus
-
 containers:
   build-env:
     build_directory: .batect/build-env
@@ -22,7 +18,7 @@ containers:
   terraform:
     build_directory: .batect/terraform
     build_args:
-      CLOUD_SDK_VERSION: *gcp_cloud_sdk_version
+      CLOUD_SDK_VERSION: <{cloudSdkVersion}
     volumes:
       - local: .
         container: /code
@@ -32,14 +28,15 @@ containers:
         options: cached
     working_directory: /code
     environment:
-      GOOGLE_PROJECT: *gcp_project
+      GOOGLE_PROJECT: <{gcpProject}
+      GOOGLE_ORGANIZATION: <{gcpOrganizationId}
       GOOGLE_REGION: us-central1
-      GOOGLE_BILLING_ACCOUNT_ID: 011113-23F385-542CC5
+      GOOGLE_BILLING_ACCOUNT_ID: <{gcpBillingAccountId}
 
   push-env:
     build_directory: .batect/push-env
     build_args:
-      CLOUD_SDK_VERSION: *gcp_cloud_sdk_version
+      CLOUD_SDK_VERSION: <{cloudSdkVersion}
     volumes:
       - local: .
         container: /code
@@ -51,7 +48,7 @@ containers:
         container: /var/run/docker.sock
     working_directory: /code
     environment:
-      GOOGLE_PROJECT: *gcp_project
+      GOOGLE_PROJECT: <{gcpProject}
 
   app:
     build_directory: .batect/app
@@ -61,7 +58,7 @@ containers:
         options: ro
     environment:
       PORT: 8080
-      GOOGLE_PROJECT: *personal_gcp_project
+      GOOGLE_PROJECT: <{gcpProject}
       GOOGLE_CREDENTIALS_FILE: /creds/gcp.json
       DATASET_ID: abacus
       SESSIONS_TABLE_ID: sessions
@@ -196,7 +193,7 @@ tasks:
     group: Infrastructure management tasks
     run:
       container: terraform
-      command: infra/scripts/setup_service_account.sh app
+      command: infra/scripts/setup_service_account.sh
       environment:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
@@ -224,6 +221,13 @@ tasks:
     run:
       container: terraform
       command: terraform fmt -recursive infra
+
+  setupGCPProject:
+    description: Create the GCP project if it is missing.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: ./infra/scripts/setup_project.sh
 
   setupBootstrapTerraform:
     description: Initialise Terraform.
@@ -265,12 +269,28 @@ tasks:
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap
 
+  createGCPBootstrapServiceAccount:
+    description: Create service account for use when bootstrapping an environment.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: infra/scripts/create_bootstrap_service_account.sh
+
+  createGCPDeployerServiceAccount:
+    description: Create service account for use when deploying to an environment.
+    group: Infrastructure bootstrapping tasks
+    run:
+      container: terraform
+      command: infra/scripts/create_deployer_service_account.sh
+      environment:
+        SERVICE_ACCOUNT_NAME: $SERVICE_ACCOUNT_NAME
+
   setupGCPBootstrapServiceAccount:
     description: Store credentials used to access GCP when bootstrapping the application, or checking the state of the bootstrapped infrastructure.
     group: Infrastructure bootstrapping tasks
     run:
       container: terraform
-      command: infra/scripts/setup_service_account.sh bootstrap
+      command: infra/scripts/setup_service_account.sh
       environment:
         GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
         GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
@@ -304,3 +324,16 @@ tasks:
       command: ./infra/scripts/push_image.sh
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: app
+
+config_variables:
+  gcpProject:
+    description: GCP project to use.
+
+  gcpBillingAccountId:
+    description: GCP billing account to use.
+
+  gcpOrganizationId:
+    description: GCP organisation to use.
+
+  cloudSdkVersion:
+    default: 287.0.0

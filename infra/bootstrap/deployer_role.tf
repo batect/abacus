@@ -17,6 +17,10 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+locals {
+  deployers_group_name = "${google_project.project.name}-deployers@${data.google_organization.organisation.domain}"
+}
+
 resource "google_project_iam_custom_role" "deployer" {
   role_id     = "deployer"
   title       = "Deployer"
@@ -101,6 +105,6 @@ resource "google_project_iam_custom_role" "deployer" {
 resource "google_project_iam_binding" "deployer" {
   role    = google_project_iam_custom_role.deployer.id
   project = google_project.project.project_id
-  members = ["group:batect-abacus-deployers@googlegroups.com"]
+  members = ["group:${local.deployers_group_name}"]
 }
 

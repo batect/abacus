@@ -18,11 +18,11 @@
 // limitations under the License and the Condition.
 
 provider "google" {
-  version     = "3.8.0"
+  version     = "3.15.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_app_infra.json"
 }
 
 provider "cloudflare" {
-  version   = "2.3.0"
+  version   = "2.5.1"
   api_token = trimspace(file("${path.module}/../../.creds/cloudflare_key"))
 }

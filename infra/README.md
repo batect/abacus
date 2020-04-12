@@ -1,4 +1,4 @@
-This directory contains three groups of Terraform files:
+This directory contains two groups of Terraform files:
 
 * `bootstrap`: contains Terraform files to create GCP resources required for deployment pipeline to run (eg. creating the Terraform
   state bucket or granting the pipeline user the necessary permissions). Should only need to be run once, requires GCP admin privileges.
@@ -17,7 +17,19 @@ This directory contains three groups of Terraform files:
   Configure authentication with `./batect setupGCPBootstrapServiceAccount`, setup Terraform with `./batect setupTerraform`, plan changes with `./batect planTerraform`
   and apply changes with `./batect applyTerraform`.
 
-* `personal`: contains Terraform files to create an environment that can be used to support local development.
+## Creating GCP project for the first time
 
-  Configure authentication with `./batect setupGCPPersonalServiceAccount`, setup Terraform with `./batect setupPersonalTerraform`, plan changes with `./batect planPersonalTerraform`
-  and apply changes with `./batect applyPersonalTerraform`.
+* Create `batect.local.yml` with your GCP project name and billing account ID:
+
+    ```yaml
+    gcpProject: my-project # GCP project ID
+    gcpOrganizationId: 123456787890 # GCP organisation ID
+    gcpBillingAccountId: 111111-222222-333333 # GCP billing account ID to use
+    ```
+
+* Run `./batect setupGCPProject` to create the GCP project
+* Run `./batect createGCPBootstrapServiceAccount` to create a service account for use during bootstrapping
+* Run `./batect importBootstrapState` to import the project you just created (this will fail as the other resources have not been created yet)
+* Run `./batect applyBootstrapTerraform` to create remaining bootstrap resources
+* Run `SERVICE_ACCOUNT_NAME=local-deployments ./batect createGCPDeployerServiceAccount` and follow the instructions to save the credentials locally
+* Run `SERVICE_ACCOUNT_NAME=github-actions ./batect createGCPDeployerServiceAccount` and follow the instructions to save the credentials on the CI system
