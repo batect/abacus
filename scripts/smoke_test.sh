@@ -43,6 +43,7 @@ EOF
     bq \
       --format=json \
       "--project_id=$GOOGLE_PROJECT" \
+      --bigqueryrc=/dev/null \
       query \
       --nouse_legacy_sql \
       "SELECT sessionId, userId, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionStartTime) AS sessionStartTime, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionEndTime) AS sessionEndTime, applicationId, applicationVersion FROM $GOOGLE_PROJECT.abacus.sessions WHERE sessionStartTime >= '$CURRENT_DATE' AND sessionId = '$SESSION_ID' AND userID = '$USER_ID';"
