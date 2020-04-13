@@ -63,17 +63,6 @@ containers:
       DATASET_ID: abacus
       SESSIONS_TABLE_ID: sessions
 
-  smoke-test-env:
-    build_directory: .batect/smoke-test-env
-    volumes:
-      - local: .
-        container: /code
-        options: cached
-    working_directory: /code
-    run_as_current_user:
-      enabled: true
-      home_directory: /home/container-user
-
 tasks:
   setup:
     description: Download all dependencies used by the application.
@@ -344,10 +333,11 @@ tasks:
     description: Run a smoke test against a deployed version of the app.
     group: Test tasks
     run:
-      container: smoke-test-env
+      container: terraform
       command: ./scripts/smoke_test.sh
       environment:
         DOMAIN: <{subdomain}.<{rootDomain}
+        CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
 
 config_variables:
   gcpProject:

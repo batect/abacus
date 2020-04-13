@@ -27,4 +27,8 @@ RUN wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TER
 RUN apk add --no-cache \
     bind-tools \
     jq \
-    moreutils
+    moreutils \
+    # For tput:
+    ncurses \
+    # For uuidgen:
+    util-linux

@@ -35,3 +35,11 @@ This directory contains two groups of Terraform files:
 * Run `./batect applyBootstrapTerraform` to create remaining bootstrap resources
 * Run `SERVICE_ACCOUNT_NAME=local-deployments ./batect createGCPDeployerServiceAccount` and follow the instructions to save the credentials locally
 * Run `SERVICE_ACCOUNT_NAME=github-actions ./batect createGCPDeployerServiceAccount` and follow the instructions to save the credentials on the CI system
+
+## Switching between projects
+
+You'll need to run the following:
+
+* `./batect setupBootstrapTerraform`
+* `rm infra/bootstrap/terraform.tfstate`
+* `./batect importBootstrapState`
