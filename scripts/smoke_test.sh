@@ -3,6 +3,8 @@
 set -euo pipefail
 
 function main() {
+  echoBlueText "Generating data..."
+
   CURRENT_DATE=$(currentDate)
   SESSION_ID=$(randomUUID)
   USER_ID=$(randomUUID)
@@ -17,6 +19,10 @@ function main() {
     "applicationVersion": "1.0.0"
   }
 EOF
+
+  echo "Generated session:"
+  echo "$UPLOAD_DATA"
+  echo
 
   echoBlueText "Sending session..."
 
@@ -42,6 +48,9 @@ EOF
       "SELECT sessionId, userId, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionStartTime) AS sessionStartTime, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionEndTime) AS sessionEndTime, applicationId, applicationVersion FROM $GOOGLE_PROJECT.abacus.sessions WHERE sessionStartTime >= '$CURRENT_DATE' AND sessionId = '$SESSION_ID' AND userID = '$USER_ID';"
   )
 
+  echo
+  echo "Response from BigQuery: "
+  echo "$RETRIEVED_DATA"
   echo
 
   diff -U 9999 <(echo "[$UPLOAD_DATA]" | jq -S .) <(echo "$RETRIEVED_DATA" | jq -S .) || { echo; echoRedText "Data in BigQuery is not the same as what was submitted. See diff above. '-' represents what was expected, '+' represents what was returned by BigQuery."; exit 1; }
