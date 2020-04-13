@@ -31,6 +31,7 @@ cloud.google.com/go/pubsub v1.0.1/go.mod h1:R0Gpsv3s54REJCy4fxDixWD93lHJMoZTyQ2k
 cloud.google.com/go/pubsub v1.1.0/go.mod h1:EwwdRX2sKPjnvnqCa270oGRyludottCI76h+R3AArQw=
 cloud.google.com/go/pubsub v1.2.0 h1:Lpy6hKgdcl7a3WGSfJIFmxmcdjSpP6OmBEfcOv1Y680=
 cloud.google.com/go/pubsub v1.2.0/go.mod h1:jhfEVHT8odbXTkndysNHCcx0awwzvfOlguIAii9o8iA=
+cloud.google.com/go/pubsub v1.3.1 h1:ukjixP1wl0LpnZ6LWtZJ0mX5tBmjp1f8Sqer8Z2OMUU=
 cloud.google.com/go/pubsub v1.3.1/go.mod h1:i+ucay31+CNRpDW4Lu78I4xXG+O1r/MAHgjpRVR+TSU=
 cloud.google.com/go/storage v1.0.0/go.mod h1:IhtSnM/ZTZV8YYJWCY8RULGVqBDmpoyjwiyrjsg+URw=
 cloud.google.com/go/storage v1.5.0/go.mod h1:tpKbwo567HUNpVclU5sGELwQWBDZ8gh0ZeosJ0Rtdos=
@@ -43,10 +44,6 @@ github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym
 github.com/TV4/logrus-stackdriver-formatter v0.1.0 h1:nFea8RiX7ecTnWPM+9FIqwZYJdcGo58CHMGIVdYzMXg=
 github.com/TV4/logrus-stackdriver-formatter v0.1.0/go.mod h1:wwS7hOiBvP6SBD0UXCa767+VhHkaXrfX0MzUojYcN0Q=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
-github.com/charleskorn/logrus-stackdriver-formatter v0.2.3 h1:lEJeL9VzxEiz1uYHS5kc8XCrNAbF9gaPe8BI30gUZqA=
-github.com/charleskorn/logrus-stackdriver-formatter v0.2.3/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
-github.com/charleskorn/logrus-stackdriver-formatter v0.3.0 h1:UKgA4P7eKY/BLuvfaJMoDVBxd5205D4LcyblaZ0maqg=
-github.com/charleskorn/logrus-stackdriver-formatter v0.3.0/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
 github.com/charleskorn/logrus-stackdriver-formatter v0.3.1 h1:BXOJvBtIoevPmFLjlcR6bK2rSgSvKr4gWotcBjuNuPo=
 github.com/charleskorn/logrus-stackdriver-formatter v0.3.1/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
@@ -248,6 +245,7 @@ golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6/go.mod h1:RxMgew5VJxzue5/jJ
 golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e h1:vcxGaoTs7kV8m5Np9uUNQin4BrLOthgV7252N8V+FwY=
 golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a h1:WXEvlFVvvGxCJLG6REjsT03iWnKLEWinaScsxF2Vm2o=
 golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
 golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
 golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
