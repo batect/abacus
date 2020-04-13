@@ -6,6 +6,8 @@ jobs:
   build:
     name: "Build, Test and Deploy"
     runs-on: ubuntu-latest
+    env:
+      TERM: xterm-256color
 
     steps:
       - uses: actions/checkout@v1
@@ -35,8 +37,6 @@ jobs:
 
       - name: Check code files have license header
         run: ./batect checkLicenseHeader
-        env:
-          TERM: xterm-256color
 
       - name: Run unit tests
         run: ./batect unitTest
