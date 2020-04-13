@@ -48,7 +48,7 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 }
 
 func (b *bigQuerySessionStore) Store(ctx context.Context, session *Session) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Second * 10)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
 	defer cancel()
 
 	if err := b.inserter.Put(ctx, session); err != nil {
