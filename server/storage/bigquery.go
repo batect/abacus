@@ -74,8 +74,8 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 	row := map[string]bigquery.Value{
 		"sessionId":          s.SessionID,
 		"userId":             s.UserID,
-		"sessionStartTime":   s.SessionStartTime,
-		"sessionEndTime":     s.SessionEndTime,
+		"sessionStartTime":   s.SessionStartTime.UTC(),
+		"sessionEndTime":     s.SessionEndTime.UTC(),
 		"applicationId":      s.ApplicationID,
 		"applicationVersion": s.ApplicationVersion,
 		"metadata":           metadata,
