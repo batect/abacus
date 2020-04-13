@@ -31,7 +31,7 @@ resource "google_monitoring_alert_policy" "log_errors" {
     condition_threshold {
       filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" metric.label.severity!=\"NOTICE\" metric.label.severity!=\"INFO\" metric.label.severity!=\"WARNING\""
       comparison      = "COMPARISON_GT"
-      duration        = "60s"
+      duration        = "0s"
       threshold_value = 0
 
       trigger {
