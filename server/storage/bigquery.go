@@ -22,6 +22,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"cloud.google.com/go/bigquery"
 	"google.golang.org/api/option"
@@ -47,6 +48,9 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 }
 
 func (b *bigQuerySessionStore) Store(ctx context.Context, session *Session) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Second * 10)
+	defer cancel()
+
 	if err := b.inserter.Put(ctx, session); err != nil {
 		if e, ok := err.(bigquery.PutMultiError); ok && len(e) == 1 {
 			return fmt.Errorf("could not store session due to Put error: %w", &e[0])
@@ -81,5 +85,5 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 		"metadata":           metadata,
 	}
 
-	return row, "", nil
+	return row, s.SessionID, nil
 }
