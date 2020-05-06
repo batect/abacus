@@ -31,12 +31,12 @@ import (
 
 // Based on https://cloud.google.com/run/docs/logging#writing_structured_logs and
 // https://cloud.google.com/trace/docs/troubleshooting#force-trace
-var _ = Describe("Tracing middleware", func() {
+var _ = Describe("Trace ID extraction middleware", func() {
 	var ctx context.Context
 	var m http.Handler
 
 	BeforeEach(func() {
-		m = TracingMiddleware(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		m = TraceIDExtractionMiddleware(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 			ctx = r.Context()
 		}))
 	})

@@ -61,7 +61,9 @@ func getEnvOrDefault(name string, fallback string) string {
 }
 
 func initTracing() {
-	exporter, err := texporter.NewExporter()
+	exporter, err := texporter.NewExporter(texporter.WithOnError(func(err error) {
+		logrus.WithError(err).Warn("Trace exporter reported error.")
+	}))
 
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not create trace exporter.")
@@ -83,7 +85,7 @@ func createServer(port string) *http.Server {
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
-		Handler: middleware.TracingMiddleware(
+		Handler: middleware.TraceIDExtractionMiddleware(
 			middleware.LoggerMiddleware(logrus.StandardLogger(), getProjectID(), mux),
 		),
 	}

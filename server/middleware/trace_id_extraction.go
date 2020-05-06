@@ -47,7 +47,7 @@ func TraceIDFromContext(ctx context.Context) string {
 	return ctx.Value(traceIDKey).(string)
 }
 
-func TracingMiddleware(next http.Handler) http.Handler {
+func TraceIDExtractionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		ctx := newContextWithTraceID(req.Context(), extractTraceID(req))
 		next.ServeHTTP(w, req.WithContext(ctx))
