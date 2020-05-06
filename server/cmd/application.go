@@ -31,10 +31,15 @@ import (
 	"github.com/batect/abacus/server/storage"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
+
+	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
+	"go.opentelemetry.io/otel/api/global"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 func main() {
 	initLogging()
+	initTracing()
 
 	srv := createServer(getPort())
 	runServer(srv)
@@ -53,6 +58,22 @@ func getEnvOrDefault(name string, fallback string) string {
 	}
 
 	return fallback
+}
+
+func initTracing() {
+	exporter, err := texporter.NewExporter()
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create trace exporter.")
+	}
+
+	traceProvider, err := sdktrace.NewProvider(sdktrace.WithSyncer(exporter))
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create trace provider.")
+	}
+
+	global.SetTraceProvider(traceProvider)
 }
 
 func createServer(port string) *http.Server {
@@ -86,7 +107,7 @@ func runServer(srv *http.Server) {
 	logrus.WithField("address", srv.Addr).Info("Server starting.")
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		logrus.WithField("err", err).Fatal("Could not start HTTP server.")
+		logrus.WithError(err).Fatal("Could not start HTTP server.")
 	}
 
 	<-connectionDrainingFinished
@@ -105,7 +126,7 @@ func shutdownOnInterrupt(srv *http.Server) chan struct{} {
 		logrus.Info("Interrupt received, draining connections...")
 
 		if err := srv.Shutdown(context.Background()); err != nil {
-			logrus.WithField("err", err).Error("Shutting down HTTP server failed.")
+			logrus.WithError(err).Error("Shutting down HTTP server failed.")
 		}
 
 		close(connectionDrainingFinished)
