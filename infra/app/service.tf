@@ -24,6 +24,9 @@ resource "google_project_service" "cloud_run" {
 locals {
   service_service_account_email = "service@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
   service_name                  = "abacus"
+
+  # Maximum length of revision name is 63 characters
+  service_revision_name = substr("${local.service_name}-${var.image_git_sha}-${regex("@sha256:(.*)$", var.image_reference)[0]}", 0, 63)
 }
 
 resource "google_cloud_run_service" "service" {
@@ -55,7 +58,7 @@ resource "google_cloud_run_service" "service" {
     }
 
     metadata {
-      name = "${local.service_name}-${var.image_git_sha}"
+      name = local.service_revision_name
     }
   }
 
