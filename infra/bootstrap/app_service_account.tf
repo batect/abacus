@@ -51,3 +51,8 @@ resource "google_project_iam_custom_role" "app_bigquery_access" {
 
   depends_on = [google_project_service.iam]
 }
+
+resource "google_project_iam_member" "app_tracing_access" {
+  member = "serviceAccount:${google_service_account.service.email}"
+  role   = "roles/cloudtrace.agent"
+}
