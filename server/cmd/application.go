@@ -31,6 +31,7 @@ import (
 	"github.com/batect/abacus/server/storage"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel/plugin/othttp"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"go.opentelemetry.io/otel/api/global"
@@ -80,13 +81,19 @@ func initTracing() {
 
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
+
+	// TODO: decorate these with othttp.WithRouteTag()
 	mux.HandleFunc("/ping", api.Ping)
-	mux.Handle("/v1/sessions", createIngestHandler())
+	mux.Handle("/v1/sessions", othttp.WithRouteTag("/v1/sessions", createIngestHandler()))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
 		Handler: middleware.TraceIDExtractionMiddleware(
-			middleware.LoggerMiddleware(logrus.StandardLogger(), getProjectID(), mux),
+			middleware.LoggerMiddleware(
+				logrus.StandardLogger(),
+				getProjectID(),
+				othttp.NewHandler(mux, "server", othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents)),
+			),
 		),
 	}
 
