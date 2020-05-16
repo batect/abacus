@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+BASE_URL=${1:-https://$DOMAIN}
+
 function main() {
   echoBlueText "Generating data..."
 
@@ -34,7 +36,7 @@ EOF
     --silent \
     --verbose \
     --show-error \
-    "https://$DOMAIN/v1/sessions"
+    "$BASE_URL/v1/sessions"
 
   echo
   echoBlueText "Confirming data was written to BigQuery successfully..."

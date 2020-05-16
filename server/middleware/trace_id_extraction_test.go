@@ -27,6 +27,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"go.opentelemetry.io/otel/api/trace/testtrace"
 )
 
 // Based on https://cloud.google.com/run/docs/logging#writing_structured_logs and
@@ -41,31 +42,21 @@ var _ = Describe("Trace ID extraction middleware", func() {
 		}))
 	})
 
-	Context("when the request contains a valid tracing ID", func() {
+	Context("when the request contains an established trace", func() {
+		var traceId string
+
 		BeforeEach(func() {
 			req := httptest.NewRequest("GET", "/blah", nil)
-			req.Header.Set("X-Cloud-Trace-Context", "105445aa7843bc8bf206b120001000/0;o=1")
+			req, traceId = addTraceToRequest(req)
 			m.ServeHTTP(nil, req)
 		})
 
-		It("extracts the trace ID from the headers", func() {
-			Expect(TraceIDFromContext(ctx)).To(Equal("105445aa7843bc8bf206b120001000"))
+		It("extracts the trace ID from the established trace", func() {
+			Expect(TraceIDFromContext(ctx)).To(Equal(traceId))
 		})
 	})
 
-	Context("when the request contains an invalid tracing ID", func() {
-		BeforeEach(func() {
-			req := httptest.NewRequest("GET", "/blah", nil)
-			req.Header.Set("X-Cloud-Trace-Context", "105445aa78")
-			m.ServeHTTP(nil, req)
-		})
-
-		It("returns the original header value", func() {
-			Expect(TraceIDFromContext(ctx)).To(Equal("105445aa78"))
-		})
-	})
-
-	Context("when the request does not contain a tracing header", func() {
+	Context("when the request does not contain an established trace", func() {
 		BeforeEach(func() {
 			req := httptest.NewRequest("GET", "/blah", nil)
 			m.ServeHTTP(nil, req)
@@ -76,3 +67,11 @@ var _ = Describe("Trace ID extraction middleware", func() {
 		})
 	})
 })
+
+func addTraceToRequest(req *http.Request) (*http.Request, string) {
+	ctx, span := testtrace.NewTracer().Start(req.Context(), "My test span")
+	traceId := span.SpanContext().TraceID.String()
+	req = req.WithContext(ctx)
+
+	return req, traceId
+}

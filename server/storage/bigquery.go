@@ -22,10 +22,13 @@ package storage
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	"go.opentelemetry.io/otel/plugin/othttp"
 	"google.golang.org/api/option"
+	htransport "google.golang.org/api/transport/http"
 )
 
 type bigQuerySessionStore struct {
@@ -34,7 +37,23 @@ type bigQuerySessionStore struct {
 
 func NewBigQuerySessionStore(projectID string, datasetID string, tableID string, credsFile string) (SessionStore, error) {
 	ctx := context.Background()
-	client, err := bigquery.NewClient(ctx, projectID, option.WithCredentialsFile(credsFile))
+
+	// We have to do this because specifying option.WithHTTPClient in the call to bigquery.NewClient overrides all other options -
+	// so instead we create the transport ourselves and then wrap that in the OpenTelemetry transport.
+	// Would be good to investigate just setting http.DefaultTransport to be the OpenTelemetry transport so all HTTP calls get telemetry.
+	scopesOption := option.WithScopes("https://www.googleapis.com/auth/bigquery.insertdata")
+	credsOption := option.WithCredentialsFile(credsFile)
+	trans, err := htransport.NewTransport(ctx, http.DefaultTransport, scopesOption, credsOption)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create transport: %w", err)
+	}
+
+	httpClient := http.Client{
+		Transport: othttp.NewTransport(trans),
+	}
+
+	client, err := bigquery.NewClient(ctx, projectID, option.WithHTTPClient(&httpClient))
 
 	if err != nil {
 		return nil, err

@@ -86,15 +86,12 @@ func createServer(port string) *http.Server {
 	mux.HandleFunc("/ping", api.Ping)
 	mux.Handle("/v1/sessions", othttp.WithRouteTag("/v1/sessions", createIngestHandler()))
 
+	wrappedMux := middleware.TraceIDExtractionMiddleware(
+		middleware.LoggerMiddleware(logrus.StandardLogger(), getProjectID(), mux),
+	)
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
-		Handler: middleware.TraceIDExtractionMiddleware(
-			middleware.LoggerMiddleware(
-				logrus.StandardLogger(),
-				getProjectID(),
-				othttp.NewHandler(mux, "server", othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents)),
-			),
-		),
+		Handler: othttp.NewHandler(wrappedMux, "server", othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents)),
 	}
 
 	return srv
