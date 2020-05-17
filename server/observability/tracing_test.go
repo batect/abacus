@@ -38,7 +38,7 @@ var _ = Describe("Naming HTTP request spans", func() {
 			name = observability.NameHTTPRequestSpan("Server", req)
 		})
 
-		It("includes the operation name, HTTP method and URL in the name", func () {
+		It("includes the operation name, HTTP method and URL in the name", func() {
 			Expect(name).To(Equal("Server: PUT /blah"))
 		})
 	})
@@ -50,7 +50,7 @@ var _ = Describe("Naming HTTP request spans", func() {
 			name = observability.NameHTTPRequestSpan("", req)
 		})
 
-		It("does not include the operation name in the span name", func () {
+		It("does not include the operation name in the span name", func() {
 			Expect(name).To(Equal("PUT /blah"))
 		})
 	})
