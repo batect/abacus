@@ -52,6 +52,8 @@ github.com/benbjohnson/clock v1.0.0/go.mod h1:bGMdMPoPVvcYyt1gHDf4J2KE153Yf9BuiU
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
 github.com/charleskorn/logrus-stackdriver-formatter v0.3.1 h1:BXOJvBtIoevPmFLjlcR6bK2rSgSvKr4gWotcBjuNuPo=
 github.com/charleskorn/logrus-stackdriver-formatter v0.3.1/go.mod h1:QVSMnGzfS7L7DbSMGhlGuErdb4fQ4eBx3pA6TJjnwlQ=
+github.com/charleskorn/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200517080550-269311d02eaf h1:fPCFbPECKDIqOW09jh2hsB1W4nrgnMX+8+/UZTpOgYs=
+github.com/charleskorn/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200517080550-269311d02eaf/go.mod h1:Ps0PAOihxzMbs4J2PWLffeKwJo3Bka6LHMLP6r/K0l8=
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=

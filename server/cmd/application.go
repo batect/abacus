@@ -28,6 +28,7 @@ import (
 
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
+	"github.com/batect/abacus/server/observability"
 	"github.com/batect/abacus/server/storage"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
@@ -91,7 +92,12 @@ func createServer(port string) *http.Server {
 	)
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
-		Handler: othttp.NewHandler(wrappedMux, "server", othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents)),
+		Handler: othttp.NewHandler(
+			wrappedMux,
+			"server",
+			othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
+			othttp.WithPropagators(&observability.GCPPropagator{}),
+		),
 	}
 
 	return srv
