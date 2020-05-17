@@ -22,6 +22,7 @@ package observability
 import (
 	"context"
 	"encoding/binary"
+	"fmt"
 	"regexp"
 	"strconv"
 
@@ -38,13 +39,17 @@ func (g *GCPPropagator) HTTPExtractors() []propagation.HTTPExtractor {
 }
 
 func (g *GCPPropagator) HTTPInjectors() []propagation.HTTPInjector {
-	return []propagation.HTTPInjector{}
+	return []propagation.HTTPInjector{
+		&cloudTraceContextInjector{},
+	}
 }
+
+const headerName = "X-Cloud-Trace-Context"
 
 type cloudTraceContextExtractor struct{}
 
 func (c *cloudTraceContextExtractor) Extract(ctx context.Context, supplier propagation.HTTPSupplier) context.Context {
-	headerValue := supplier.Get("X-Cloud-Trace-Context")
+	headerValue := supplier.Get(headerName)
 	sc := c.extractSpanContext(headerValue)
 
 	return trace.ContextWithRemoteSpanContext(ctx, sc)
@@ -86,4 +91,18 @@ func (c *cloudTraceContextExtractor) extractSpanContext(headerValue string) trac
 		SpanID:     sidBytes,
 		TraceFlags: flags,
 	}
+}
+
+type cloudTraceContextInjector struct{}
+
+func (c *cloudTraceContextInjector) Inject(ctx context.Context, supplier propagation.HTTPSupplier) {
+	sc := trace.SpanFromContext(ctx).SpanContext()
+	sid := binary.BigEndian.Uint64(sc.SpanID[:])
+	headerValue := fmt.Sprintf("%v/%v", sc.TraceID.String(), sid)
+
+	if sc.IsSampled() {
+		headerValue += ";o=1"
+	}
+
+	supplier.Set(headerName, headerValue)
 }
