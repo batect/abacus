@@ -26,6 +26,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/bigquery"
+	"github.com/batect/abacus/server/observability"
 	"go.opentelemetry.io/otel/plugin/othttp"
 	"google.golang.org/api/option"
 	htransport "google.golang.org/api/transport/http"
@@ -50,7 +51,11 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 	}
 
 	httpClient := http.Client{
-		Transport: othttp.NewTransport(trans),
+		Transport: othttp.NewTransport(
+			trans,
+			othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
+			othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+		),
 	}
 
 	client, err := bigquery.NewClient(ctx, projectID, option.WithHTTPClient(&httpClient))

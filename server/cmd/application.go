@@ -78,6 +78,7 @@ func initTracing() {
 	}
 
 	global.SetTraceProvider(traceProvider)
+	global.SetPropagators(&observability.GCPPropagator{})
 }
 
 func createServer(port string) *http.Server {
@@ -90,13 +91,15 @@ func createServer(port string) *http.Server {
 	wrappedMux := middleware.TraceIDExtractionMiddleware(
 		middleware.LoggerMiddleware(logrus.StandardLogger(), getProjectID(), mux),
 	)
+
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
 		Handler: othttp.NewHandler(
 			wrappedMux,
-			"server",
+			"Incoming API call",
 			othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
-			othttp.WithPropagators(&observability.GCPPropagator{}),
+			othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+			othttp.WithPublicEndpoint(),
 		),
 	}
 

@@ -25,7 +25,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"go.opentelemetry.io/otel/api/global"
 	"go.opentelemetry.io/otel/api/propagation"
 	"go.opentelemetry.io/otel/api/trace"
 )
@@ -39,7 +38,7 @@ func (g *GCPPropagator) HTTPExtractors() []propagation.HTTPExtractor {
 }
 
 func (g *GCPPropagator) HTTPInjectors() []propagation.HTTPInjector {
-	return global.Propagators().HTTPInjectors()
+	return []propagation.HTTPInjector{}
 }
 
 type cloudTraceContextExtractor struct{}
