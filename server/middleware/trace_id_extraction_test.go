@@ -43,16 +43,16 @@ var _ = Describe("Trace ID extraction middleware", func() {
 	})
 
 	Context("when the request contains an established trace", func() {
-		var traceId string
+		var traceID string
 
 		BeforeEach(func() {
 			req := httptest.NewRequest("GET", "/blah", nil)
-			req, traceId = addTraceToRequest(req)
+			req, traceID = addTraceToRequest(req)
 			m.ServeHTTP(nil, req)
 		})
 
 		It("extracts the trace ID from the established trace", func() {
-			Expect(TraceIDFromContext(ctx)).To(Equal(traceId))
+			Expect(TraceIDFromContext(ctx)).To(Equal(traceID))
 		})
 	})
 
@@ -70,8 +70,8 @@ var _ = Describe("Trace ID extraction middleware", func() {
 
 func addTraceToRequest(req *http.Request) (*http.Request, string) {
 	ctx, span := testtrace.NewTracer().Start(req.Context(), "My test span")
-	traceId := span.SpanContext().TraceID.String()
+	traceID := span.SpanContext().TraceID.String()
 	req = req.WithContext(ctx)
 
-	return req, traceId
+	return req, traceID
 }

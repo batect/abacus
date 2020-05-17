@@ -168,23 +168,3 @@ var _ = Describe("A GCP tracing propagator", func() {
 		})
 	}
 })
-
-func toTraceId(id string) trace.ID {
-	traceId, err := trace.IDFromHex(id)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return traceId
-}
-
-func toSpanId(id string) trace.SpanID {
-	spanId, err := trace.SpanIDFromHex(id)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return spanId
-}
