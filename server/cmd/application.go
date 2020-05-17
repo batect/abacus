@@ -99,7 +99,6 @@ func createServer(port string) *http.Server {
 			"Incoming API call",
 			othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
 			othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
-			othttp.WithPublicEndpoint(),
 		),
 	}
 
