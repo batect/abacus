@@ -12,7 +12,7 @@ require (
 	github.com/onsi/gomega v1.9.0
 	github.com/sirupsen/logrus v1.6.0
 	go.opentelemetry.io/otel v0.5.0
-	google.golang.org/api v0.23.0
+	google.golang.org/api v0.24.0
 )
 
 replace github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace => github.com/charleskorn/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200517080550-269311d02eaf
