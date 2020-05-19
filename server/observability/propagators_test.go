@@ -33,11 +33,7 @@ import (
 
 // Based on test cases from https://github.com/census-ecosystem/opencensus-go-exporter-stackdriver/blob/master/propagation/http_test.go
 var _ = Describe("A GCP tracing propagator", func() {
-	var propagator observability.GCPPropagator
-
-	BeforeEach(func() {
-		propagator = observability.GCPPropagator{}
-	})
+	propagator := observability.GCPPropagator{}
 
 	Context("when processing incoming requests", func() {
 		Context("given no X-Cloud-Trace-Context header", func() {
