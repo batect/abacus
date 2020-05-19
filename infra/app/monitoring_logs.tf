@@ -18,7 +18,10 @@
 // limitations under the License and the Condition.
 
 locals {
-  log_errors_query = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" severity!=\"NOTICE\" severity!=\"ERROR\" severity!=\"WARNING\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/run.googleapis.com%2Frequests\""
+  log_severities_to_ignore = ["NOTICE", "INFO", "DEBUG", "WARNING"]
+  log_severities_for_log_query = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
+  log_severities_for_metrics_query = join(" ", formatlist("metric.label.severity!=\"%s\"", local.log_severities_to_ignore))
+  log_errors_query = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${google_project_service.cloud_run.project}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/run.googleapis.com%2Frequests\""
 }
 
 resource "google_monitoring_alert_policy" "log_errors" {
@@ -29,7 +32,7 @@ resource "google_monitoring_alert_policy" "log_errors" {
     display_name = "Log entries for service"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" metric.label.severity!=\"NOTICE\" metric.label.severity!=\"INFO\" metric.label.severity!=\"WARNING\""
+      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" ${local.log_severities_for_metrics_query}"
       comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "0s"
