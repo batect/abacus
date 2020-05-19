@@ -18,10 +18,10 @@
 // limitations under the License and the Condition.
 
 locals {
-  log_severities_to_ignore = ["NOTICE", "INFO", "DEBUG", "WARNING"]
-  log_severities_for_log_query = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
+  log_severities_to_ignore         = ["NOTICE", "INFO", "DEBUG", "WARNING"]
+  log_severities_for_log_query     = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
   log_severities_for_metrics_query = join(" ", formatlist("metric.label.severity!=\"%s\"", local.log_severities_to_ignore))
-  log_errors_query = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${google_project_service.cloud_run.project}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/run.googleapis.com%2Frequests\""
+  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${google_project_service.cloud_run.project}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/run.googleapis.com%2Frequests\""
 }
 
 resource "google_monitoring_alert_policy" "log_errors" {
