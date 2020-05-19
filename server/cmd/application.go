@@ -74,9 +74,9 @@ func getEnvOrDefault(name string, fallback string) string {
 
 func initProfiling() {
 	err := profiler.Start(profiler.Config{
-		Service: getServiceName(),
+		Service:        getServiceName(),
 		ServiceVersion: getVersion(),
-		ProjectID: getProjectID(),
+		ProjectID:      getProjectID(),
 		MutexProfiling: true,
 	})
 
