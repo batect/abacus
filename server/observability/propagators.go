@@ -30,25 +30,11 @@ import (
 	"go.opentelemetry.io/otel/api/trace"
 )
 
-type GCPPropagator struct{}
-
-func (g *GCPPropagator) HTTPExtractors() []propagation.HTTPExtractor {
-	return []propagation.HTTPExtractor{
-		&cloudTraceContextExtractor{},
-	}
-}
-
-func (g *GCPPropagator) HTTPInjectors() []propagation.HTTPInjector {
-	return []propagation.HTTPInjector{
-		&cloudTraceContextInjector{},
-	}
-}
-
 const headerName = "X-Cloud-Trace-Context"
 
-type cloudTraceContextExtractor struct{}
+type GCPPropagator struct{}
 
-func (c *cloudTraceContextExtractor) Extract(ctx context.Context, supplier propagation.HTTPSupplier) context.Context {
+func (c GCPPropagator) Extract(ctx context.Context, supplier propagation.HTTPSupplier) context.Context {
 	headerValue := supplier.Get(headerName)
 	sc := c.extractSpanContext(headerValue)
 
@@ -57,7 +43,7 @@ func (c *cloudTraceContextExtractor) Extract(ctx context.Context, supplier propa
 
 // See https://cloud.google.com/trace/docs/setup#force-trace for a description of the X-Cloud-Trace-Context header,
 // and https://github.com/census-ecosystem/opencensus-go-exporter-stackdriver/blob/master/propagation/http.go for the OpenCensus implementation.
-func (c *cloudTraceContextExtractor) extractSpanContext(headerValue string) trace.SpanContext {
+func (c GCPPropagator) extractSpanContext(headerValue string) trace.SpanContext {
 	regex := regexp.MustCompile(`^([\da-fA-F]{32})/(\d+)(?:;o=([01]))?$`)
 	segments := regex.FindStringSubmatch(headerValue)
 
@@ -93,9 +79,7 @@ func (c *cloudTraceContextExtractor) extractSpanContext(headerValue string) trac
 	}
 }
 
-type cloudTraceContextInjector struct{}
-
-func (c *cloudTraceContextInjector) Inject(ctx context.Context, supplier propagation.HTTPSupplier) {
+func (c GCPPropagator) Inject(ctx context.Context, supplier propagation.HTTPSupplier) {
 	sc := trace.SpanFromContext(ctx).SpanContext()
 	sid := binary.BigEndian.Uint64(sc.SpanID[:])
 	headerValue := fmt.Sprintf("%v/%v", sc.TraceID.String(), sid)

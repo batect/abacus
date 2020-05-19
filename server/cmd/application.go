@@ -33,6 +33,8 @@ import (
 	"github.com/batect/abacus/server/storage"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel/api/propagation"
+	"go.opentelemetry.io/otel/api/trace"
 	"go.opentelemetry.io/otel/plugin/othttp"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
@@ -101,7 +103,14 @@ func initTracing() {
 	}
 
 	global.SetTraceProvider(traceProvider)
-	global.SetPropagators(&observability.GCPPropagator{})
+
+	w3Propagator := trace.DefaultHTTPPropagator()
+	gcpPropagator := observability.GCPPropagator{}
+
+	global.SetPropagators(propagation.New(
+		propagation.WithInjectors(w3Propagator, gcpPropagator),
+		propagation.WithExtractors(w3Propagator, gcpPropagator),
+	))
 }
 
 func createServer(port string) *http.Server {
