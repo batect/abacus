@@ -78,7 +78,6 @@ func initProfiling() {
 		ServiceVersion: getVersion(),
 		ProjectID: getProjectID(),
 		MutexProfiling: true,
-		DebugLogging: true,
 	})
 
 	if err != nil {
