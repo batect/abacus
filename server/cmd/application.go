@@ -26,6 +26,7 @@ import (
 	"os"
 	"os/signal"
 
+	"cloud.google.com/go/profiler"
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/observability"
@@ -41,6 +42,7 @@ import (
 
 func main() {
 	initLogging()
+	initProfiling()
 	initTracing()
 
 	srv := createServer(getPort())
@@ -49,9 +51,17 @@ func main() {
 
 func initLogging() {
 	logrus.SetFormatter(stackdriver.NewFormatter(
-		stackdriver.WithService(getEnvOrDefault("K_SERVICE", "abacus")),
-		stackdriver.WithVersion(getEnvOrDefault("K_REVISION", "local")),
+		stackdriver.WithService(getServiceName()),
+		stackdriver.WithVersion(getVersion()),
 	))
+}
+
+func getServiceName() string {
+	return getEnvOrDefault("K_SERVICE", "abacus")
+}
+
+func getVersion() string {
+	return getEnvOrDefault("K_REVISION", "local")
 }
 
 func getEnvOrDefault(name string, fallback string) string {
@@ -60,6 +70,20 @@ func getEnvOrDefault(name string, fallback string) string {
 	}
 
 	return fallback
+}
+
+func initProfiling() {
+	err := profiler.Start(profiler.Config{
+		Service: getServiceName(),
+		ServiceVersion: getVersion(),
+		ProjectID: getProjectID(),
+		MutexProfiling: true,
+		DebugLogging: true,
+	})
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create profiler.")
+	}
 }
 
 func initTracing() {

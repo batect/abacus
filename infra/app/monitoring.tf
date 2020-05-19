@@ -21,6 +21,10 @@ resource "google_project_service" "monitoring" {
   service = "monitoring.googleapis.com"
 }
 
+resource "google_project_service" "profiling" {
+  service = "cloudprofiler.googleapis.com"
+}
+
 resource "google_project_service" "stackdriver" {
   service = "stackdriver.googleapis.com"
 }

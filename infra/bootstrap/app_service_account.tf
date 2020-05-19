@@ -56,3 +56,8 @@ resource "google_project_iam_member" "app_tracing_access" {
   member = "serviceAccount:${google_service_account.service.email}"
   role   = "roles/cloudtrace.agent"
 }
+
+resource "google_project_iam_member" "app_profiler_access" {
+  member = "serviceAccount:${google_service_account.service.email}"
+  role   = "roles/cloudprofiler.agent"
+}

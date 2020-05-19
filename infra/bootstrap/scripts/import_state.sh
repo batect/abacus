@@ -37,6 +37,7 @@ function main() {
   import google_service_account.service "projects/$GOOGLE_PROJECT/serviceAccounts/service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_service_account_iam_policy.service "projects/$GOOGLE_PROJECT/serviceAccounts/service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_tracing_access "$GOOGLE_PROJECT roles/cloudtrace.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
+  import google_project_iam_member.app_profiler_access "$GOOGLE_PROJECT roles/cloudprofiler.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
 
   # FIXME: Importing a google_container_registry isn't supported (see https://github.com/terraform-providers/terraform-provider-google/issues/6098),
   # so we have to manually add the state to the state file for the time being.
