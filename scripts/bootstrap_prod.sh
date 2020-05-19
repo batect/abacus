@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-rm -f infra/bootstrap/terraform.tfstate
+rm -f infra/bootstrap/terraform-batect-abacus-prod.tfstate
 ./batect --config-vars-file=batect.prod.yml setupBootstrapTerraform
 ./batect --config-vars-file=batect.prod.yml importBootstrapState
 ./batect --config-vars-file=batect.prod.yml planBootstrapTerraform

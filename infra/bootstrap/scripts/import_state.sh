@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-KNOWN_RESOURCES=$([ ! -f terraform.tfstate ] || terraform state list)
+STATE_FILE="terraform-${GOOGLE_PROJECT}.tfstate"
+KNOWN_RESOURCES=$([ ! -f "$STATE_FILE" ] || terraform state list)
 HAD_IMPORT_FAILURES=false
 
 read -r -d '' CONTAINER_REGISTRY_HACK_STATE <<EOF || true
@@ -66,7 +67,7 @@ function manualImport() {
     echo "Already imported state for $1, skipping."
   else
     echo "Manually adding state for $1..."
-    jq ".resources += [$2]" terraform.tfstate | sponge terraform.tfstate || HAD_IMPORT_FAILURES=true
+    jq ".resources += [$2]" "$STATE_FILE" | sponge "$STATE_FILE" || HAD_IMPORT_FAILURES=true
     echo "Done!"
   fi
 }

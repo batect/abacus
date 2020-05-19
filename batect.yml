@@ -32,6 +32,11 @@ containers:
       GOOGLE_ORGANIZATION: <{gcpOrganizationId}
       GOOGLE_REGION: us-central1
       GOOGLE_BILLING_ACCOUNT_ID: <{gcpBillingAccountId}
+      TF_CLI_ARGS_import: -state=terraform-<{gcpProject}.tfstate
+      TF_CLI_ARGS_apply: -state=terraform-<{gcpProject}.tfstate
+      TF_CLI_ARGS_plan: -state=terraform-<{gcpProject}.tfstate
+      TF_CLI_ARGS_destroy: -state=terraform-<{gcpProject}.tfstate
+      TF_CLI_ARGS_state_list: -state=terraform-<{gcpProject}.tfstate
 
   push-env:
     build_directory: .batect/push-env
