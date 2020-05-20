@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go v0.57.0
-	cloud.google.com/go/bigquery v1.6.0
+	cloud.google.com/go/bigquery v1.8.0
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200514210843-966afdc5d38c
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1
 	github.com/go-playground/validator/v10 v10.2.0
