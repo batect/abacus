@@ -98,7 +98,7 @@ tasks:
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo watch -tags unitTests -race server/...
+      command: ginkgo watch -tags unitTests server/...
 
   shell:
     description: Start a shell in the development environment.
