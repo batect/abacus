@@ -38,7 +38,11 @@ func (c GCPPropagator) Extract(ctx context.Context, supplier propagation.HTTPSup
 	headerValue := supplier.Get(headerName)
 	sc := c.extractSpanContext(headerValue)
 
-	return trace.ContextWithRemoteSpanContext(ctx, sc)
+	if sc.IsValid() {
+		return trace.ContextWithRemoteSpanContext(ctx, sc)
+	}
+
+	return ctx
 }
 
 // See https://cloud.google.com/trace/docs/setup#force-trace for a description of the X-Cloud-Trace-Context header,

@@ -36,17 +36,20 @@ var _ = Describe("A GCP tracing propagator", func() {
 	propagator := observability.GCPPropagator{}
 
 	Context("when processing incoming requests", func() {
+		originalSpanContext := trace.SpanContext{TraceID: [16]byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16}, SpanID: [8]byte{1, 2, 3, 4, 5, 6, 7, 8}}
+		originalContext := trace.ContextWithRemoteSpanContext(context.Background(), originalSpanContext)
+
 		Context("given no X-Cloud-Trace-Context header", func() {
 			var spanContext trace.SpanContext
 
 			BeforeEach(func() {
 				headers := http.Header{}
-				ctx := propagator.Extract(context.Background(), headers)
-				spanContext = trace.SpanFromContext(ctx).SpanContext()
+				ctx := propagator.Extract(originalContext, headers)
+				spanContext = trace.RemoteSpanContextFromContext(ctx)
 			})
 
-			It("returns an empty context", func() {
-				Expect(spanContext).To(Equal(trace.EmptySpanContext()))
+			It("does not modify the span context on the context", func() {
+				Expect(spanContext).To(Equal(originalSpanContext))
 			})
 		})
 
@@ -58,7 +61,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 					"X-Cloud-Trace-Context": {"105445aa7843bc8bf206b12000100000/18374686479671623803"},
 				}
 
-				ctx := propagator.Extract(context.Background(), headers)
+				ctx := propagator.Extract(originalContext, headers)
 				spanContext = trace.RemoteSpanContextFromContext(ctx)
 			})
 
@@ -78,7 +81,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 					"X-Cloud-Trace-Context": {"105445aa7843bc8bf206b12000100000/123"},
 				}
 
-				ctx := propagator.Extract(context.Background(), headers)
+				ctx := propagator.Extract(originalContext, headers)
 				spanContext = trace.RemoteSpanContextFromContext(ctx)
 			})
 
@@ -98,7 +101,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 					"X-Cloud-Trace-Context": {"105445aa7843bc8bf206b12000100000/18374686479671623803;o=0"},
 				}
 
-				ctx := propagator.Extract(context.Background(), headers)
+				ctx := propagator.Extract(originalContext, headers)
 				spanContext = trace.RemoteSpanContextFromContext(ctx)
 			})
 
@@ -118,7 +121,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 					"X-Cloud-Trace-Context": {"105445aa7843bc8bf206b12000100000/18374686479671623803;o=1"},
 				}
 
-				ctx := propagator.Extract(context.Background(), headers)
+				ctx := propagator.Extract(originalContext, headers)
 				spanContext = trace.RemoteSpanContextFromContext(ctx)
 			})
 
@@ -155,12 +158,12 @@ var _ = Describe("A GCP tracing propagator", func() {
 						"X-Cloud-Trace-Context": {headerValue},
 					}
 
-					ctx := propagator.Extract(context.Background(), headers)
+					ctx := propagator.Extract(originalContext, headers)
 					spanContext = trace.RemoteSpanContextFromContext(ctx)
 				})
 
-				It("returns an empty context", func() {
-					Expect(spanContext).To(Equal(trace.EmptySpanContext()))
+				It("does not modify the span context on the context", func() {
+					Expect(spanContext).To(Equal(originalSpanContext))
 				})
 			})
 		}
