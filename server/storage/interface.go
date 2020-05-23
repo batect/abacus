@@ -32,7 +32,7 @@ type Session struct {
 	SessionID          string            `json:"sessionId" validate:"required,uuid"`
 	UserID             string            `json:"userId" validate:"required,uuid"`
 	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
-	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required"`
+	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
 	ApplicationID      string            `json:"applicationId" validate:"required"`
 	ApplicationVersion string            `json:"applicationVersion" validate:"required"`
 	Metadata           map[string]string `json:"metadata"`

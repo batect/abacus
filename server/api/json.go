@@ -21,22 +21,27 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"reflect"
 	"strings"
 
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	en_translations "github.com/go-playground/validator/v10/translations/en"
 )
 
 const jsonMimeType = "application/json"
 const contentTypeHeader = "Content-Type"
 
 type jsonLoader struct {
-	validator *validator.Validate
+	validator  *validator.Validate
+	translator ut.Translator
 }
 
-func newJSONLoader() *jsonLoader {
+func newJSONLoader() (*jsonLoader, error) {
 	v := validator.New()
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -48,9 +53,22 @@ func newJSONLoader() *jsonLoader {
 		return name
 	})
 
-	return &jsonLoader{
-		validator: v,
+	en := en.New()
+	uni := ut.New(en, en)
+	trans, found := uni.GetTranslator("en")
+
+	if !found {
+		return nil, errors.New("could not load English translator")
 	}
+
+	if err := en_translations.RegisterDefaultTranslations(v, trans); err != nil {
+		return nil, fmt.Errorf("could not register default translations: %w", err)
+	}
+
+	return &jsonLoader{
+		validator:  v,
+		translator: trans,
+	}, nil
 }
 
 func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target interface{}) bool {
@@ -91,16 +109,17 @@ func (l *jsonLoader) toValidationErrors(errors validator.ValidationErrors) []val
 			key = key[i+1:]
 		}
 
-		value := fmt.Sprintf("%v", e.Value())
+		value := e.Value()
 
 		if e.Tag() == "required" {
-			value = ""
+			value = nil
 		}
 
 		validationErrors = append(validationErrors, validationError{
 			Key:          key,
 			Type:         e.Tag(),
 			InvalidValue: value,
+			Message:      e.Translate(l.translator),
 		})
 	}
 

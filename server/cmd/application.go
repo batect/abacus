@@ -144,7 +144,13 @@ func createIngestHandler() http.Handler {
 		logrus.WithError(err).Fatal("Could not create session store.")
 	}
 
-	return api.NewIngestHandler(store)
+	handler, err := api.NewIngestHandler(store)
+
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not create ingest API handler.")
+	}
+
+	return handler
 }
 
 func runServer(srv *http.Server) {

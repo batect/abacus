@@ -45,7 +45,11 @@ var _ = Describe("Ingest endpoint", func() {
 
 	BeforeEach(func() {
 		store = &mockStore{}
-		handler = api.NewIngestHandler(store)
+
+		var err error
+		handler, err = api.NewIngestHandler(store)
+		Expect(err).ToNot(HaveOccurred())
+
 		resp = httptest.NewRecorder()
 	})
 
@@ -192,12 +196,12 @@ var _ = Describe("Ingest endpoint", func() {
 					Expect(resp.Body).To(MatchJSON(`{
 						"message": "Request body has validation errors",
 						"validationErrors": [
-							{ "key": "sessionId", "type": "required" },
-							{ "key": "userId", "type": "required" },
-							{ "key": "sessionStartTime", "type": "required" },
-							{ "key": "sessionEndTime", "type": "required" },
-							{ "key": "applicationId", "type": "required" },
-							{ "key": "applicationVersion", "type": "required" }
+							{ "key": "sessionId", "type": "required", "message": "sessionId is a required field" },
+							{ "key": "userId", "type": "required", "message": "userId is a required field" },
+							{ "key": "sessionStartTime", "type": "required", "message": "sessionStartTime is a required field" },
+							{ "key": "sessionEndTime", "type": "required", "message": "sessionEndTime is a required field" },
+							{ "key": "applicationId", "type": "required", "message": "applicationId is a required field" },
+							{ "key": "applicationVersion", "type": "required", "message": "applicationVersion is a required field" }
 						]
 					}`))
 				})
@@ -212,39 +216,86 @@ var _ = Describe("Ingest endpoint", func() {
 			})
 
 			Context("when the request body is valid JSON but has an invalid value for one or more fields", func() {
-				BeforeEach(func() {
-					req, _ := createRequest(`{
-						"sessionId": "abc123", 
-						"userId": "def456", 
-						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
-						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-						"applicationId": "my-app", 
-						"applicationVersion": "1.0.0"
-					}`)
+				Context("because one or more fields is in an invalid format", func() {
+					BeforeEach(func() {
+						req, _ := createRequest(`{
+							"sessionId": "abc123", 
+							"userId": "def456", 
+							"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+							"applicationId": "my-app", 
+							"applicationVersion": "1.0.0"
+						}`)
 
-					handler.ServeHTTP(resp, req)
+						handler.ServeHTTP(resp, req)
+					})
+
+					It("returns a HTTP 400 response", func() {
+						Expect(resp.Code).To(Equal(http.StatusBadRequest))
+					})
+
+					It("returns a JSON error payload with details of each of the errors", func() {
+						Expect(resp.Body).To(MatchJSON(`{
+							"message": "Request body has validation errors",
+							"validationErrors": [
+								{ "key": "sessionId", "type": "uuid", "invalidValue": "abc123", "message": "sessionId must be a valid UUID" },
+								{ "key": "userId", "type": "uuid", "invalidValue": "def456", "message": "userId must be a valid UUID" }
+							]
+						}`))
+					})
+
+					It("sets the response Content-Type header", func() {
+						Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+					})
+
+					It("does not store any sessions", func() {
+						Expect(store.StoredSessions).To(BeEmpty())
+					})
 				})
 
-				It("returns a HTTP 400 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusBadRequest))
-				})
+				Context("because the session start time is after the session end time", func() {
+					BeforeEach(func() {
+						req, _ := createRequest(`{
+							"sessionId": "11112222-3333-4444-5555-666677778888", 
+							"userId": "99990000-3333-4444-5555-666677778888", 
+							"sessionStartTime": "2019-01-04T03:04:05.678Z", 
+							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+							"applicationId": "my-app", 
+							"applicationVersion": "1.0.0"
+						}`)
 
-				It("returns a JSON error payload with details of each of the errors", func() {
-					Expect(resp.Body).To(MatchJSON(`{
-						"message": "Request body has validation errors",
-						"validationErrors": [
-							{ "key": "sessionId", "type": "uuid", "invalidValue": "abc123" },
-							{ "key": "userId", "type": "uuid", "invalidValue": "def456" }
-						]
-					}`))
-				})
+						handler.ServeHTTP(resp, req)
+					})
 
-				It("sets the response Content-Type header", func() {
-					Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-				})
+					It("returns a HTTP 400 response", func() {
+						Expect(resp.Code).To(Equal(http.StatusBadRequest))
+					})
 
-				It("does not store any sessions", func() {
-					Expect(store.StoredSessions).To(BeEmpty())
+					It("returns a JSON error payload with details of each of the error", func() {
+						// FIXME: this field name is capitalised until https://github.com/go-playground/validator/pull/601 is merged
+						// Once it is merged, we'll need to override the default translation function
+						// (https://github.com/go-playground/validator/blob/c68441b7f4748b48ad9a0c9a79d346019730e207/translations/en/en.go#L955)
+						// to use the new ParamField() function instead of Param().
+						Expect(resp.Body).To(MatchJSON(`{
+							"message": "Request body has validation errors",
+							"validationErrors": [
+								{
+									"key": "sessionEndTime", 
+									"type": "gtefield", 
+									"invalidValue": "2019-01-02T09:04:05.678Z", 
+									"message": "sessionEndTime must be greater than or equal to SessionStartTime"
+								}
+							]
+						}`))
+					})
+
+					It("sets the response Content-Type header", func() {
+						Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+					})
+
+					It("does not store any sessions", func() {
+						Expect(store.StoredSessions).To(BeEmpty())
+					})
 				})
 			})
 

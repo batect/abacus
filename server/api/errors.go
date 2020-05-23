@@ -31,9 +31,10 @@ type errorResponse struct {
 }
 
 type validationError struct {
-	Key          string `json:"key"`
-	Type         string `json:"type"`
-	InvalidValue string `json:"invalidValue,omitempty"`
+	Key          string      `json:"key"`
+	Type         string      `json:"type"`
+	InvalidValue interface{} `json:"invalidValue,omitempty"`
+	Message      string      `json:"message"`
 }
 
 func badRequest(w http.ResponseWriter, message string) {

@@ -20,6 +20,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/batect/abacus/server/middleware"
@@ -31,11 +32,17 @@ type ingestHandler struct {
 	sessionStore storage.SessionStore
 }
 
-func NewIngestHandler(sessionStore storage.SessionStore) http.Handler {
-	return &ingestHandler{
-		loader:       newJSONLoader(),
-		sessionStore: sessionStore,
+func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
+	loader, err := newJSONLoader()
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create JSON loader: %w", err)
 	}
+
+	return &ingestHandler{
+		loader:       loader,
+		sessionStore: sessionStore,
+	}, nil
 }
 
 func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
