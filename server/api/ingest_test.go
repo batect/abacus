@@ -272,10 +272,6 @@ var _ = Describe("Ingest endpoint", func() {
 					})
 
 					It("returns a JSON error payload with details of each of the error", func() {
-						// FIXME: this field name is capitalised until https://github.com/go-playground/validator/pull/601 is merged
-						// Once it is merged, we'll need to override the default translation function
-						// (https://github.com/go-playground/validator/blob/c68441b7f4748b48ad9a0c9a79d346019730e207/translations/en/en.go#L955)
-						// to use the new ParamField() function instead of Param().
 						Expect(resp.Body).To(MatchJSON(`{
 							"message": "Request body has validation errors",
 							"validationErrors": [
@@ -283,7 +279,7 @@ var _ = Describe("Ingest endpoint", func() {
 									"key": "sessionEndTime", 
 									"type": "gtefield", 
 									"invalidValue": "2019-01-02T09:04:05.678Z", 
-									"message": "sessionEndTime must be greater than or equal to SessionStartTime"
+									"message": "sessionEndTime must be greater than or equal to sessionStartTime"
 								}
 							]
 						}`))

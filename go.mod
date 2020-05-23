@@ -19,3 +19,6 @@ require (
 )
 
 replace github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace => github.com/charleskorn/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200517080550-269311d02eaf
+
+// Required until https://github.com/go-playground/validator/pull/601 and https://github.com/go-playground/validator/pull/614 are merged.
+replace github.com/go-playground/validator/v10 => github.com/charleskorn/validator/v10 v10.3.1-0.20200523101504-a85cc5797d3d
