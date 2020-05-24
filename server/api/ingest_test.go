@@ -409,7 +409,7 @@ func GetLevel(e logrus.Entry) logrus.Level { return e.Level }
 func LogEntryWithError(message string, err error) types.GomegaMatcher {
 	return SatisfyAll(
 		WithTransform(GetMessage, Equal(message)),
-		WithTransform(GetData, Equal(logrus.Fields{logrus.ErrorKey: err})),
+		WithTransform(GetData, HaveKeyWithValue(logrus.ErrorKey, err)),
 		WithTransform(GetLevel, Equal(logrus.ErrorLevel)),
 	)
 }
