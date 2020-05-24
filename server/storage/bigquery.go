@@ -97,7 +97,7 @@ func (b *bigQuerySessionStore) CheckIfExists(ctx context.Context, session *Sessi
 		Count int
 	}
 
-	if err := it.Next(&row); err == iterator.Done {
+	if err := it.Next(&row); errors.Is(err, iterator.Done) {
 		return false, errors.New("query returned no results")
 	} else if err != nil {
 		return false, fmt.Errorf("getting query result failed: %w", err)

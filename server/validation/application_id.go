@@ -58,6 +58,7 @@ func registrationFunc(tag string, translation string) validator.RegisterTranslat
 		if err := ut.Add(tag, translation, false); err != nil {
 			return err
 		}
+
 		return nil
 	}
 }

@@ -21,6 +21,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -158,7 +159,7 @@ func runServer(srv *http.Server) {
 
 	logrus.WithField("address", srv.Addr).Info("Server starting.")
 
-	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+	if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
 		logrus.WithError(err).Fatal("Could not start HTTP server.")
 	}
 

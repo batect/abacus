@@ -18,14 +18,14 @@
 // limitations under the License and the Condition.
 // +build unitTests
 
-package middleware
+package middleware_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 
+	"github.com/batect/abacus/server/middleware"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/sirupsen/logrus"
@@ -43,7 +43,7 @@ var _ = Describe("Logging middleware", func() {
 
 	Context("when the request starts", func() {
 		BeforeEach(func() {
-			m := LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
+			m := middleware.LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
 			m.ServeHTTP(nil, createTestRequest())
 		})
 
@@ -66,10 +66,10 @@ var _ = Describe("Logging middleware", func() {
 
 	Context("when the request logs a message", func() {
 		BeforeEach(func() {
-			m := LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+			m := middleware.LoggerMiddleware(logger, "my-project", http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 				hook.Reset()
 
-				logger := LoggerFromContext(r.Context())
+				logger := middleware.LoggerFromContext(r.Context())
 				logger.Info("Inside request.")
 			}))
 
@@ -89,5 +89,5 @@ var _ = Describe("Logging middleware", func() {
 func createTestRequest() *http.Request {
 	req := httptest.NewRequest("PUT", "/blah", strings.NewReader("test"))
 
-	return req.WithContext(context.WithValue(req.Context(), traceIDKey, "abc-123-def"))
+	return req.WithContext(middleware.ContextWithTraceID(req.Context(), "abc-123-def"))
 }

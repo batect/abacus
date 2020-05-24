@@ -13,6 +13,7 @@ linters-settings:
 
 linters:
   enable:
+    - asciicheck
     - bodyclose
     - deadcode
     - depguard
@@ -26,11 +27,14 @@ linters:
     - goconst
     - gocritic
     - gocyclo
+    - godot
     # Disabled: - godox
+    - goerr113
     - gofmt
     - goimports
     - golint
     # Disabled: - gomnd
+    # Disabled: - gomodguard
     - goprintffuncname
     - gosec
     - gosimple
@@ -41,15 +45,25 @@ linters:
     - maligned
     - misspell
     - nakedret
+    - nestif
+    - nolintlint
     - prealloc
     - rowserrcheck
     - scopelint
     - staticcheck
     - structcheck
     - stylecheck
+    - testpackage
     - typecheck
     - unconvert
     - unparam
     - unused
     - varcheck
     - whitespace
+    - wsl
+
+issues:
+  exclude-rules:
+    # Allow use of errors.New("...") - match on text until specific code is added as per https://github.com/Djarvur/go-err113/issues/10
+    - text: "do not define dynamic errors, use wrapped static errors instead"
+      linters: [goerr113]
