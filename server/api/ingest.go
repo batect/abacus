@@ -26,6 +26,8 @@ import (
 
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/storage"
+	"go.opentelemetry.io/otel/api/kv"
+	"go.opentelemetry.io/otel/api/trace"
 )
 
 type ingestHandler struct {
@@ -35,6 +37,9 @@ type ingestHandler struct {
 }
 
 type timeSource func() time.Time
+
+const sessionId kv.Key = kv.Key("sessionId")
+const applicationId kv.Key = kv.Key("applicationId")
 
 func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
 	return NewIngestHandlerWithTimeSource(sessionStore, time.Now)
@@ -70,6 +75,12 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		WithField("applicationId", session.ApplicationID)
 
 	ctx := middleware.ContextWithLogger(req.Context(), log)
+
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(
+		sessionId.String(session.SessionID),
+		applicationId.String(session.ApplicationID),
+	)
 
 	session.IngestionTime = h.timeSource()
 
