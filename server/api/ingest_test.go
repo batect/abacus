@@ -75,7 +75,7 @@ var _ = Describe("Ingest endpoint", func() {
 
 	Context("when invoked with a HTTP method other than PUT", func() {
 		BeforeEach(func() {
-			req := httptest.NewRequest("POST", "/ingest", nil)
+			req, _ := testutils.RequestWithTestLogger(httptest.NewRequest("POST", "/ingest", nil))
 			handler.ServeHTTP(resp, req)
 		})
 
@@ -103,7 +103,7 @@ var _ = Describe("Ingest endpoint", func() {
 	Context("when invoked with PUT", func() {
 		Context("when invoked with no Content-Type header", func() {
 			BeforeEach(func() {
-				req := httptest.NewRequest("PUT", "/ingest", nil)
+				req, _ := testutils.RequestWithTestLogger(httptest.NewRequest("PUT", "/ingest", nil))
 				handler.ServeHTTP(resp, req)
 			})
 
@@ -112,7 +112,7 @@ var _ = Describe("Ingest endpoint", func() {
 
 		Context("when invoked with an invalid Content-Type header", func() {
 			BeforeEach(func() {
-				req := httptest.NewRequest("PUT", "/ingest", nil)
+				req, _ := testutils.RequestWithTestLogger(httptest.NewRequest("PUT", "/ingest", nil))
 				req.Header.Set("Content-Type", "text/plain")
 				handler.ServeHTTP(resp, req)
 			})
@@ -322,7 +322,7 @@ var _ = Describe("Ingest endpoint", func() {
 						})
 
 						It("logs the error", func() {
-							Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithError("Storing session failed.", store.ErrorToReturnFromStore)))
+							Expect(loggingHook.Entries).To(ContainElement(LogEntryWithError("Storing session failed.", store.ErrorToReturnFromStore)))
 						})
 					})
 				})
@@ -369,7 +369,7 @@ var _ = Describe("Ingest endpoint", func() {
 					})
 
 					It("logs the error", func() {
-						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithError("Checking if session already exists failed.", store.ErrorToReturnFromCheckIfExists)))
+						Expect(loggingHook.Entries).To(ContainElement(LogEntryWithError("Checking if session already exists failed.", store.ErrorToReturnFromCheckIfExists)))
 					})
 
 					It("does not store the session", func() {

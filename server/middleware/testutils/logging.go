@@ -29,5 +29,5 @@ import (
 func RequestWithTestLogger(req *http.Request) (*http.Request, *test.Hook) {
 	logger, hook := test.NewNullLogger()
 
-	return req.WithContext(middleware.NewContextWithLogger(req.Context(), logger)), hook
+	return req.WithContext(middleware.ContextWithLogger(req.Context(), logger)), hook
 }

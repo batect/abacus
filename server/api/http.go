@@ -23,7 +23,7 @@ import "net/http"
 
 func requireMethod(w http.ResponseWriter, req *http.Request, method string) bool {
 	if req.Method != method {
-		methodNotAllowed(w, method)
+		methodNotAllowed(req.Context(), w, method)
 		return false
 	}
 

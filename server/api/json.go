@@ -79,7 +79,7 @@ func newJSONLoader() (*jsonLoader, error) {
 
 func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target interface{}) bool {
 	if req.Header.Get(contentTypeHeader) != jsonMimeType {
-		badRequest(w, "Content-Type must be 'application/json'")
+		badRequest(req.Context(), w, "Content-Type must be 'application/json'")
 		return false
 	}
 
@@ -87,17 +87,17 @@ func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target i
 	decoder.DisallowUnknownFields()
 
 	if err := decoder.Decode(&target); err != nil {
-		badRequest(w, fmt.Sprintf("Request body is not valid: %s", strings.TrimPrefix(err.Error(), "json: ")))
+		badRequest(req.Context(), w, fmt.Sprintf("Request body is not valid: %s", strings.TrimPrefix(err.Error(), "json: ")))
 		return false
 	}
 
 	if err := l.validator.Struct(target); err != nil {
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
-			invalidBody(w, l.toValidationErrors(validationErrors))
+			invalidBody(req.Context(), w, l.toValidationErrors(validationErrors))
 			return false
 		}
 
-		badRequest(w, fmt.Sprintf("Request body is not valid: %s", err))
+		badRequest(req.Context(), w, fmt.Sprintf("Request body is not valid: %s", err))
 
 		return false
 	}

@@ -65,31 +65,39 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	log := middleware.LoggerFromContext(req.Context()).
+		WithField("sessionId", session.SessionID).
+		WithField("applicationId", session.ApplicationID)
+
+	ctx := middleware.ContextWithLogger(req.Context(), log)
+
 	session.IngestionTime = h.timeSource()
 
-	if alreadyExists, err := h.sessionStore.CheckIfExists(req.Context(), &session); err != nil {
-		middleware.LoggerFromContext(req.Context()).WithError(err).Error("Checking if session already exists failed.")
+	if alreadyExists, err := h.sessionStore.CheckIfExists(ctx, &session); err != nil {
+		log.WithError(err).Error("Checking if session already exists failed.")
 
 		resp := errorResponse{Message: "Could not process request"}
-		resp.Write(w, http.StatusServiceUnavailable)
+		resp.Write(ctx, w, http.StatusServiceUnavailable)
 
 		return
 	} else if alreadyExists {
-		middleware.LoggerFromContext(req.Context()).WithField("sessionId", session.SessionID).Warn("Session already exists, not storing.")
+		log.Warn("Session already exists, not storing.")
 
 		w.Header().Set("Content-Length", "0")
 		w.WriteHeader(http.StatusNotModified)
 		return
 	}
 
-	if err := h.sessionStore.Store(req.Context(), &session); err != nil {
-		middleware.LoggerFromContext(req.Context()).WithError(err).Error("Storing session failed.")
+	if err := h.sessionStore.Store(ctx, &session); err != nil {
+		log.WithError(err).Error("Storing session failed.")
 
 		resp := errorResponse{Message: "Could not process request"}
-		resp.Write(w, http.StatusServiceUnavailable)
+		resp.Write(ctx, w, http.StatusServiceUnavailable)
 
 		return
 	}
+
+	log.Info("Stored session successfully.")
 
 	w.Header().Set("Content-Length", "0")
 	w.WriteHeader(http.StatusCreated)

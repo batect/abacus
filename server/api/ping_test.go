@@ -25,6 +25,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/batect/abacus/server/api"
+	"github.com/batect/abacus/server/middleware/testutils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -38,7 +39,7 @@ var _ = Describe("Ping endpoint", func() {
 
 	Context("when invoked with a HTTP method other than GET", func() {
 		BeforeEach(func() {
-			req := httptest.NewRequest("POST", "/ping", nil)
+			req, _ := testutils.RequestWithTestLogger(httptest.NewRequest("POST", "/ping", nil))
 			api.Ping(resp, req)
 		})
 
@@ -61,7 +62,7 @@ var _ = Describe("Ping endpoint", func() {
 
 	Context("when invoked with a HTTP GET", func() {
 		BeforeEach(func() {
-			req := httptest.NewRequest("GET", "/ping", nil)
+			req, _ := testutils.RequestWithTestLogger(httptest.NewRequest("GET", "/ping", nil))
 			api.Ping(resp, req)
 		})
 

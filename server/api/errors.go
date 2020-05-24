@@ -20,9 +20,12 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/batect/abacus/server/middleware"
 )
 
 type errorResponse struct {
@@ -37,24 +40,27 @@ type validationError struct {
 	Message      string      `json:"message"`
 }
 
-func badRequest(w http.ResponseWriter, message string) {
+func badRequest(ctx context.Context, w http.ResponseWriter, message string) {
 	resp := errorResponse{Message: message}
-	resp.Write(w, http.StatusBadRequest)
+	resp.Write(ctx, w, http.StatusBadRequest)
 }
 
-func invalidBody(w http.ResponseWriter, errors []validationError) {
+func invalidBody(ctx context.Context, w http.ResponseWriter, errors []validationError) {
 	resp := errorResponse{Message: "Request body has validation errors", ValidationErrors: errors}
-	resp.Write(w, http.StatusBadRequest)
+	resp.Write(ctx, w, http.StatusBadRequest)
 }
 
-func methodNotAllowed(w http.ResponseWriter, allowedMethod string) {
-	resp := errorResponse{Message: fmt.Sprintf("This endpoint only supports %v requests", allowedMethod)}
-
+func methodNotAllowed(ctx context.Context, w http.ResponseWriter, allowedMethod string) {
 	w.Header().Set("Allow", allowedMethod)
-	resp.Write(w, http.StatusMethodNotAllowed)
+
+	resp := errorResponse{Message: fmt.Sprintf("This endpoint only supports %v requests", allowedMethod)}
+	resp.Write(ctx, w, http.StatusMethodNotAllowed)
 }
 
-func (e *errorResponse) Write(w http.ResponseWriter, status int) {
+func (e *errorResponse) Write(ctx context.Context, w http.ResponseWriter, status int) {
+	log := middleware.LoggerFromContext(ctx)
+	log.WithField("errorResponse", e).WithField("statusCode", status).Warn("Returning error to client.")
+
 	w.Header().Set(contentTypeHeader, jsonMimeType)
 	w.WriteHeader(status)
 
