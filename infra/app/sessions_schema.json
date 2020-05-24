@@ -30,7 +30,7 @@
     "mode": "REQUIRED"
   },
   {
-    "name": "metadata",
+    "name": "attributes",
     "type": "RECORD",
     "mode": "REPEATED",
     "fields": [

@@ -90,10 +90,10 @@ func (b *bigQuerySessionStore) Store(ctx context.Context, session *Session) erro
 var _ bigquery.ValueSaver = &Session{}
 
 func (s *Session) Save() (map[string]bigquery.Value, string, error) {
-	metadata := make([]map[string]bigquery.Value, 0, len(s.Metadata))
+	attributes := make([]map[string]bigquery.Value, 0, len(s.Attributes))
 
-	for k, v := range s.Metadata {
-		metadata = append(metadata, map[string]bigquery.Value{
+	for k, v := range s.Attributes {
+		attributes = append(attributes, map[string]bigquery.Value{
 			"key":   k,
 			"value": v,
 		})
@@ -106,7 +106,7 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 		"sessionEndTime":     s.SessionEndTime.UTC(),
 		"applicationId":      s.ApplicationID,
 		"applicationVersion": s.ApplicationVersion,
-		"metadata":           metadata,
+		"attributes":         attributes,
 	}
 
 	return row, s.SessionID, nil

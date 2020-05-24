@@ -35,5 +35,5 @@ type Session struct {
 	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
 	ApplicationID      string            `json:"applicationId" validate:"required"`
 	ApplicationVersion string            `json:"applicationVersion" validate:"required"`
-	Metadata           map[string]string `json:"metadata"`
+	Attributes         map[string]string `json:"metadata"`
 }

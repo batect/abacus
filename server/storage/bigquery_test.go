@@ -39,7 +39,7 @@ var _ = Describe("A session", func() {
 				SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
 				ApplicationID:      "my-app",
 				ApplicationVersion: "1.0.0",
-				Metadata: map[string]string{
+				Attributes: map[string]string{
 					"operatingSystem": "Mac",
 					"dockerVersion":   "19.3.5",
 				},
@@ -55,23 +55,34 @@ var _ = Describe("A session", func() {
 				Expect(insertID).To(Equal(session.SessionID))
 			})
 
-			It("converts the session to the format expected by BigQuery", func() {
-				Expect(row).To(Equal(map[string]bigquery.Value{
+			It("converts the required session data to the format expected by BigQuery", func() {
+				rowWithoutAttributes := map[string]bigquery.Value{}
+
+				for k, v := range row {
+					if k != "attributes" {
+						rowWithoutAttributes[k] = v
+					}
+				}
+
+				Expect(rowWithoutAttributes).To(Equal(map[string]bigquery.Value{
 					"sessionId":          session.SessionID,
 					"userId":             session.UserID,
 					"sessionStartTime":   session.SessionStartTime,
 					"sessionEndTime":     session.SessionEndTime,
 					"applicationId":      session.ApplicationID,
 					"applicationVersion": session.ApplicationVersion,
-					"metadata": []map[string]bigquery.Value{
-						{
-							"key":   "operatingSystem",
-							"value": "Mac",
-						},
-						{
-							"key":   "dockerVersion",
-							"value": "19.3.5",
-						},
+				}))
+			})
+
+			It("converts the attributes to the format expected by BigQuery, without necessarily preserving their order", func() {
+				Expect(row["attributes"]).To(ConsistOf([]map[string]bigquery.Value{
+					{
+						"key":   "dockerVersion",
+						"value": "19.3.5",
+					},
+					{
+						"key":   "operatingSystem",
+						"value": "Mac",
 					},
 				}))
 			})
@@ -88,7 +99,7 @@ var _ = Describe("A session", func() {
 				SessionEndTime:     time.Date(2019, 1, 2, 9, 14, 5, 678000000, time.FixedZone("Not-UTC", 600)),
 				ApplicationID:      "my-app",
 				ApplicationVersion: "1.0.0",
-				Metadata: map[string]string{
+				Attributes: map[string]string{
 					"operatingSystem": "Mac",
 					"dockerVersion":   "19.3.5",
 				},
