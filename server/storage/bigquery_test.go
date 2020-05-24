@@ -70,7 +70,7 @@ var _ = Describe("A session", func() {
 					"userId":             session.UserID,
 					"sessionStartTime":   session.SessionStartTime,
 					"sessionEndTime":     session.SessionEndTime,
-					"ingestionTime":	  session.IngestionTime,
+					"ingestionTime":      session.IngestionTime,
 					"applicationId":      session.ApplicationID,
 					"applicationVersion": session.ApplicationVersion,
 				}))

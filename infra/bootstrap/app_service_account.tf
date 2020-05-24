@@ -46,10 +46,16 @@ resource "google_project_iam_custom_role" "app_bigquery_access" {
   permissions = [
     "bigquery.datasets.get",
     "bigquery.tables.get",
+    "bigquery.tables.getData",
     "bigquery.tables.updateData",
   ]
 
   depends_on = [google_project_service.iam]
+}
+
+resource "google_project_iam_member" "app_bigquery_job_access" {
+  member = "serviceAccount:${google_service_account.service.email}"
+  role   = "roles/bigquery.jobUser"
 }
 
 resource "google_project_iam_member" "app_tracing_access" {

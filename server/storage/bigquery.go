@@ -21,6 +21,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -28,12 +29,16 @@ import (
 	"cloud.google.com/go/bigquery"
 	"github.com/batect/abacus/server/observability"
 	"go.opentelemetry.io/otel/plugin/othttp"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	htransport "google.golang.org/api/transport/http"
 )
 
 type bigQuerySessionStore struct {
-	inserter *bigquery.Inserter
+	datasetID string
+	tableID   string
+	client    *bigquery.Client
+	inserter  *bigquery.Inserter
 }
 
 func NewBigQuerySessionStore(projectID string, datasetID string, tableID string, credsFile string) (SessionStore, error) {
@@ -42,7 +47,7 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 	// We have to do this because specifying option.WithHTTPClient in the call to bigquery.NewClient overrides all other options -
 	// so instead we create the transport ourselves and then wrap that in the OpenTelemetry transport.
 	// Would be good to investigate just setting http.DefaultTransport to be the OpenTelemetry transport so all HTTP calls get telemetry.
-	scopesOption := option.WithScopes("https://www.googleapis.com/auth/bigquery.insertdata")
+	scopesOption := option.WithScopes("https://www.googleapis.com/auth/bigquery")
 	credsOption := option.WithCredentialsFile(credsFile)
 	trans, err := htransport.NewTransport(ctx, http.DefaultTransport, scopesOption, credsOption)
 
@@ -68,7 +73,37 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 	table := dataset.Table(tableID)
 	inserter := table.Inserter()
 
-	return &bigQuerySessionStore{inserter}, nil
+	return &bigQuerySessionStore{datasetID, tableID, client, inserter}, nil
+}
+
+func (b *bigQuerySessionStore) CheckIfExists(ctx context.Context, session *Session) (bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	q := b.client.Query(`SELECT COUNT(*) AS Count FROM abacus.sessions WHERE sessionId = @sessionId AND sessionStartTime = @sessionStartTime;`)
+
+	q.Parameters = []bigquery.QueryParameter{
+		{Name: "sessionId", Value: session.SessionID},
+		{Name: "sessionStartTime", Value: session.SessionStartTime.UTC()},
+	}
+
+	it, err := q.Read(ctx)
+
+	if err != nil {
+		return false, fmt.Errorf("executing query failed: %w", err)
+	}
+
+	var row struct {
+		Count int
+	}
+
+	if err := it.Next(&row); err == iterator.Done {
+		return false, errors.New("query returned no results")
+	} else if err != nil {
+		return false, fmt.Errorf("getting query result failed: %w", err)
+	}
+
+	return row.Count > 0, nil
 }
 
 func (b *bigQuerySessionStore) Store(ctx context.Context, session *Session) error {
@@ -104,7 +139,7 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 		"userId":             s.UserID,
 		"sessionStartTime":   s.SessionStartTime.UTC(),
 		"sessionEndTime":     s.SessionEndTime.UTC(),
-		"ingestionTime":	  s.IngestionTime.UTC(),
+		"ingestionTime":      s.IngestionTime.UTC(),
 		"applicationId":      s.ApplicationID,
 		"applicationVersion": s.ApplicationVersion,
 		"attributes":         attributes,

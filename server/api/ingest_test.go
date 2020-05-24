@@ -55,7 +55,7 @@ var _ = Describe("Ingest endpoint", func() {
 		resp = httptest.NewRecorder()
 	})
 
-	ItReturnsABadRequestResponseWithBody:= func(expectedBody string) {
+	ItReturnsABadRequestResponseWithBody := func(expectedBody string) {
 		It("returns a HTTP 400 response", func() {
 			Expect(resp.Code).To(Equal(http.StatusBadRequest))
 		})
@@ -120,7 +120,7 @@ var _ = Describe("Ingest endpoint", func() {
 			ItReturnsABadRequestResponseWithBody(`{"message":"Content-Type must be 'application/json'"}`)
 		})
 
-		Context("when invoked with a the required Content-Type header", func() {
+		Context("when invoked with the required Content-Type header", func() {
 			createRequest := func(body string) (*http.Request, *test.Hook) {
 				req := httptest.NewRequest("PUT", "/ingest", strings.NewReader(body))
 				req.Header.Set("Content-Type", "application/json")
@@ -250,35 +250,87 @@ var _ = Describe("Ingest endpoint", func() {
 					}`)
 				})
 
-				Context("when storing the session succeeds", func() {
+				Context("when the session does not already exist", func() {
 					BeforeEach(func() {
+						store.SessionExists = false
+					})
+
+					Context("when storing the session succeeds", func() {
+						BeforeEach(func() {
+							handler.ServeHTTP(resp, req)
+						})
+
+						It("returns a HTTP 201 response", func() {
+							Expect(resp.Code).To(Equal(http.StatusCreated))
+						})
+
+						It("returns an empty body", func() {
+							Expect(resp.Result().ContentLength).To(BeZero())
+						})
+
+						It("stores the session", func() {
+							Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+								SessionID:          "11112222-3333-4444-5555-666677778888",
+								UserID:             "99990000-3333-4444-5555-666677778888",
+								SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+								SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+								IngestionTime:      currentTime,
+								ApplicationID:      "my-app",
+								ApplicationVersion: "1.0.0",
+							}))
+						})
+					})
+
+					Context("when storing the session fails", func() {
+						BeforeEach(func() {
+							store.ErrorToReturnFromStore = errors.New("could not store session")
+							handler.ServeHTTP(resp, req)
+						})
+
+						It("returns a HTTP 503 response", func() {
+							Expect(resp.Code).To(Equal(http.StatusServiceUnavailable))
+						})
+
+						It("returns a JSON error payload", func() {
+							Expect(resp.Body).To(MatchJSON(`{"message": "Could not process request"}`))
+						})
+
+						It("sets the response Content-Type header", func() {
+							Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+						})
+
+						It("logs the error", func() {
+							Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithError("Storing session failed.", store.ErrorToReturnFromStore)))
+						})
+					})
+				})
+
+				Context("when the session already exists", func() {
+					BeforeEach(func() {
+						store.SessionExists = true
 						handler.ServeHTTP(resp, req)
 					})
 
-					It("returns a HTTP 201 response", func() {
-						Expect(resp.Code).To(Equal(http.StatusCreated))
+					It("returns a HTTP 304 response", func() {
+						Expect(resp.Code).To(Equal(http.StatusNotModified))
 					})
 
 					It("returns an empty body", func() {
 						Expect(resp.Result().ContentLength).To(BeZero())
 					})
 
-					It("stores the session", func() {
-						Expect(store.StoredSessions).To(ConsistOf(storage.Session{
-							SessionID:          "11112222-3333-4444-5555-666677778888",
-							UserID:             "99990000-3333-4444-5555-666677778888",
-							SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
-							SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
-							IngestionTime: 		currentTime,
-							ApplicationID:      "my-app",
-							ApplicationVersion: "1.0.0",
-						}))
+					It("does not store the session", func() {
+						Expect(store.StoredSessions).To(BeEmpty())
+					})
+
+					It("logs a warning", func() {
+						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithWarning("Session already exists, not storing.")))
 					})
 				})
 
-				Context("when storing the session fails", func() {
+				Context("when checking if the session already exists fails", func() {
 					BeforeEach(func() {
-						store.ErrorToReturn = errors.New("could not store session")
+						store.ErrorToReturnFromCheckIfExists = errors.New("could not check if session exists")
 						handler.ServeHTTP(resp, req)
 					})
 
@@ -295,7 +347,11 @@ var _ = Describe("Ingest endpoint", func() {
 					})
 
 					It("logs the error", func() {
-						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithError("Storing session failed", store.ErrorToReturn)))
+						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithError("Checking if session already exists failed.", store.ErrorToReturnFromCheckIfExists)))
+					})
+
+					It("does not store the session", func() {
+						Expect(store.StoredSessions).To(BeEmpty())
 					})
 				})
 			})
@@ -304,13 +360,15 @@ var _ = Describe("Ingest endpoint", func() {
 })
 
 type mockStore struct {
-	ErrorToReturn  error
-	StoredSessions []storage.Session
+	ErrorToReturnFromStore         error
+	StoredSessions                 []storage.Session
+	ErrorToReturnFromCheckIfExists error
+	SessionExists                  bool
 }
 
 func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
-	if m.ErrorToReturn != nil {
-		return m.ErrorToReturn
+	if m.ErrorToReturnFromStore != nil {
+		return m.ErrorToReturnFromStore
 	}
 
 	m.StoredSessions = append(m.StoredSessions, *session)
@@ -318,14 +376,25 @@ func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
 	return nil
 }
 
-func LogEntryWithError(message string, err error) types.GomegaMatcher {
-	GetMessage := func(e logrus.Entry) string { return e.Message }
-	GetData := func(e logrus.Entry) logrus.Fields { return e.Data }
-	GetLevel := func(e logrus.Entry) logrus.Level { return e.Level }
+func (m *mockStore) CheckIfExists(_ context.Context, session *storage.Session) (bool, error) {
+	return m.SessionExists, m.ErrorToReturnFromCheckIfExists
+}
 
+func GetMessage(e logrus.Entry) string     { return e.Message }
+func GetData(e logrus.Entry) logrus.Fields { return e.Data }
+func GetLevel(e logrus.Entry) logrus.Level { return e.Level }
+
+func LogEntryWithError(message string, err error) types.GomegaMatcher {
 	return SatisfyAll(
 		WithTransform(GetMessage, Equal(message)),
 		WithTransform(GetData, Equal(logrus.Fields{logrus.ErrorKey: err})),
 		WithTransform(GetLevel, Equal(logrus.ErrorLevel)),
+	)
+}
+
+func LogEntryWithWarning(message string) types.GomegaMatcher {
+	return SatisfyAll(
+		WithTransform(GetMessage, Equal(message)),
+		WithTransform(GetLevel, Equal(logrus.WarnLevel)),
 	)
 }

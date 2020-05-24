@@ -26,6 +26,7 @@ import (
 
 type SessionStore interface {
 	Store(ctx context.Context, session *Session) error
+	CheckIfExists(ctx context.Context, session *Session) (bool, error)
 }
 
 type Session struct {
@@ -33,7 +34,7 @@ type Session struct {
 	UserID             string            `json:"userId" validate:"required,uuid"`
 	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
 	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
-	IngestionTime	   time.Time		 `json:"-"`
+	IngestionTime      time.Time         `json:"-"`
 	ApplicationID      string            `json:"applicationId" validate:"required"`
 	ApplicationVersion string            `json:"applicationVersion" validate:"required"`
 	Attributes         map[string]string `json:"metadata"`

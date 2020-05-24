@@ -37,6 +37,7 @@ function main() {
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
   import google_service_account.service "projects/$GOOGLE_PROJECT/serviceAccounts/service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_service_account_iam_policy.service "projects/$GOOGLE_PROJECT/serviceAccounts/service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
+  import google_project_iam_member.app_bigquery_job_access "$GOOGLE_PROJECT roles/bigquery.jobUser serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_tracing_access "$GOOGLE_PROJECT roles/cloudtrace.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_profiler_access "$GOOGLE_PROJECT roles/cloudprofiler.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
 
