@@ -104,6 +104,7 @@ func (s *Session) Save() (map[string]bigquery.Value, string, error) {
 		"userId":             s.UserID,
 		"sessionStartTime":   s.SessionStartTime.UTC(),
 		"sessionEndTime":     s.SessionEndTime.UTC(),
+		"ingestionTime":	  s.IngestionTime.UTC(),
 		"applicationId":      s.ApplicationID,
 		"applicationVersion": s.ApplicationVersion,
 		"attributes":         attributes,

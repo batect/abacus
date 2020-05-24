@@ -37,6 +37,7 @@ var _ = Describe("A session", func() {
 				UserID:             "99990000-3333-4444-5555-666677778888",
 				SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
 				SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+				IngestionTime:      time.Date(2019, 1, 2, 20, 4, 5, 678000000, time.UTC),
 				ApplicationID:      "my-app",
 				ApplicationVersion: "1.0.0",
 				Attributes: map[string]string{
@@ -69,6 +70,7 @@ var _ = Describe("A session", func() {
 					"userId":             session.UserID,
 					"sessionStartTime":   session.SessionStartTime,
 					"sessionEndTime":     session.SessionEndTime,
+					"ingestionTime":	  session.IngestionTime,
 					"applicationId":      session.ApplicationID,
 					"applicationVersion": session.ApplicationVersion,
 				}))
@@ -97,6 +99,7 @@ var _ = Describe("A session", func() {
 				UserID:             "99990000-3333-4444-5555-666677778888",
 				SessionStartTime:   time.Date(2019, 1, 2, 3, 14, 5, 678000000, time.FixedZone("Not-UTC", 600)),
 				SessionEndTime:     time.Date(2019, 1, 2, 9, 14, 5, 678000000, time.FixedZone("Not-UTC", 600)),
+				IngestionTime:      time.Date(2019, 1, 2, 20, 14, 5, 678000000, time.FixedZone("Not-UTC", 600)),
 				ApplicationID:      "my-app",
 				ApplicationVersion: "1.0.0",
 				Attributes: map[string]string{
@@ -117,6 +120,10 @@ var _ = Describe("A session", func() {
 
 			It("converts the end time to UTC before saving it", func() {
 				Expect(row["sessionEndTime"]).To(Equal(time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC)))
+			})
+
+			It("converts the ingestion time to UTC before saving it", func() {
+				Expect(row["ingestionTime"]).To(Equal(time.Date(2019, 1, 2, 20, 4, 5, 678000000, time.UTC)))
 			})
 		})
 	})

@@ -22,6 +22,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/storage"
@@ -30,9 +31,16 @@ import (
 type ingestHandler struct {
 	loader       *jsonLoader
 	sessionStore storage.SessionStore
+	timeSource   timeSource
 }
 
+type timeSource func() time.Time
+
 func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
+	return NewIngestHandlerWithTimeSource(sessionStore, time.Now)
+}
+
+func NewIngestHandlerWithTimeSource(sessionStore storage.SessionStore, timeSource timeSource) (http.Handler, error) {
 	loader, err := newJSONLoader()
 
 	if err != nil {
@@ -42,6 +50,7 @@ func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
 	return &ingestHandler{
 		loader:       loader,
 		sessionStore: sessionStore,
+		timeSource:   timeSource,
 	}, nil
 }
 
@@ -55,6 +64,8 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if ok := h.loader.LoadJSON(w, req, &session); !ok {
 		return
 	}
+
+	session.IngestionTime = h.timeSource()
 
 	if err := h.sessionStore.Store(req.Context(), &session); err != nil {
 		middleware.LoggerFromContext(req.Context()).WithError(err).Error("Storing session failed")

@@ -42,16 +42,36 @@ var _ = Describe("Ingest endpoint", func() {
 	var handler http.Handler
 	var resp *httptest.ResponseRecorder
 	var store *mockStore
+	currentTime := time.Date(2020, 5, 24, 10, 12, 14, 123, time.UTC)
 
 	BeforeEach(func() {
 		store = &mockStore{}
+		timeSource := func() time.Time { return currentTime }
 
 		var err error
-		handler, err = api.NewIngestHandler(store)
+		handler, err = api.NewIngestHandlerWithTimeSource(store, timeSource)
 		Expect(err).ToNot(HaveOccurred())
 
 		resp = httptest.NewRecorder()
 	})
+
+	ItReturnsABadRequestResponseWithBody:= func(expectedBody string) {
+		It("returns a HTTP 400 response", func() {
+			Expect(resp.Code).To(Equal(http.StatusBadRequest))
+		})
+
+		It("returns a JSON error payload", func() {
+			Expect(resp.Body).To(MatchJSON(expectedBody))
+		})
+
+		It("sets the response Content-Type header", func() {
+			Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
+		})
+
+		It("does not store any sessions", func() {
+			Expect(store.StoredSessions).To(BeEmpty())
+		})
+	}
 
 	Context("when invoked with a HTTP method other than PUT", func() {
 		BeforeEach(func() {
@@ -87,21 +107,7 @@ var _ = Describe("Ingest endpoint", func() {
 				handler.ServeHTTP(resp, req)
 			})
 
-			It("returns a HTTP 400 response", func() {
-				Expect(resp.Code).To(Equal(http.StatusBadRequest))
-			})
-
-			It("returns a JSON error payload", func() {
-				Expect(resp.Body).To(MatchJSON(`{"message":"Content-Type must be 'application/json'"}`))
-			})
-
-			It("sets the response Content-Type header", func() {
-				Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-			})
-
-			It("does not store any sessions", func() {
-				Expect(store.StoredSessions).To(BeEmpty())
-			})
+			ItReturnsABadRequestResponseWithBody(`{"message":"Content-Type must be 'application/json'"}`)
 		})
 
 		Context("when invoked with an invalid Content-Type header", func() {
@@ -111,21 +117,7 @@ var _ = Describe("Ingest endpoint", func() {
 				handler.ServeHTTP(resp, req)
 			})
 
-			It("returns a HTTP 400 response", func() {
-				Expect(resp.Code).To(Equal(http.StatusBadRequest))
-			})
-
-			It("returns a JSON error payload", func() {
-				Expect(resp.Body).To(MatchJSON(`{"message":"Content-Type must be 'application/json'"}`))
-			})
-
-			It("sets the response Content-Type header", func() {
-				Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-			})
-
-			It("does not store any sessions", func() {
-				Expect(store.StoredSessions).To(BeEmpty())
-			})
+			ItReturnsABadRequestResponseWithBody(`{"message":"Content-Type must be 'application/json'"}`)
 		})
 
 		Context("when invoked with a the required Content-Type header", func() {
@@ -142,21 +134,7 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a HTTP 400 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusBadRequest))
-				})
-
-				It("returns a JSON error payload", func() {
-					Expect(resp.Body).To(MatchJSON(`{"message": "Request body is not valid: EOF"}`))
-				})
-
-				It("sets the response Content-Type header", func() {
-					Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-				})
-
-				It("does not store any sessions", func() {
-					Expect(store.StoredSessions).To(BeEmpty())
-				})
+				ItReturnsABadRequestResponseWithBody(`{"message":"Request body is not valid: EOF"}`)
 			})
 
 			Context("when the request body is not valid JSON", func() {
@@ -165,21 +143,7 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a HTTP 400 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusBadRequest))
-				})
-
-				It("returns a JSON error payload", func() {
-					Expect(resp.Body).To(MatchJSON(`{"message": "Request body is not valid: unexpected EOF"}`))
-				})
-
-				It("sets the response Content-Type header", func() {
-					Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-				})
-
-				It("does not store any sessions", func() {
-					Expect(store.StoredSessions).To(BeEmpty())
-				})
+				ItReturnsABadRequestResponseWithBody(`{"message":"Request body is not valid: unexpected EOF"}`)
 			})
 
 			Context("when the request body is valid JSON but is empty", func() {
@@ -188,31 +152,17 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a HTTP 400 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusBadRequest))
-				})
-
-				It("returns a JSON error payload", func() {
-					Expect(resp.Body).To(MatchJSON(`{
-						"message": "Request body has validation errors",
-						"validationErrors": [
-							{ "key": "sessionId", "type": "required", "message": "sessionId is a required field" },
-							{ "key": "userId", "type": "required", "message": "userId is a required field" },
-							{ "key": "sessionStartTime", "type": "required", "message": "sessionStartTime is a required field" },
-							{ "key": "sessionEndTime", "type": "required", "message": "sessionEndTime is a required field" },
-							{ "key": "applicationId", "type": "required", "message": "applicationId is a required field" },
-							{ "key": "applicationVersion", "type": "required", "message": "applicationVersion is a required field" }
-						]
-					}`))
-				})
-
-				It("sets the response Content-Type header", func() {
-					Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-				})
-
-				It("does not store any sessions", func() {
-					Expect(store.StoredSessions).To(BeEmpty())
-				})
+				ItReturnsABadRequestResponseWithBody(`{
+					"message": "Request body has validation errors",
+					"validationErrors": [
+						{ "key": "sessionId", "type": "required", "message": "sessionId is a required field" },
+						{ "key": "userId", "type": "required", "message": "userId is a required field" },
+						{ "key": "sessionStartTime", "type": "required", "message": "sessionStartTime is a required field" },
+						{ "key": "sessionEndTime", "type": "required", "message": "sessionEndTime is a required field" },
+						{ "key": "applicationId", "type": "required", "message": "applicationId is a required field" },
+						{ "key": "applicationVersion", "type": "required", "message": "applicationVersion is a required field" }
+					]
+				}`)
 			})
 
 			Context("when the request body is valid JSON but has an invalid value for one or more fields", func() {
@@ -230,27 +180,13 @@ var _ = Describe("Ingest endpoint", func() {
 						handler.ServeHTTP(resp, req)
 					})
 
-					It("returns a HTTP 400 response", func() {
-						Expect(resp.Code).To(Equal(http.StatusBadRequest))
-					})
-
-					It("returns a JSON error payload with details of each of the errors", func() {
-						Expect(resp.Body).To(MatchJSON(`{
-							"message": "Request body has validation errors",
-							"validationErrors": [
-								{ "key": "sessionId", "type": "uuid", "invalidValue": "abc123", "message": "sessionId must be a valid UUID" },
-								{ "key": "userId", "type": "uuid", "invalidValue": "def456", "message": "userId must be a valid UUID" }
-							]
-						}`))
-					})
-
-					It("sets the response Content-Type header", func() {
-						Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-					})
-
-					It("does not store any sessions", func() {
-						Expect(store.StoredSessions).To(BeEmpty())
-					})
+					ItReturnsABadRequestResponseWithBody(`{
+						"message": "Request body has validation errors",
+						"validationErrors": [
+							{ "key": "sessionId", "type": "uuid", "invalidValue": "abc123", "message": "sessionId must be a valid UUID" },
+							{ "key": "userId", "type": "uuid", "invalidValue": "def456", "message": "userId must be a valid UUID" }
+						]
+					}`)
 				})
 
 				Context("because the session start time is after the session end time", func() {
@@ -267,31 +203,17 @@ var _ = Describe("Ingest endpoint", func() {
 						handler.ServeHTTP(resp, req)
 					})
 
-					It("returns a HTTP 400 response", func() {
-						Expect(resp.Code).To(Equal(http.StatusBadRequest))
-					})
-
-					It("returns a JSON error payload with details of each of the error", func() {
-						Expect(resp.Body).To(MatchJSON(`{
-							"message": "Request body has validation errors",
-							"validationErrors": [
-								{
-									"key": "sessionEndTime", 
-									"type": "gtefield", 
-									"invalidValue": "2019-01-02T09:04:05.678Z", 
-									"message": "sessionEndTime must be greater than or equal to sessionStartTime"
-								}
-							]
-						}`))
-					})
-
-					It("sets the response Content-Type header", func() {
-						Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-					})
-
-					It("does not store any sessions", func() {
-						Expect(store.StoredSessions).To(BeEmpty())
-					})
+					ItReturnsABadRequestResponseWithBody(`{
+						"message": "Request body has validation errors",
+						"validationErrors": [
+							{
+								"key": "sessionEndTime", 
+								"type": "gtefield", 
+								"invalidValue": "2019-01-02T09:04:05.678Z", 
+								"message": "sessionEndTime must be greater than or equal to sessionStartTime"
+							}
+						]
+					}`)
 				})
 			})
 
@@ -301,21 +223,16 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a HTTP 400 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusBadRequest))
+				ItReturnsABadRequestResponseWithBody(`{"message":"Request body is not valid: unknown field \"blah\""}`)
+			})
+
+			Context("when the request body is valid JSON but contains a value for the ingestion time", func() {
+				BeforeEach(func() {
+					req, _ := createRequest(`{"sessionId": "11112222-3333-4444-5555-666677778888", "IngestionTime": "2020-05-24T00:00:00.000Z"}`)
+					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a JSON error payload", func() {
-					Expect(resp.Body).To(MatchJSON(`{"message": "Request body is not valid: unknown field \"blah\""}`))
-				})
-
-				It("sets the response Content-Type header", func() {
-					Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-				})
-
-				It("does not store any sessions", func() {
-					Expect(store.StoredSessions).To(BeEmpty())
-				})
+				ItReturnsABadRequestResponseWithBody(`{"message":"Request body is not valid: unknown field \"IngestionTime\""}`)
 			})
 
 			Context("when the request body is valid", func() {
@@ -352,6 +269,7 @@ var _ = Describe("Ingest endpoint", func() {
 							UserID:             "99990000-3333-4444-5555-666677778888",
 							SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
 							SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+							IngestionTime: 		currentTime,
 							ApplicationID:      "my-app",
 							ApplicationVersion: "1.0.0",
 						}))

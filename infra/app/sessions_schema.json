@@ -15,6 +15,11 @@
     "mode": "REQUIRED"
   },
   {
+    "name": "ingestionTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
     "name": "userId",
     "type": "STRING",
     "mode": "REQUIRED"
