@@ -38,8 +38,8 @@ type ingestHandler struct {
 
 type timeSource func() time.Time
 
-const sessionId kv.Key = kv.Key("sessionId")
-const applicationId kv.Key = kv.Key("applicationId")
+const sessionID kv.Key = kv.Key("sessionId")
+const applicationID kv.Key = kv.Key("applicationId")
 
 func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
 	return NewIngestHandlerWithTimeSource(sessionStore, time.Now)
@@ -78,8 +78,8 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
-		sessionId.String(session.SessionID),
-		applicationId.String(session.ApplicationID),
+		sessionID.String(session.SessionID),
+		applicationID.String(session.ApplicationID),
 	)
 
 	session.IngestionTime = h.timeSource()
