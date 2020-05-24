@@ -27,6 +27,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/batect/abacus/server/validation"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -43,6 +44,7 @@ type jsonLoader struct {
 
 func newJSONLoader() (*jsonLoader, error) {
 	v := validator.New()
+
 	v.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 
@@ -63,6 +65,10 @@ func newJSONLoader() (*jsonLoader, error) {
 
 	if err := en_translations.RegisterDefaultTranslations(v, trans); err != nil {
 		return nil, fmt.Errorf("could not register default translations: %w", err)
+	}
+
+	if err := validation.RegisterApplicationIDValidation(v, trans); err != nil {
+		return nil, fmt.Errorf("could not register application ID validator: %w", err)
 	}
 
 	return &jsonLoader{

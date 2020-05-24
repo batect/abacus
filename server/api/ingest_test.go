@@ -173,7 +173,7 @@ var _ = Describe("Ingest endpoint", func() {
 							"userId": "def456", 
 							"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-							"applicationId": "my-app", 
+							"applicationId": "test-app", 
 							"applicationVersion": "1.0.0"
 						}`)
 
@@ -196,7 +196,7 @@ var _ = Describe("Ingest endpoint", func() {
 							"userId": "99990000-3333-4444-5555-666677778888", 
 							"sessionStartTime": "2019-01-04T03:04:05.678Z", 
 							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-							"applicationId": "my-app", 
+							"applicationId": "test-app", 
 							"applicationVersion": "1.0.0"
 						}`)
 
@@ -212,6 +212,28 @@ var _ = Describe("Ingest endpoint", func() {
 								"invalidValue": "2019-01-02T09:04:05.678Z", 
 								"message": "sessionEndTime must be greater than or equal to sessionStartTime"
 							}
+						]
+					}`)
+				})
+
+				Context("because the application ID is invalid", func() {
+					BeforeEach(func() {
+						req, _ := createRequest(`{
+							"sessionId": "11112222-3333-4444-5555-666677778888", 
+							"userId": "99990000-3333-4444-5555-666677778888", 
+							"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+							"applicationId": "my-app", 
+							"applicationVersion": "1.0.0"
+						}`)
+
+						handler.ServeHTTP(resp, req)
+					})
+
+					ItReturnsABadRequestResponseWithBody(`{
+						"message": "Request body has validation errors",
+						"validationErrors": [
+							{ "key": "applicationId", "type": "applicationId", "invalidValue": "my-app", "message": "applicationId must be a valid application ID" }
 						]
 					}`)
 				})
@@ -245,7 +267,7 @@ var _ = Describe("Ingest endpoint", func() {
 						"userId": "99990000-3333-4444-5555-666677778888", 
 						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-						"applicationId": "my-app", 
+						"applicationId": "test-app", 
 						"applicationVersion": "1.0.0"
 					}`)
 				})
@@ -275,7 +297,7 @@ var _ = Describe("Ingest endpoint", func() {
 								SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
 								SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
 								IngestionTime:      currentTime,
-								ApplicationID:      "my-app",
+								ApplicationID:      "test-app",
 								ApplicationVersion: "1.0.0",
 							}))
 						})
