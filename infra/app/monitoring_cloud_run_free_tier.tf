@@ -26,6 +26,11 @@ locals {
   cloud_run_free_tier_cpu_seconds_per_second                 = local.cloud_run_free_tier_cpu_seconds_per_month / local.seconds_in_month
   cloud_run_free_tier_alert_threshold_cpu_seconds_per_second = local.cloud_run_free_tier_cpu_seconds_per_second * local.alert_threshold_decimal
 
+  cloud_run_free_tier_memory_gb_seconds_per_month                    = 360000
+  cloud_run_free_tier_memory_gb_seconds_per_second                   = local.cloud_run_free_tier_memory_gb_seconds_per_month / local.seconds_in_month
+  cloud_run_free_tier_alert_threshold_memory_gb_seconds_per_second   = local.cloud_run_free_tier_memory_gb_seconds_per_second * local.alert_threshold_decimal
+  cloud_run_free_tier_alert_threshold_memory_byte_seconds_per_second = local.cloud_run_free_tier_alert_threshold_memory_gb_seconds_per_second * local.bytes_in_gb
+
   days_in_month    = 31
   seconds_in_day   = 24 * 60 * 60
   seconds_in_month = local.days_in_month * local.seconds_in_day
@@ -79,14 +84,36 @@ resource "google_monitoring_alert_policy" "cloud_run_free_tier" {
     }
   }
 
+  conditions {
+    display_name = "Memory"
+
+    condition_threshold {
+      filter          = "metric.type=\"run.googleapis.com/container/memory/allocation_time\" resource.type=\"cloud_run_revision\""
+      comparison      = "COMPARISON_GT"
+      duration        = "1800s"
+      threshold_value = local.cloud_run_free_tier_alert_threshold_memory_byte_seconds_per_second
+
+      trigger {
+        count = 1
+      }
+
+      aggregations {
+        alignment_period     = "300s"
+        cross_series_reducer = "REDUCE_SUM"
+        per_series_aligner   = "ALIGN_RATE"
+      }
+    }
+  }
+
   documentation {
     content = <<-EOT
     Free tier limits:
 
     * ${local.cloud_run_free_tier_requests_per_month} requests per calendar month (${format("%.6f", local.cloud_run_free_tier_requests_per_second)} requests per second)
     * ${local.cloud_run_free_tier_cpu_seconds_per_month} vCPU seconds per month (${format("%.6f", local.cloud_run_free_tier_cpu_seconds_per_second)} vCPU seconds per second)
+    * ${local.cloud_run_free_tier_memory_gb_seconds_per_month} GB seconds per month (${format("%.6f", local.cloud_run_free_tier_memory_gb_seconds_per_second)} GB seconds per second)
 
-    This alert fires when the request rate or vCPU consumption exceeds ${local.alert_threshold_percentage}% of the request rate / vCPU consumption required to exceed the free tier threshold.
+    This alert fires when the request rate, vCPU or memory consumption exceeds ${local.alert_threshold_percentage}% of the request rate, vCPU or memory consumption required to exceed the free tier threshold.
 
     Documentation: https://cloud.google.com/run/pricing
     EOT
