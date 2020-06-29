@@ -14,7 +14,7 @@ require (
 	github.com/onsi/ginkgo v1.13.0
 	github.com/onsi/gomega v1.10.1
 	github.com/sirupsen/logrus v1.6.0
-	go.opentelemetry.io/otel v0.6.0
+	go.opentelemetry.io/otel v0.7.0
 	google.golang.org/api v0.28.0
 )
 
