@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"cloud.google.com/go/profiler"
 	"github.com/batect/abacus/server/api"
@@ -97,7 +98,9 @@ func initTracing() {
 		logrus.WithError(err).Fatal("Could not create trace exporter.")
 	}
 
-	traceProvider, err := sdktrace.NewProvider(sdktrace.WithSyncer(exporter))
+	traceProvider, err := sdktrace.NewProvider(
+		sdktrace.WithBatcher(exporter, sdktrace.WithBatchTimeout(time.Microsecond), sdktrace.WithMaxExportBatchSize(1)),
+	)
 
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not create trace provider.")
