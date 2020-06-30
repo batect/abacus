@@ -28,7 +28,7 @@ import (
 
 	"cloud.google.com/go/bigquery"
 	"github.com/batect/abacus/server/observability"
-	"go.opentelemetry.io/otel/plugin/othttp"
+	"go.opentelemetry.io/otel/instrumentation/othttp"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	htransport "google.golang.org/api/transport/http"

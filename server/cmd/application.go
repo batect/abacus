@@ -36,7 +36,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel/api/propagation"
 	"go.opentelemetry.io/otel/api/trace"
-	"go.opentelemetry.io/otel/plugin/othttp"
+	"go.opentelemetry.io/otel/instrumentation/othttp"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"go.opentelemetry.io/otel/api/global"
