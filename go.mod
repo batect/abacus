@@ -3,7 +3,7 @@ module github.com/batect/abacus
 go 1.13
 
 require (
-	cloud.google.com/go v0.60.0
+	cloud.google.com/go v0.61.0
 	cloud.google.com/go/bigquery v1.9.0
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.1.1-0.20200529171817-088b5045d282
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1
