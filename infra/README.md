@@ -1,7 +1,8 @@
 This directory contains two groups of Terraform files:
 
 * `bootstrap`: contains Terraform files to create GCP resources required for deployment pipeline to run (eg. creating the Terraform
-  state bucket or granting the pipeline user the necessary permissions). Should only need to be run once, requires GCP admin privileges.
+  state bucket or granting the pipeline user the necessary permissions) or which are too sensitive to allow the GitHub Actions pipeline
+  access to perform (eg. IAM role creation). Should only need to be run once, requires GCP admin privileges.
   In the pipeline, a check is performed to ensure that the infrastructure has not drifted from the desired state.
 
   Configure authentication with `./batect gcpBootstrapLogin` and setup Terraform with `./batect setupBootstrapTerraform`.
