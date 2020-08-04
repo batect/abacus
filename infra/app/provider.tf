@@ -23,6 +23,6 @@ provider "google" {
 }
 
 provider "cloudflare" {
-  version   = "2.5.1"
+  version   = "2.9.0"
   api_token = trimspace(file("${path.module}/../../.creds/cloudflare_key"))
 }
