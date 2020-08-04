@@ -21,7 +21,7 @@ locals {
   log_severities_to_ignore         = ["NOTICE", "INFO", "DEBUG", "WARNING"]
   log_severities_for_log_query     = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
   log_severities_for_metrics_query = join(" ", formatlist("metric.label.severity!=\"%s\"", local.log_severities_to_ignore))
-  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${google_project_service.cloud_run.project}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${google_project_service.cloud_run.project}/logs/run.googleapis.com%2Frequests\""
+  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${data.google_project.project.name}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${data.google_project.project.name}/logs/run.googleapis.com%2Frequests\""
 }
 
 resource "google_monitoring_alert_policy" "log_errors" {
@@ -56,9 +56,9 @@ resource "google_monitoring_alert_policy" "log_errors" {
     content = <<-EOT
     **This alert has fired because there was one or more `$${metric.label.severity}` level log messages written to the `$${metric.label.log}` log by `$${resource.label.revision_name}`.**
 
-    [Quick link to logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.log_errors_query), "+", "%20")}?project=${google_project_service.cloud_run.project})
+    [Quick link to logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.log_errors_query), "+", "%20")}?project=${data.google_project.project.name})
 
-    Log query details: view logs with the following query at https://console.cloud.google.com/logs/query?project=${google_project_service.cloud_run.project}:
+    Log query details: view logs with the following query at https://console.cloud.google.com/logs/query?project=${data.google_project.project.name}:
 
     ```
     ${local.log_errors_query}

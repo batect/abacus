@@ -17,13 +17,8 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_project_service" "cloud_run" {
-  service            = "run.googleapis.com"
-  disable_on_destroy = false
-}
-
 locals {
-  service_service_account_email = "service@${google_project_service.cloud_run.project}.iam.gserviceaccount.com"
+  service_service_account_email = "service@${data.google_project.project.name}.iam.gserviceaccount.com"
   service_name                  = "abacus"
 
   # Maximum length of revision name is 63 characters
@@ -43,7 +38,7 @@ resource "google_cloud_run_service" "service" {
 
         env {
           name  = "GOOGLE_PROJECT"
-          value = google_project_service.cloud_run.project
+          value = data.google_project.project.name
         }
 
         env {
@@ -67,10 +62,6 @@ resource "google_cloud_run_service" "service" {
     percent         = 100
     latest_revision = true
   }
-
-  depends_on = [
-    google_project_service.cloud_run
-  ]
 }
 
 data "google_iam_policy" "allow_invoke_by_all" {

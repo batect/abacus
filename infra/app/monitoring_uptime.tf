@@ -31,7 +31,7 @@ resource "google_monitoring_uptime_check_config" "api_ping" {
   monitored_resource {
     type = "uptime_url"
     labels = {
-      project_id = google_project_service.cloud_run.project
+      project_id = data.google_project.project.name
       host       = google_cloud_run_domain_mapping.service.name
     }
   }

@@ -17,39 +17,5 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_bigquery_dataset" "default" {
-  dataset_id = "abacus"
-  location   = "US"
-
-  access {
-    role          = "OWNER"
-    special_group = "projectOwners"
-  }
-
-  access {
-    role          = "projects/${data.google_project.project.name}/roles/app_bigquery_access"
-    user_by_email = local.service_service_account_email
-  }
-}
-
-resource "google_bigquery_table" "sessions" {
-  dataset_id = google_bigquery_dataset.default.dataset_id
-  table_id   = "sessions"
-
-  time_partitioning {
-    type                     = "DAY"
-    field                    = "sessionStartTime"
-    require_partition_filter = true
-  }
-
-  schema = file("${path.module}/sessions_schema.json")
-
-  clustering = [
-    "applicationId",
-    "applicationVersion",
-  ]
-
-  lifecycle {
-    prevent_destroy = true
-  }
+data "google_project" "project" {
 }

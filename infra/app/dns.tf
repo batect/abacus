@@ -30,7 +30,7 @@ resource "google_cloud_run_domain_mapping" "service" {
   name     = local.api_dns_fqdn
 
   metadata {
-    namespace = google_project_service.cloud_run.project
+    namespace = data.google_project.project.name
   }
 
   spec {
