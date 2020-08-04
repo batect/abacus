@@ -18,7 +18,8 @@
 // limitations under the License and the Condition.
 
 resource "google_project_service" "cloud_run" {
-  service = "run.googleapis.com"
+  service            = "run.googleapis.com"
+  disable_on_destroy = false
 }
 
 locals {

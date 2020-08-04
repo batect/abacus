@@ -18,15 +18,18 @@
 // limitations under the License and the Condition.
 
 resource "google_project_service" "monitoring" {
-  service = "monitoring.googleapis.com"
+  service            = "monitoring.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "profiling" {
-  service = "cloudprofiler.googleapis.com"
+  service            = "cloudprofiler.googleapis.com"
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "stackdriver" {
-  service = "stackdriver.googleapis.com"
+  service            = "stackdriver.googleapis.com"
+  disable_on_destroy = false
 }
 
 // If creating this fails with "Error creating NotificationChannel: googleapi: Error 400: 'projects/XXX' is not a workspace.",
