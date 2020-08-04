@@ -355,7 +355,7 @@ config_variables:
     description: GCP organisation to use.
 
   cloudSdkVersion:
-    default: 287.0.0
+    default: 303.0.0
 
   rootDomain:
     description: Root domain name registered with Cloudflare.
