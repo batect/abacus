@@ -20,6 +20,8 @@ linters:
     - dogsled
     - dupl
     - errcheck
+    - exhaustive
+    - exportloopref
     - funlen
     - gochecknoglobals
     - gochecknoinits
@@ -31,6 +33,8 @@ linters:
     # Disabled: - godox
     - goerr113
     - gofmt
+    # Disabled: - gofumpt (would be good to turn this on if the "No empty lines before a simple error check" rule could be disabled
+    - goheader
     - goimports
     - golint
     # Disabled: - gomnd
@@ -46,10 +50,12 @@ linters:
     - misspell
     - nakedret
     - nestif
+    - noctx
     - nolintlint
     - prealloc
     - rowserrcheck
     - scopelint
+    - sqlclosecheck
     - staticcheck
     - structcheck
     - stylecheck
