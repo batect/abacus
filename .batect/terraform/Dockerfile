@@ -6,7 +6,7 @@ RUN apk add --no-cache \
     bash \
     ca-certificates \
     curl \
-    python2
+    python3
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
 ARG CLOUD_SDK_VERSION
