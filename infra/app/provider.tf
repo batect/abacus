@@ -18,7 +18,7 @@
 // limitations under the License and the Condition.
 
 provider "google" {
-  version     = "3.15.0"
+  version     = "3.32.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_${var.cloud_sdk_config_name}_infra.json"
 }
 
