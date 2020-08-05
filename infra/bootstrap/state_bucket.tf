@@ -23,10 +23,14 @@ resource "google_storage_bucket" "state" {
   location           = var.region
   storage_class      = "REGIONAL"
   bucket_policy_only = true
+
+  versioning {
+    enabled = true
+  }
 }
 
 resource "google_storage_bucket_iam_binding" "state_write_access" {
   bucket  = google_storage_bucket.state.name
-  role    = "roles/storage.legacyBucketWriter"
+  role    = "roles/storage.objectAdmin"
   members = ["group:${local.deployers_group_name}"]
 }

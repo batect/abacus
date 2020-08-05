@@ -43,7 +43,7 @@ function main() {
   import google_project_iam_custom_role.app_bigquery_access "projects/$GOOGLE_PROJECT/roles/app_bigquery_access"
   import google_project_iam_binding.deployer "$GOOGLE_PROJECT projects/$GOOGLE_PROJECT/roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/$GOOGLE_PROJECT-terraform-state"
-  import google_storage_bucket_iam_binding.state_write_access "b/$GOOGLE_PROJECT-terraform-state roles/storage.legacyBucketWriter"
+  import google_storage_bucket_iam_binding.state_write_access "b/$GOOGLE_PROJECT-terraform-state roles/storage.objectAdmin"
   import google_project_service.artifact_registry "$GOOGLE_PROJECT/artifactregistry.googleapis.com"
   import google_project_service.cloud_run "$GOOGLE_PROJECT/run.googleapis.com"
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
