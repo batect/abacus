@@ -17,12 +17,6 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-resource "google_container_registry" "registry" {
-  // Nothing to configure.
-
-  depends_on = [google_project_service.container_registry]
-}
-
 resource "google_artifact_registry_repository" "images" {
   provider = google-beta
 

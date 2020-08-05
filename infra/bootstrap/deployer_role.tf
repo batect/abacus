@@ -38,6 +38,10 @@ resource "google_project_iam_custom_role" "deployer" {
     "serviceusage.services.get",
     "serviceusage.services.list",
 
+    // Required to check Artifact Registry repositories' state
+    "artifactregistry.repositories.getIamPolicy",
+    "artifactregistry.repositories.get",
+
     // Required to manage Cloud Run
     "run.services.create",
     "run.services.delete",
@@ -50,7 +54,7 @@ resource "google_project_iam_custom_role" "deployer" {
     "run.domainmappings.delete",
     "run.domainmappings.get",
 
-    // Required to manage Container Registry storage bucket, and maintain state in Cloud Storage
+    // Required to maintain state in Cloud Storage
     "storage.buckets.getIamPolicy",
     "storage.buckets.get",
     "storage.buckets.list",
