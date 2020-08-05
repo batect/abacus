@@ -68,6 +68,12 @@ containers:
       GOOGLE_APPLICATION_CREDENTIALS: /creds/gcp.json
       DATASET_ID: abacus
       SESSIONS_TABLE_ID: sessions
+    dependencies:
+      - cloud-storage
+
+  cloud-storage:
+    build_directory: .batect/fake-gcs-server
+    command: /bin/fake-gcs-server -scheme=http -port=80 -backend=memory -public-host=cloud-storage
 
 tasks:
   setup:
@@ -100,6 +106,17 @@ tasks:
     run:
       container: build-env
       command: ginkgo watch -tags unitTests server/...
+
+  integrationTest:
+    description: Run the integration tests.
+    group: Test tasks
+    dependencies:
+      - cloud-storage
+    run:
+      container: build-env
+      command: ginkgo -tags integrationTests server/...
+      environment:
+        STORAGE_EMULATOR_HOST: cloud-storage
 
   shell:
     description: Start a shell in the development environment.

@@ -250,11 +250,39 @@ var _ = Describe("Ingest endpoint", func() {
 
 			Context("when the request body is valid JSON but contains a value for the ingestion time", func() {
 				BeforeEach(func() {
-					req, _ := createRequest(`{"sessionId": "11112222-3333-4444-5555-666677778888", "IngestionTime": "2020-05-24T00:00:00.000Z"}`)
+					body := `{
+						"sessionId": "11112222-3333-4444-5555-666677778888", 
+						"userId": "99990000-3333-4444-5555-666677778888", 
+						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+						"applicationId": "test-app", 
+						"applicationVersion": "1.0.0",
+						"ingestionTime": "2019-01-03T00:00:00.000Z"
+					}`
+
+					req, _ := createRequest(body)
 					handler.ServeHTTP(resp, req)
 				})
 
-				ItReturnsABadRequestResponseWithBody(`{"message":"Request body is not valid: unknown field \"IngestionTime\""}`)
+				It("stores the session with the current ingestion time, not the ingestion time in the request", func() {
+					Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+						SessionID:          "11112222-3333-4444-5555-666677778888",
+						UserID:             "99990000-3333-4444-5555-666677778888",
+						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+						SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+						IngestionTime:      currentTime,
+						ApplicationID:      "test-app",
+						ApplicationVersion: "1.0.0",
+					}))
+				})
+
+				It("returns a HTTP 201 response", func() {
+					Expect(resp.Code).To(Equal(http.StatusCreated))
+				})
+
+				It("returns an empty body", func() {
+					Expect(resp.Result().ContentLength).To(BeZero())
+				})
 			})
 
 			Context("when the request body is valid", func() {

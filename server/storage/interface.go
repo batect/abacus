@@ -21,6 +21,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -34,8 +35,10 @@ type Session struct {
 	UserID             string            `json:"userId" validate:"required,uuid"`
 	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
 	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
-	IngestionTime      time.Time         `json:"-"`
+	IngestionTime      time.Time         `json:"ingestionTime"`
 	ApplicationID      string            `json:"applicationId" validate:"required,applicationId"`
 	ApplicationVersion string            `json:"applicationVersion" validate:"required"`
-	Attributes         map[string]string `json:"metadata"`
+	Attributes         map[string]string `json:"attributes"`
 }
+
+var AlreadyExistsError error = errors.New("the session already exists")
