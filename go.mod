@@ -15,7 +15,7 @@ require (
 	github.com/onsi/gomega v1.10.1
 	github.com/sirupsen/logrus v1.6.0
 	go.opentelemetry.io/otel v0.9.0
-	google.golang.org/api v0.29.0
+	google.golang.org/api v0.30.0
 )
 
 // Required until https://github.com/go-playground/validator/pull/601 and https://github.com/go-playground/validator/pull/614 are merged.
