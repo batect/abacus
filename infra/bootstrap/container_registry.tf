@@ -22,3 +22,22 @@ resource "google_container_registry" "registry" {
 
   depends_on = [google_project_service.container_registry]
 }
+
+resource "google_artifact_registry_repository" "images" {
+  provider = google-beta
+
+  location      = var.region
+  repository_id = "images"
+  format        = "DOCKER"
+
+  depends_on = [google_project_service.artifact_registry]
+}
+
+resource "google_artifact_registry_repository_iam_binding" "images_writer" {
+  provider = google-beta
+
+  location   = google_artifact_registry_repository.images.location
+  repository = google_artifact_registry_repository.images.name
+  role       = "roles/artifactregistry.writer"
+  members    = ["group:${local.deployers_group_name}"]
+}

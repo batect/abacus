@@ -10,7 +10,9 @@ if [ ! -f "$VARS_FILE" ]; then
   exit 1
 fi
 
-rm -f "infra/bootstrap/terraform-batect-abacus-$ENV.tfstate"
+PROJECT_NAME=$(yq r "$VARS_FILE" gcpProject)
+
+rm -f "infra/bootstrap/terraform-$PROJECT_NAME.tfstate"
 ./batect --config-vars-file="$VARS_FILE" setupBootstrapTerraform
 ./batect --config-vars-file="$VARS_FILE" importBootstrapState
 ./batect --config-vars-file="$VARS_FILE" planBootstrapTerraform

@@ -33,6 +33,7 @@ function main() {
   import google_project_iam_custom_role.app_bigquery_access "projects/$GOOGLE_PROJECT/roles/app_bigquery_access"
   import google_project_iam_binding.deployer "$GOOGLE_PROJECT projects/$GOOGLE_PROJECT/roles/deployer"
   import google_storage_bucket.state "$GOOGLE_PROJECT/$GOOGLE_PROJECT-terraform-state"
+  import google_project_service.artifact_registry "$GOOGLE_PROJECT/artifactregistry.googleapis.com"
   import google_project_service.cloud_run "$GOOGLE_PROJECT/run.googleapis.com"
   import google_project_service.container_registry "$GOOGLE_PROJECT/containerregistry.googleapis.com"
   import google_project_service.iam "$GOOGLE_PROJECT/iam.googleapis.com"
@@ -44,6 +45,8 @@ function main() {
   import google_project_iam_member.app_bigquery_job_access "$GOOGLE_PROJECT roles/bigquery.jobUser serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_tracing_access "$GOOGLE_PROJECT roles/cloudtrace.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_profiler_access "$GOOGLE_PROJECT roles/cloudprofiler.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
+  importUsingBetaProvider google_artifact_registry_repository.images "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/images"
+  importUsingBetaProvider google_artifact_registry_repository_iam_binding.images_writer "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/images roles/artifactregistry.writer"
 
   # FIXME: Importing a google_container_registry isn't supported (see https://github.com/terraform-providers/terraform-provider-google/issues/6098),
   # so we have to manually add the state to the state file for the time being.
@@ -66,8 +69,15 @@ function import() {
   fi
 }
 
-function manualImport() {
+function importUsingBetaProvider() {
+  if haveStateFor "$1"; then
+    echo "Already imported state for $1, skipping."
+  else
+    terraform import -input=false -backup=- -provider=google-beta "$1" "$2" || HAD_IMPORT_FAILURES=true
+  fi
+}
 
+function manualImport() {
   if haveStateFor "$1"; then
     echo "Already imported state for $1, skipping."
   else

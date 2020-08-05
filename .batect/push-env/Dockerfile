@@ -17,8 +17,8 @@ RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cl
 
 ENV PATH /google-cloud-sdk/bin:$PATH
 
+RUN gcloud components install beta
+
 RUN apk add --no-cache \
     docker \
     git
-
-RUN gcloud components install docker-credential-gcr

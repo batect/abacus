@@ -6,12 +6,13 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 APP_IMAGE_DIR="$SCRIPT_DIR/../../.batect/app"
 
 HASH=$(git rev-parse HEAD)
-IMAGE_NAME="gcr.io/$GOOGLE_PROJECT/abacus"
+IMAGE_HOST="$GOOGLE_REGION-docker.pkg.dev"
+IMAGE_NAME="$IMAGE_HOST/$GOOGLE_PROJECT/images/service"
 TAG="$IMAGE_NAME:$HASH"
 
 echo
 echo "Configuring Docker credential helper for GCP..."
-docker-credential-gcr configure-docker
+gcloud beta auth configure-docker --quiet "$IMAGE_HOST"
 
 echo
 echo "Building image..."
