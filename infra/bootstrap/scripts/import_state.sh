@@ -27,6 +27,37 @@ read -r -d '' CONTAINER_REGISTRY_HACK_STATE <<EOF || true
 }
 EOF
 
+read -r -d '' ARTIFACT_REGISTRY_HACK_STATE <<EOF || true
+{
+  "mode": "managed",
+  "type": "google_artifact_registry_repository",
+  "name": "images",
+  "provider": "provider.google-beta",
+  "instances": [
+    {
+      "schema_version": 0,
+      "attributes": {
+        "description": "",
+        "format": "DOCKER",
+        "id": "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/",
+        "kms_key_name": "",
+        "labels": {},
+        "location": "$GOOGLE_REGION",
+        "name": "images",
+        "project": "$GOOGLE_PROJECT",
+        "repository_id": "images",
+        "timeouts": {
+          "create": null,
+          "delete": null,
+          "update": null
+        },
+      },
+      "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoyNDAwMDAwMDAwMDAsImRlbGV0ZSI6MjQwMDAwMDAwMDAwLCJ1cGRhdGUiOjI0MDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMCJ9"
+    }
+  ]
+}
+EOF
+
 function main() {
   import google_project.project "$GOOGLE_PROJECT"
   import google_project_iam_custom_role.deployer "projects/$GOOGLE_PROJECT/roles/deployer"
@@ -45,8 +76,12 @@ function main() {
   import google_project_iam_member.app_bigquery_job_access "$GOOGLE_PROJECT roles/bigquery.jobUser serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_tracing_access "$GOOGLE_PROJECT roles/cloudtrace.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
   import google_project_iam_member.app_profiler_access "$GOOGLE_PROJECT roles/cloudprofiler.agent serviceAccount:service@$GOOGLE_PROJECT.iam.gserviceaccount.com"
-  importUsingBetaProvider google_artifact_registry_repository.images "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/images"
   importUsingBetaProvider google_artifact_registry_repository_iam_binding.images_writer "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/images roles/artifactregistry.writer"
+
+  # FIXME: workaround for https://github.com/terraform-providers/terraform-provider-google/issues/6936
+  # When the issue is fixed, used this command:
+  # importUsingBetaProvider google_artifact_registry_repository.images "projects/$GOOGLE_PROJECT/locations/$GOOGLE_REGION/repositories/images"
+  manualImport google_artifact_registry_repository.images "$ARTIFACT_REGISTRY_HACK_STATE"
 
   # FIXME: Importing a google_container_registry isn't supported (see https://github.com/terraform-providers/terraform-provider-google/issues/6098),
   # so we have to manually add the state to the state file for the time being.
