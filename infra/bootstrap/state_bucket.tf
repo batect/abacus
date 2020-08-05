@@ -24,3 +24,9 @@ resource "google_storage_bucket" "state" {
   storage_class      = "REGIONAL"
   bucket_policy_only = true
 }
+
+resource "google_storage_bucket_iam_binding" "state_write_access" {
+  bucket  = google_storage_bucket.state.name
+  role    = "roles/storage.legacyBucketWriter"
+  members = ["group:${local.deployers_group_name}"]
+}

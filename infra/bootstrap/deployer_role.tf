@@ -54,17 +54,8 @@ resource "google_project_iam_custom_role" "deployer" {
     "run.domainmappings.delete",
     "run.domainmappings.get",
 
-    // Required to maintain state in Cloud Storage
+    // Required to check Cloud Storage buckets' state
     "storage.buckets.getIamPolicy",
-    "storage.buckets.get",
-    "storage.buckets.list",
-    "storage.objects.create",
-    "storage.objects.delete",
-    "storage.objects.get",
-    "storage.objects.getIamPolicy",
-    "storage.objects.list",
-    "storage.objects.setIamPolicy",
-    "storage.objects.update",
 
     // Required to manage Stackdriver uptime checks
     "monitoring.uptimeCheckConfigs.create",
