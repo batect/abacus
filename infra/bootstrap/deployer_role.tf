@@ -34,9 +34,7 @@ resource "google_project_iam_custom_role" "deployer" {
     // Required to check if Terraform state bucket exists
     "storage.buckets.get",
 
-    // Required to manage GCP project services
-    "serviceusage.services.disable",
-    "serviceusage.services.enable",
+    // Required to check GCP project services' state
     "serviceusage.services.get",
     "serviceusage.services.list",
 
