@@ -19,6 +19,7 @@ read -p "Are you sure you want to apply the plan above? (y/N) " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   ./batect --config-vars-file="$VARS_FILE" applyBootstrapTerraform
 else
+  echo
   echo "Cancelled."
   exit 1
 fi

@@ -17,14 +17,19 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+// We have to use 'disable_on_destroy = false' below because that's what terraform import sets it to by default
+// - otherwise we'll get bootstrapping state check failures like https://github.com/batect/abacus/runs/947146685?check_suite_focus=true#step:15:1.
+
 resource "google_project_service" "cloud_run" {
-  service = "run.googleapis.com"
-  project = google_project.project.project_id
+  service            = "run.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "container_registry" {
-  service = "containerregistry.googleapis.com"
-  project = google_project.project.project_id
+  service            = "containerregistry.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "iam" {
@@ -34,16 +39,19 @@ resource "google_project_service" "iam" {
 }
 
 resource "google_project_service" "monitoring" {
-  service = "monitoring.googleapis.com"
-  project = google_project.project.project_id
+  service            = "monitoring.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "profiling" {
-  service = "cloudprofiler.googleapis.com"
-  project = google_project.project.project_id
+  service            = "cloudprofiler.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
 
 resource "google_project_service" "stackdriver" {
-  service = "stackdriver.googleapis.com"
-  project = google_project.project.project_id
+  service            = "stackdriver.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
 }
