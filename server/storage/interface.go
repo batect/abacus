@@ -27,7 +27,6 @@ import (
 
 type SessionStore interface {
 	Store(ctx context.Context, session *Session) error
-	CheckIfExists(ctx context.Context, session *Session) (bool, error)
 }
 
 type Session struct {
@@ -41,4 +40,4 @@ type Session struct {
 	Attributes         map[string]string `json:"attributes"`
 }
 
-var AlreadyExistsError error = errors.New("the session already exists")
+var ErrAlreadyExists = errors.New("the session already exists")

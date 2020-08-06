@@ -69,15 +69,11 @@ func (c *cloudStorageSessionStore) Store(ctx context.Context, session *Session) 
 
 	if err := w.Close(); err != nil {
 		if gerr, ok := err.(*googleapi.Error); ok && gerr.Code == http.StatusPreconditionFailed {
-			return AlreadyExistsError
+			return ErrAlreadyExists
 		}
 
 		return fmt.Errorf("storing session in Cloud Storage failed: %w", err)
 	}
 
 	return nil
-}
-
-func (c *cloudStorageSessionStore) CheckIfExists(ctx context.Context, session *Session) (bool, error) {
-	panic("implement me")
 }

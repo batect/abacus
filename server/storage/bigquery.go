@@ -21,7 +21,6 @@ package storage
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -29,7 +28,6 @@ import (
 	"cloud.google.com/go/bigquery"
 	"github.com/batect/abacus/server/observability"
 	"go.opentelemetry.io/otel/instrumentation/othttp"
-	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 	htransport "google.golang.org/api/transport/http"
 )
@@ -74,36 +72,6 @@ func NewBigQuerySessionStore(projectID string, datasetID string, tableID string,
 	inserter := table.Inserter()
 
 	return &bigQuerySessionStore{datasetID, tableID, client, inserter}, nil
-}
-
-func (b *bigQuerySessionStore) CheckIfExists(ctx context.Context, session *Session) (bool, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-	defer cancel()
-
-	q := b.client.Query(`SELECT COUNT(*) AS Count FROM abacus.sessions WHERE sessionId = @sessionId AND sessionStartTime = @sessionStartTime;`)
-
-	q.Parameters = []bigquery.QueryParameter{
-		{Name: "sessionId", Value: session.SessionID},
-		{Name: "sessionStartTime", Value: session.SessionStartTime.UTC()},
-	}
-
-	it, err := q.Read(ctx)
-
-	if err != nil {
-		return false, fmt.Errorf("executing query failed: %w", err)
-	}
-
-	var row struct {
-		Count int
-	}
-
-	if err := it.Next(&row); errors.Is(err, iterator.Done) {
-		return false, errors.New("query returned no results")
-	} else if err != nil {
-		return false, fmt.Errorf("getting query result failed: %w", err)
-	}
-
-	return row.Count > 0, nil
 }
 
 func (b *bigQuerySessionStore) Store(ctx context.Context, session *Session) error {

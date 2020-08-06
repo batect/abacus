@@ -20,6 +20,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -84,22 +85,14 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	session.IngestionTime = h.timeSource()
 
-	if alreadyExists, err := h.sessionStore.CheckIfExists(ctx, &session); err != nil {
-		log.WithError(err).Error("Checking if session already exists failed.")
-
-		resp := errorResponse{Message: "Could not process request"}
-		resp.Write(ctx, w, http.StatusServiceUnavailable)
-
-		return
-	} else if alreadyExists {
+	if err := h.sessionStore.Store(ctx, &session); errors.Is(err, storage.ErrAlreadyExists) {
 		log.Warn("Session already exists, not storing.")
 
 		w.Header().Set("Content-Length", "0")
 		w.WriteHeader(http.StatusNotModified)
-		return
-	}
 
-	if err := h.sessionStore.Store(ctx, &session); err != nil {
+		return
+	} else if err != nil {
 		log.WithError(err).Error("Storing session failed.")
 
 		resp := errorResponse{Message: "Could not process request"}

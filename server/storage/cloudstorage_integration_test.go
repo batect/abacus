@@ -53,7 +53,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		},
 	}
 
-	expectedJson := `{
+	expectedJSON := `{
 		"sessionId": "11112222-3333-4444-5555-666677778888",
 		"userId": "99990000-3333-4444-5555-666677778888",
 		"sessionStartTime": "2019-01-02T03:04:05.678Z",
@@ -100,7 +100,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		})
 
 		It("stores the session in the bucket at the expected path", func() {
-			Expect(bucket.Object("v1/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJson)))
+			Expect(bucket.Object("v1/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
 		})
 
 		It("stores the session in the bucket with the JSON media type", func() {
@@ -132,11 +132,11 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		})
 
 		It("returns an error that indicates the session already exists", func() {
-			Expect(err).To(MatchError(storage.AlreadyExistsError))
+			Expect(err).To(MatchError(storage.ErrAlreadyExists))
 		})
 
 		It("does not overwrite the existing session", func() {
-			Expect(bucket.Object("v1/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJson)))
+			Expect(bucket.Object("v1/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
 		})
 	})
 })

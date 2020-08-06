@@ -377,43 +377,15 @@ var _ = Describe("Ingest endpoint", func() {
 						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithWarning("Session already exists, not storing.")))
 					})
 				})
-
-				Context("when checking if the session already exists fails", func() {
-					BeforeEach(func() {
-						store.ErrorToReturnFromCheckIfExists = errors.New("could not check if session exists")
-						handler.ServeHTTP(resp, req)
-					})
-
-					It("returns a HTTP 503 response", func() {
-						Expect(resp.Code).To(Equal(http.StatusServiceUnavailable))
-					})
-
-					It("returns a JSON error payload", func() {
-						Expect(resp.Body).To(MatchJSON(`{"message": "Could not process request"}`))
-					})
-
-					It("sets the response Content-Type header", func() {
-						Expect(resp.Result().Header).To(HaveKeyWithValue("Content-Type", []string{"application/json"}))
-					})
-
-					It("logs the error", func() {
-						Expect(loggingHook.Entries).To(ContainElement(LogEntryWithError("Checking if session already exists failed.", store.ErrorToReturnFromCheckIfExists)))
-					})
-
-					It("does not store the session", func() {
-						Expect(store.StoredSessions).To(BeEmpty())
-					})
-				})
 			})
 		})
 	})
 })
 
 type mockStore struct {
-	ErrorToReturnFromStore         error
-	StoredSessions                 []storage.Session
-	ErrorToReturnFromCheckIfExists error
-	SessionExists                  bool
+	ErrorToReturnFromStore error
+	StoredSessions         []storage.Session
+	SessionExists          bool
 }
 
 func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
@@ -421,13 +393,13 @@ func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
 		return m.ErrorToReturnFromStore
 	}
 
+	if m.SessionExists {
+		return storage.ErrAlreadyExists
+	}
+
 	m.StoredSessions = append(m.StoredSessions, *session)
 
 	return nil
-}
-
-func (m *mockStore) CheckIfExists(_ context.Context, session *storage.Session) (bool, error) {
-	return m.SessionExists, m.ErrorToReturnFromCheckIfExists
 }
 
 func GetMessage(e logrus.Entry) string     { return e.Message }
