@@ -18,11 +18,14 @@
 // limitations under the License and the Condition.
 
 locals {
-  service_service_account_email = "service@${data.google_project.project.name}.iam.gserviceaccount.com"
   service_name                  = "abacus"
 
   # Maximum length of revision name is 63 characters
   service_revision_name = substr("${local.service_name}-${var.image_git_sha}-${regex("@sha256:(.*)$", var.image_reference)[0]}", 0, 63)
+}
+
+data "google_service_account" "service" {
+  account_id = "service"
 }
 
 resource "google_cloud_run_service" "service" {
@@ -31,7 +34,7 @@ resource "google_cloud_run_service" "service" {
 
   template {
     spec {
-      service_account_name = local.service_service_account_email
+      service_account_name = data.google_service_account.service.email
 
       containers {
         image = var.image_reference

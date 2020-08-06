@@ -25,11 +25,6 @@ resource "google_bigquery_dataset" "default" {
     role          = "OWNER"
     special_group = "projectOwners"
   }
-
-  access {
-    role          = "projects/${data.google_project.project.name}/roles/app_bigquery_access"
-    user_by_email = local.service_service_account_email
-  }
 }
 
 resource "google_bigquery_table" "sessions" {
