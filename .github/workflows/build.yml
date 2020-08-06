@@ -27,9 +27,6 @@ jobs:
           restore-keys: |
             golang-
 
-      - name: Cache Docker images
-        uses: satackey/action-docker-layer-caching@v0.0.5
-
       - name: Download dependencies
         run: ./batect setup
 
