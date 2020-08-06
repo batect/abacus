@@ -49,7 +49,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: server/**/coverage.txt
+          directory: server
 
       - name: Lint Terraform files
         run: ./batect --config-vars-file=batect.prod.yml lintTerraform
