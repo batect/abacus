@@ -90,10 +90,6 @@ resource "google_project_iam_custom_role" "deployer" {
     "iam.roles.get",
     "resourcemanager.projects.getIamPolicy",
     "iam.serviceAccounts.getIamPolicy",
-
-    // Required for smoke test
-    "bigquery.jobs.create",
-    "bigquery.tables.getData"
   ]
 
   depends_on = [google_project_service.iam]

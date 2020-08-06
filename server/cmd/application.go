@@ -38,6 +38,7 @@ import (
 	"go.opentelemetry.io/otel/api/propagation"
 	"go.opentelemetry.io/otel/api/trace"
 	"go.opentelemetry.io/otel/instrumentation/othttp"
+	"google.golang.org/api/option"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"go.opentelemetry.io/otel/api/global"
@@ -142,7 +143,8 @@ func createServer(port string) *http.Server {
 }
 
 func createIngestHandler() http.Handler {
-	store, err := storage.NewBigQuerySessionStore(getProjectID(), getDatasetID(), getSessionsTableID(), getCredentialsFilePath())
+	bucketName := fmt.Sprintf("%v-sessions", getProjectID())
+	store, err := storage.NewCloudStorageSessionStore(bucketName, option.WithCredentialsFile(getCredentialsFilePath()))
 
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not create session store.")

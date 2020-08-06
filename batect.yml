@@ -68,8 +68,6 @@ containers:
       GOOGLE_APPLICATION_CREDENTIALS: /creds/gcp.json
       DATASET_ID: abacus
       SESSIONS_TABLE_ID: sessions
-    dependencies:
-      - cloud-storage
 
   cloud-storage:
     build_directory: .batect/fake-gcs-server

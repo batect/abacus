@@ -18,7 +18,10 @@ function main() {
     "sessionStartTime": "$(currentTime)",
     "sessionEndTime": "$(currentTime)",
     "applicationId": "smoke-test-app",
-    "applicationVersion": "1.0.0"
+    "applicationVersion": "1.0.0",
+    "attributes": {
+      "source": "smoke-test"
+    }
   }
 EOF
 
@@ -39,24 +42,16 @@ EOF
     "$BASE_URL/v1/sessions"
 
   echo
-  echoBlueText "Confirming data was written to BigQuery successfully..."
+  echoBlueText "Confirming data was written to Cloud Storage successfully..."
 
-  RETRIEVED_DATA=$(
-    bq \
-      --format=json \
-      "--project_id=$GOOGLE_PROJECT" \
-      --bigqueryrc=/dev/null \
-      query \
-      --nouse_legacy_sql \
-      "SELECT sessionId, userId, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionStartTime) AS sessionStartTime, FORMAT_TIMESTAMP(\"%Y-%m-%dT%H:%M:%SZ\", sessionEndTime) AS sessionEndTime, applicationId, applicationVersion FROM $GOOGLE_PROJECT.abacus.sessions WHERE sessionStartTime >= '$CURRENT_DATE' AND sessionId = '$SESSION_ID' AND userID = '$USER_ID';"
-  )
+  RETRIEVED_DATA=$(gsutil cat "gs://$GOOGLE_PROJECT-sessions/v1/$SESSION_ID.json")
 
   echo
-  echo "Response from BigQuery: "
+  echo "Response from Cloud Storage: "
   echo "$RETRIEVED_DATA"
   echo
 
-  diff -U 9999 <(echo "[$UPLOAD_DATA]" | jq -S .) <(echo "$RETRIEVED_DATA" | jq -S .) || { echo; echoRedText "Data in BigQuery is not the same as what was submitted. See diff above. '-' represents what was expected, '+' represents what was returned by BigQuery."; exit 1; }
+  diff -U 9999 <(echo "$UPLOAD_DATA" | jq -S .) <(echo "$RETRIEVED_DATA" | jq -S 'del(.ingestionTime)') || { echo; echoRedText "Data in Cloud Storage is not the same as what was submitted. See diff above. '-' represents what was expected, '+' represents what was returned by Cloud Storage."; exit 1; }
 
   echoGreenText "Smoke test completed successfully."
 }
