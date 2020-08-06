@@ -40,8 +40,9 @@ resource "google_storage_bucket_iam_binding" "session_storage_creation_access" {
 }
 
 resource "google_storage_bucket_iam_binding" "session_storage_read_access" {
-  bucket  = google_storage_bucket.session_storage.name
-  role    = "roles/storage.objectViewer"
+  bucket = google_storage_bucket.session_storage.name
+  role   = "roles/storage.objectViewer"
+
   members = [
     "group:${local.deployers_group_name}" # For smoke test
   ]
