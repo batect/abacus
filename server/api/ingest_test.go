@@ -257,7 +257,8 @@ var _ = Describe("Ingest endpoint", func() {
 						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 						"applicationId": "test-app", 
 						"applicationVersion": "1.0.0",
-						"ingestionTime": "2019-01-03T00:00:00.000Z"
+						"ingestionTime": "2019-01-03T00:00:00.000Z",
+						"attributes": { "operatingSystem": "Mac" }
 					}`
 
 					req, _ := createRequest(body)
@@ -273,6 +274,9 @@ var _ = Describe("Ingest endpoint", func() {
 						IngestionTime:      currentTime,
 						ApplicationID:      "test-app",
 						ApplicationVersion: "1.0.0",
+						Attributes: map[string]string{
+							"operatingSystem": "Mac",
+						},
 					}))
 				})
 
@@ -296,7 +300,8 @@ var _ = Describe("Ingest endpoint", func() {
 						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 						"applicationId": "test-app", 
-						"applicationVersion": "1.0.0"
+						"applicationVersion": "1.0.0",
+						"attributes": { "operatingSystem": "Mac" }
 					}`)
 				})
 
@@ -327,6 +332,9 @@ var _ = Describe("Ingest endpoint", func() {
 								IngestionTime:      currentTime,
 								ApplicationID:      "test-app",
 								ApplicationVersion: "1.0.0",
+								Attributes: map[string]string{
+									"operatingSystem": "Mac",
+								},
 							}))
 						})
 					})
@@ -376,6 +384,44 @@ var _ = Describe("Ingest endpoint", func() {
 					It("logs a warning", func() {
 						Expect(loggingHook.Entries).To(ConsistOf(LogEntryWithWarning("Session already exists, not storing.")))
 					})
+				})
+			})
+
+			Context("when the request body is valid but contains no attributes for the session", func() {
+				var req *http.Request
+
+				BeforeEach(func() {
+					req, _ = createRequest(`{
+						"sessionId": "11112222-3333-4444-5555-666677778888", 
+						"userId": "99990000-3333-4444-5555-666677778888", 
+						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+						"applicationId": "test-app", 
+						"applicationVersion": "1.0.0"
+					}`)
+
+					handler.ServeHTTP(resp, req)
+				})
+
+				It("returns a HTTP 201 response", func() {
+					Expect(resp.Code).To(Equal(http.StatusCreated))
+				})
+
+				It("returns an empty body", func() {
+					Expect(resp.Result().ContentLength).To(BeZero())
+				})
+
+				It("stores the session with an empty set of attributes", func() {
+					Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+						SessionID:          "11112222-3333-4444-5555-666677778888",
+						UserID:             "99990000-3333-4444-5555-666677778888",
+						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+						SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+						IngestionTime:      currentTime,
+						ApplicationID:      "test-app",
+						ApplicationVersion: "1.0.0",
+						Attributes:         map[string]string{},
+					}))
 				})
 			})
 		})
