@@ -33,14 +33,6 @@ func getProjectID() string {
 	return getEnvOrExit("GOOGLE_PROJECT")
 }
 
-func getDatasetID() string {
-	return getEnvOrExit("DATASET_ID")
-}
-
-func getSessionsTableID() string {
-	return getEnvOrExit("SESSIONS_TABLE_ID")
-}
-
 func getCredentialsFilePath() string {
 	variableName := "GOOGLE_APPLICATION_CREDENTIALS"
 	value := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS")

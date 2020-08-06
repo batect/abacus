@@ -40,16 +40,6 @@ resource "google_cloud_run_service" "service" {
           name  = "GOOGLE_PROJECT"
           value = data.google_project.project.name
         }
-
-        env {
-          name  = "DATASET_ID"
-          value = google_bigquery_dataset.default.dataset_id
-        }
-
-        env {
-          name  = "SESSIONS_TABLE_ID"
-          value = google_bigquery_table.sessions.table_id
-        }
       }
     }
 

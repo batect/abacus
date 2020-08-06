@@ -52,7 +52,7 @@ func NewCloudStorageSessionStore(bucketName string, opts ...option.ClientOption)
 
 func (c *cloudStorageSessionStore) Store(ctx context.Context, session *Session) error {
 	w := c.bucket.
-		Object(fmt.Sprintf("v1/%v.json", session.SessionID)).
+		Object(fmt.Sprintf("v1/%v/%v.json", session.ApplicationID, session.SessionID)).
 		If(cloudstorage.Conditions{DoesNotExist: true}).
 		NewWriter(ctx)
 	w.ContentType = "application/json"
