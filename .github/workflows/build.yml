@@ -27,9 +27,6 @@ jobs:
           restore-keys: |
             golang-
 
-      - name: Cache Docker images
-        uses: satackey/action-docker-layer-caching@v0.0.5
-
       - name: Download dependencies
         run: ./batect setup
 
@@ -52,6 +49,7 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: server/**/coverage.txt
 
       - name: Lint Terraform files
         run: ./batect --config-vars-file=batect.prod.yml lintTerraform
@@ -95,6 +93,3 @@ jobs:
 
       - name: Cleanup credentials
         run: sudo rm -rf .creds .gcloud
-
-      - name: Remove Docker images that shouldn't be cached
-        run: docker images -q | grep -v -x -F -f <(docker images -f "reference=abacus-*" -q) | xargs docker rmi && docker images || exit 0
