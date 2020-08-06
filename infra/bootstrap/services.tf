@@ -26,6 +26,12 @@ resource "google_project_service" "artifact_registry" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "bigquery_data_transfer" {
+  service            = "bigquerydatatransfer.googleapis.com"
+  project            = google_project.project.project_id
+  disable_on_destroy = false
+}
+
 resource "google_project_service" "cloud_run" {
   service            = "run.googleapis.com"
   project            = google_project.project.project_id

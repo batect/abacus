@@ -37,27 +37,6 @@ resource "google_service_account_iam_policy" "service" {
   policy_data        = data.google_iam_policy.app_service_account.policy_data
 }
 
-resource "google_project_iam_custom_role" "app_bigquery_access" {
-  role_id     = "app_bigquery_access"
-  title       = "BigQuery Access for Application"
-  description = "Permissions required by application to interact with BigQuery"
-  project     = google_project.project.project_id
-
-  permissions = [
-    "bigquery.datasets.get",
-    "bigquery.tables.get",
-    "bigquery.tables.getData",
-    "bigquery.tables.updateData",
-  ]
-
-  depends_on = [google_project_service.iam]
-}
-
-resource "google_project_iam_member" "app_bigquery_job_access" {
-  member = "serviceAccount:${google_service_account.service.email}"
-  role   = "roles/bigquery.jobUser"
-}
-
 resource "google_project_iam_member" "app_tracing_access" {
   member = "serviceAccount:${google_service_account.service.email}"
   role   = "roles/cloudtrace.agent"
