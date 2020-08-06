@@ -9,4 +9,8 @@ ENV CGO_ENABLED=0
 RUN go build -o fake-gcs-server
 
 FROM alpine:3.12.0
+RUN apk add --no-cache bash curl
+COPY healthcheck.sh /bin/healthcheck.sh
+HEALTHCHECK --interval=1s CMD /bin/healthcheck.sh
+
 COPY --from=builder /code/fake-gcs-server /bin/fake-gcs-server
