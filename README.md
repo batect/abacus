@@ -1,6 +1,6 @@
 # Abacus
 
-Simple analytics for CLI applications.
+Simple telemetry for CLI applications.
 
 ## Goals
 
