@@ -97,4 +97,4 @@ jobs:
         run: sudo rm -rf .creds .gcloud
 
       - name: Remove Docker images that shouldn't be cached
-        run: docker images -q | grep -v -x -F -f <(docker images -f "reference=abacus-*" -q) | xargs docker rmi && docker images
+        run: docker images -q | grep -v -x -F -f <(docker images -f "reference=abacus-*" -q) | xargs docker rmi && docker images || exit 0
