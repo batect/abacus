@@ -8,6 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TERM: xterm-256color
+      BATECT_CACHE_TYPE: directory
 
     steps:
       - uses: actions/checkout@v1
@@ -21,7 +22,7 @@ jobs:
       - name: Cache Golang dependencies
         uses: actions/cache@v1
         with:
-          path: .go-cache
+          path: .batect/caches/go-cache
           key: golang-${{ hashFiles('go.sum') }}
           restore-keys: |
             golang-
