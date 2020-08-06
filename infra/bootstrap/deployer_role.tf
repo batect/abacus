@@ -86,6 +86,10 @@ resource "google_project_iam_custom_role" "deployer" {
     "bigquery.tables.update",
     "bigquery.tables.updateTag",
 
+    // Required to manage BigQuery Transfer Service configurations
+    "bigquery.transfers.get",
+    "bigquery.transfers.update",
+
     // Required to check this IAM role is in sync with configuration
     "iam.roles.get",
     "resourcemanager.projects.getIamPolicy",

@@ -37,18 +37,7 @@
   {
     "name": "attributes",
     "type": "RECORD",
-    "mode": "REPEATED",
-    "fields": [
-      {
-        "name": "key",
-        "type": "STRING",
-        "mode": "REQUIRED"
-      },
-      {
-        "name": "value",
-        "type": "STRING",
-        "mode": "REQUIRED"
-      }
-    ]
+    "mode": "REQUIRED",
+    "fields": ["replaced in Terraform with configuration for table"]
   }
 ]
