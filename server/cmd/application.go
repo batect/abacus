@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/profiler"
+	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/observability"
@@ -43,6 +44,7 @@ import (
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"go.opentelemetry.io/otel/api/global"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	htransport "google.golang.org/api/transport/http"
 )
 
 func main() {
@@ -116,6 +118,12 @@ func initTracing() {
 		propagation.WithInjectors(w3Propagator, gcpPropagator),
 		propagation.WithExtractors(w3Propagator, gcpPropagator),
 	))
+
+	http.DefaultTransport = othttp.NewTransport(
+		http.DefaultTransport,
+		othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
+		othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+	)
 }
 
 func createServer(port string) *http.Server {
@@ -143,8 +151,11 @@ func createServer(port string) *http.Server {
 }
 
 func createIngestHandler() http.Handler {
+	scopesOption := option.WithScopes(cloudstorage.ScopeReadWrite)
+	credsOption := option.WithCredentialsFile(getCredentialsFilePath())
+	tracingClientOption := withTracingClient(scopesOption, credsOption)
 	bucketName := fmt.Sprintf("%v-sessions", getProjectID())
-	store, err := storage.NewCloudStorageSessionStore(bucketName, option.WithCredentialsFile(getCredentialsFilePath()))
+	store, err := storage.NewCloudStorageSessionStore(bucketName, tracingClientOption)
 
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not create session store.")
@@ -157,6 +168,23 @@ func createIngestHandler() http.Handler {
 	}
 
 	return handler
+}
+
+func withTracingClient(opts ...option.ClientOption) option.ClientOption {
+	// We have to do this because setting http.DefaultTransport to a non-default implementation causes something deep in the bowels of the
+	// Google Cloud SDK to ignore it and create a fresh transport with many of the settings copied across from DefaultTransport.
+	// Being explicit about the client forces the SDK to use the transport.
+	trans, err := htransport.NewTransport(context.Background(), http.DefaultTransport, opts...)
+
+	if err != nil {
+		logrus.WithError(err).Fatal("could not create transport")
+	}
+
+	httpClient := http.Client{
+		Transport: trans,
+	}
+
+	return option.WithHTTPClient(&httpClient)
 }
 
 func runServer(srv *http.Server) {
