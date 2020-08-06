@@ -17,6 +17,10 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+data "google_service_account" "bigquery_transfer_service" {
+  account_id = "bigquery-transfer-service"
+}
+
 resource "google_bigquery_dataset" "default" {
   dataset_id = "abacus"
   location   = "US"
@@ -28,7 +32,7 @@ resource "google_bigquery_dataset" "default" {
 
   access {
     role          = "WRITER"
-    user_by_email = "service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
+    user_by_email = data.google_service_account.bigquery_transfer_service.email
   }
 }
 
@@ -55,11 +59,12 @@ resource "google_bigquery_table" "smoke_test_sessions" {
 }
 
 resource "google_bigquery_data_transfer_config" "smoke_test_transfer" {
-  display_name           = "Smoke test app import"
+  display_name           = "smoke-test-app import"
   data_source_id         = "google_cloud_storage"
   destination_dataset_id = google_bigquery_dataset.default.dataset_id
   location               = google_bigquery_dataset.default.location
   schedule               = "every 24 hours"
+  service_account_name   = data.google_service_account.bigquery_transfer_service.email
 
   params = {
     data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/smoke-test-app/*.json"
@@ -98,6 +103,7 @@ resource "google_bigquery_data_transfer_config" "batect_transfer" {
   destination_dataset_id = google_bigquery_dataset.default.dataset_id
   location               = google_bigquery_dataset.default.location
   schedule               = "every 8 hours"
+  service_account_name   = data.google_service_account.bigquery_transfer_service.email
 
   params = {
     data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/batect/*.json"

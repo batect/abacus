@@ -44,6 +44,7 @@ resource "google_storage_bucket_iam_binding" "session_storage_read_access" {
   role   = "roles/storage.objectViewer"
 
   members = [
-    "group:${local.deployers_group_name}" # For smoke test
+    "group:${local.deployers_group_name}", # For smoke test
+    "serviceAccount:${google_service_account.bigquery_transfer_service.email}",
   ]
 }
