@@ -10,15 +10,12 @@ if [ ! -f "$VARS_FILE" ]; then
   exit 1
 fi
 
-PROJECT_NAME=$(yq r "$VARS_FILE" gcpProject)
-
-rm -f "infra/bootstrap/terraform-$PROJECT_NAME.tfstate"
 ./batect --config-vars-file="$VARS_FILE" setupBootstrapTerraform
-./batect --config-vars-file="$VARS_FILE" importBootstrapState
 ./batect --config-vars-file="$VARS_FILE" planBootstrapTerraform
 
 read -p "Are you sure you want to apply the plan above? (y/N) " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
+  echo
   ./batect --config-vars-file="$VARS_FILE" applyBootstrapTerraform
 else
   echo

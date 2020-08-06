@@ -63,10 +63,6 @@ jobs:
         run: ./batect --config-vars-file=batect.prod.yml setupBootstrapTerraform
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
 
-      - name: Import current bootstrapping state
-        run: ./batect --config-vars-file=batect.prod.yml importBootstrapState
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
-
       - name: Check bootstrapping state
         run: ./batect --config-vars-file=batect.prod.yml checkBootstrapState
         if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'

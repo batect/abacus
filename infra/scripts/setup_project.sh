@@ -51,6 +51,8 @@ function createProject() {
   echo "Adding deployers group to organization viewers..."
   gcloud organizations add-iam-policy-binding "$GOOGLE_ORGANIZATION" --member "group:$DEPLOYERS_GROUP_EMAIL" --role roles/resourcemanager.organizationViewer
   echo
+  echo "Creating bootstrap state bucket..."
+  gsutil mb -b on -c Standard -l "$GOOGLE_REGION" -p "$GOOGLE_PROJECT" "gs://$GOOGLE_PROJECT-bootstrap-terraform-state"
 }
 
 main

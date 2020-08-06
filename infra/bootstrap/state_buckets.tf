@@ -38,3 +38,25 @@ resource "google_storage_bucket_iam_binding" "state_write_access" {
   role    = "roles/storage.objectAdmin"
   members = ["group:${local.deployers_group_name}"]
 }
+
+resource "google_storage_bucket" "bootstrap_state" {
+  name               = "${var.project_name}-bootstrap-terraform-state"
+  project            = google_project.project.project_id
+  location           = var.region
+  storage_class      = "STANDARD"
+  bucket_policy_only = true
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+
+resource "google_storage_bucket_iam_binding" "bootstrap_state_read_access" {
+  bucket  = google_storage_bucket.bootstrap_state.name
+  role    = "roles/storage.objectViewer"
+  members = ["group:${local.deployers_group_name}"]
+}

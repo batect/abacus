@@ -261,7 +261,7 @@ tasks:
     group: Infrastructure bootstrapping tasks
     run:
       container: terraform
-      command: sh -c "./scripts/generate_vars.sh && terraform init -input=false -reconfigure"
+      command: sh -c './scripts/generate_vars.sh && terraform init -input=false -reconfigure -backend-config="bucket=$GOOGLE_PROJECT-bootstrap-terraform-state" -backend-config="credentials=../../.creds/gcp_service_account_${CLOUDSDK_ACTIVE_CONFIG_NAME}_infra.json"'
       working_directory: /code/infra/bootstrap
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
@@ -338,7 +338,7 @@ tasks:
     group: Infrastructure bootstrapping tasks
     run:
       container: terraform
-      command: terraform plan -detailed-exitcode -input=false
+      command: terraform plan -detailed-exitcode -input=false -lock=false
       working_directory: /code/infra/bootstrap
       environment:
         CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
