@@ -3,7 +3,7 @@ module github.com/batect/abacus
 go 1.13
 
 require (
-	cloud.google.com/go v0.62.0
+	cloud.google.com/go v0.63.0
 	cloud.google.com/go/bigquery v1.10.0
 	cloud.google.com/go/storage v1.10.0
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.2.1
