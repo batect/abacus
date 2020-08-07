@@ -32,7 +32,7 @@ resource "google_bigquery_dataset" "default" {
 
   access {
     role          = "WRITER"
-    user_by_email = data.google_service_account.bigquery_transfer_service.email
+    user_by_email = "service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
   }
 }
 

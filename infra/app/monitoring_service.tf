@@ -57,17 +57,17 @@ resource "google_monitoring_alert_policy" "service_responses" {
     display_name = "Request latency (95th percentile)"
 
     condition_threshold {
-      filter             = "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
-      comparison         = "COMPARISON_GT"
-      duration           = "600s"
-      threshold_value    = 500
+      filter          = "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
+      comparison      = "COMPARISON_GT"
+      duration        = "600s"
+      threshold_value = 500
 
       trigger {
         count = 1
       }
 
       aggregations {
-        alignment_period     = "60s"
+        alignment_period = "60s"
 
         // These settings are based on the settings used by the Cloud Run monitoring tab.
         cross_series_reducer = "REDUCE_PERCENTILE_95"

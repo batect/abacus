@@ -67,7 +67,7 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
     display_name = "BigQuery transfer job logs"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.bigquery_transfer_jobs.name}\" resource.type=\"global\"" // TODO: filter to errors (left out for testing)
+      filter          = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.bigquery_transfer_jobs.name}\" resource.type=\"global\" metric.label.severity!=INFO"
       comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "0s"

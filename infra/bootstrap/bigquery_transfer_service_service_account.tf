@@ -17,6 +17,7 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+// Note that this account is only used to read data from Cloud Storage - the GCP-internal service account is used to write to BigQuery.
 resource "google_service_account" "bigquery_transfer_service" {
   account_id   = "bigquery-transfer-service"
   display_name = "BiqQuery Transfer Service service account for abacus"
