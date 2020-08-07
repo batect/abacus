@@ -18,10 +18,14 @@
 // limitations under the License and the Condition.
 
 locals {
-  bytes_in_kb             = 1024
-  bytes_in_mb             = 1024 * local.bytes_in_kb
-  bytes_in_gb             = 1024 * local.bytes_in_mb
+  bytes_in_kb = 1024
+  bytes_in_mb = 1024 * local.bytes_in_kb
+  bytes_in_gb = 1024 * local.bytes_in_mb
+
   logging_free_tier_bytes = 50 * local.bytes_in_gb
+
+  metrics_chargeable_ingestion_free_tier_bytes_per_month  = 150 * local.bytes_in_mb
+  metrics_chargeable_ingestion_free_tier_bytes_per_second = local.metrics_chargeable_ingestion_free_tier_bytes_per_month / local.seconds_in_month
 
   tracing_free_tier_spans = 2500000
 
@@ -90,6 +94,38 @@ resource "google_monitoring_alert_policy" "stackdriver_tracing_free_tier" {
 
   documentation {
     content = "Free tier limit is ${local.tracing_free_tier_spans} spans per month. This alert fires at ${local.alert_threshold_percentage}% of the free tier threshold. Documentation: https://cloud.google.com/stackdriver/pricing"
+  }
+
+  notification_channels = [google_monitoring_notification_channel.email.name]
+}
+
+resource "google_monitoring_alert_policy" "stackdriver_metrics_free_tier" {
+  display_name = "Stackdriver Metrics free tier"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "Chargeable metrics ingested"
+
+    condition_threshold {
+      filter          = "metric.type=\"monitoring.googleapis.com/billing/bytes_ingested\" resource.type=\"global\""
+      comparison      = "COMPARISON_GT"
+      duration        = "1800s"
+      threshold_value = local.metrics_chargeable_ingestion_free_tier_bytes_per_second * local.alert_threshold_decimal
+
+      trigger {
+        count = 1
+      }
+
+      aggregations {
+        alignment_period     = "3600s"
+        cross_series_reducer = "REDUCE_SUM"
+        per_series_aligner   = "ALIGN_RATE"
+      }
+    }
+  }
+
+  documentation {
+    content = "Free tier limit is ${local.metrics_chargeable_ingestion_free_tier_bytes_per_month} bytes per month (${format("%.1f", local.metrics_chargeable_ingestion_free_tier_bytes_per_second)} bytes per second). This alert fires when the ingestion rate exceeds ${local.alert_threshold_percentage}% of the ingestion rate required to exceed the free tier threshold. Documentation: https://cloud.google.com/stackdriver/pricing"
   }
 
   notification_channels = [google_monitoring_notification_channel.email.name]
