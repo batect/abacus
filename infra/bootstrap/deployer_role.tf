@@ -75,6 +75,13 @@ resource "google_project_iam_custom_role" "deployer" {
     "monitoring.alertPolicies.get",
     "monitoring.alertPolicies.update",
 
+    // Required to manage log-based metrics
+    "logging.logMetrics.create",
+    "logging.logMetrics.delete",
+    "logging.logMetrics.get",
+    "logging.logMetrics.list",
+    "logging.logMetrics.update",
+
     // Required to manage BigQuery datasets and tables
     "bigquery.datasets.create",
     "bigquery.datasets.get",
