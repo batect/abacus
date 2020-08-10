@@ -20,21 +20,18 @@
 package validation
 
 import (
+	"regexp"
+
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
-func RegisterApplicationIDValidation(v *validator.Validate, trans ut.Translator) error {
-	return registerValidation(v, trans, "applicationId", "{0} must be a valid application ID", func(fl validator.FieldLevel) bool {
-		switch fl.Field().String() {
-		case "batect":
-			return true
-		case "test-app":
-			return true
-		case "smoke-test-app":
-			return true
-		}
+func RegisterVersionValidation(v *validator.Validate, trans ut.Translator) error {
+	versionValidationRegex := regexp.MustCompile(`^(\d+)(\.(\d+)(\.(\d+)(-([a-zA-Z0-9-.]+))?(\+([a-zA-Z0-9-.]+))?)?)?$`)
 
-		return false
+	return registerValidation(v, trans, "version", "{0} must be a valid version", func(fl validator.FieldLevel) bool {
+		value := fl.Field().String()
+
+		return versionValidationRegex.MatchString(value)
 	})
 }

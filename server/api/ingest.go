@@ -41,6 +41,7 @@ type timeSource func() time.Time
 
 const sessionID kv.Key = kv.Key("sessionId")
 const applicationID kv.Key = kv.Key("applicationId")
+const applicationVersion kv.Key = kv.Key("applicationVersion")
 
 func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
 	return NewIngestHandlerWithTimeSource(sessionStore, time.Now)
@@ -81,6 +82,7 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	span.SetAttributes(
 		sessionID.String(session.SessionID),
 		applicationID.String(session.ApplicationID),
+		applicationVersion.String(session.ApplicationVersion),
 	)
 
 	session.IngestionTime = h.timeSource()

@@ -71,6 +71,10 @@ func newJSONLoader() (*jsonLoader, error) {
 		return nil, fmt.Errorf("could not register application ID validator: %w", err)
 	}
 
+	if err := validation.RegisterVersionValidation(v, trans); err != nil {
+		return nil, fmt.Errorf("could not register version validator: %w", err)
+	}
+
 	return &jsonLoader{
 		validator:  v,
 		translator: trans,

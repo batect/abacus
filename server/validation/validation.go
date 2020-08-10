@@ -20,21 +20,40 @@
 package validation
 
 import (
+	"fmt"
+
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
-func RegisterApplicationIDValidation(v *validator.Validate, trans ut.Translator) error {
-	return registerValidation(v, trans, "applicationId", "{0} must be a valid application ID", func(fl validator.FieldLevel) bool {
-		switch fl.Field().String() {
-		case "batect":
-			return true
-		case "test-app":
-			return true
-		case "smoke-test-app":
-			return true
+func registerValidation(v *validator.Validate, trans ut.Translator, tag string, errorMessage string, validationFunc validator.Func) error {
+	if err := v.RegisterValidation(tag, validationFunc, false); err != nil {
+		return fmt.Errorf("could not register %v validator: %w", tag, err)
+	}
+
+	if err := v.RegisterTranslation(tag, trans, registrationFunc(tag, errorMessage), translateFunc); err != nil {
+		return fmt.Errorf("could not register %v validator error message translation: %w", tag, err)
+	}
+
+	return nil
+}
+
+func registrationFunc(tag string, translation string) validator.RegisterTranslationsFunc {
+	return func(ut ut.Translator) error {
+		if err := ut.Add(tag, translation, false); err != nil {
+			return err
 		}
 
-		return false
-	})
+		return nil
+	}
+}
+
+func translateFunc(ut ut.Translator, fe validator.FieldError) string {
+	t, err := ut.T(fe.Tag(), fe.Field())
+
+	if err != nil {
+		panic(fmt.Sprintf("error translating FieldError: %#v", fe))
+	}
+
+	return t
 }
