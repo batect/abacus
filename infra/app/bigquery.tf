@@ -67,7 +67,7 @@ resource "google_bigquery_data_transfer_config" "smoke_test_transfer" {
   service_account_name   = data.google_service_account.bigquery_transfer_service.email
 
   params = {
-    data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/smoke-test-app/*.json"
+    data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/smoke-test-app/*/*.json"
     destination_table_name_template = google_bigquery_table.smoke_test_sessions.table_id
     file_format                     = "JSON"
     max_bad_records                 = 0
@@ -106,7 +106,7 @@ resource "google_bigquery_data_transfer_config" "batect_transfer" {
   service_account_name   = data.google_service_account.bigquery_transfer_service.email
 
   params = {
-    data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/batect/*.json"
+    data_path_template              = "gs://${data.google_project.project.name}-sessions/v1/batect/*/*.json"
     destination_table_name_template = google_bigquery_table.batect_sessions.table_id
     file_format                     = "JSON"
     max_bad_records                 = 0

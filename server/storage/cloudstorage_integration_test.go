@@ -100,11 +100,11 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		})
 
 		It("stores the session in the bucket at the expected path", func() {
-			Expect(bucket.Object("v1/my-app/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
+			Expect(bucket.Object("v1/my-app/1.0.0/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
 		})
 
 		It("stores the session in the bucket with the JSON media type", func() {
-			Expect(bucket.Object("v1/my-app/11112222-3333-4444-5555-666677778888.json")).To(HaveContentType("application/json"))
+			Expect(bucket.Object("v1/my-app/1.0.0/11112222-3333-4444-5555-666677778888.json")).To(HaveContentType("application/json"))
 		})
 	})
 
@@ -136,7 +136,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		})
 
 		It("does not overwrite the existing session", func() {
-			Expect(bucket.Object("v1/my-app/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
+			Expect(bucket.Object("v1/my-app/1.0.0/11112222-3333-4444-5555-666677778888.json")).To(HaveContent(MatchJSON(expectedJSON)))
 		})
 	})
 })

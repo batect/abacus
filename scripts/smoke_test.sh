@@ -44,7 +44,7 @@ EOF
   echo
   echoBlueText "Confirming data was written to Cloud Storage successfully..."
 
-  RETRIEVED_DATA=$(gsutil cat "gs://$GOOGLE_PROJECT-sessions/v1/smoke-test-app/$SESSION_ID.json")
+  RETRIEVED_DATA=$(gsutil cat "gs://$GOOGLE_PROJECT-sessions/v1/smoke-test-app/1.0.0/$SESSION_ID.json")
 
   echo
   echo "Response from Cloud Storage: "
