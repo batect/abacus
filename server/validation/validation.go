@@ -101,7 +101,6 @@ func ToValidationErrors(errors validator.ValidationErrors, translator ut.Transla
 	return validationErrors
 }
 
-
 func registerValidation(v *validator.Validate, trans ut.Translator, tag string, errorMessage string, validationFunc validator.Func) error {
 	if err := v.RegisterValidation(tag, validationFunc, false); err != nil {
 		return fmt.Errorf("could not register %v validator: %w", tag, err)

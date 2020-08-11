@@ -51,7 +51,6 @@ func newJSONLoader() (*jsonLoader, error) {
 	}, nil
 }
 
-
 func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target interface{}) bool {
 	if req.Header.Get(contentTypeHeader) != jsonMimeType {
 		badRequest(req.Context(), w, "Content-Type must be 'application/json'")
