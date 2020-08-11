@@ -26,18 +26,12 @@ import (
 	"net/http"
 
 	"github.com/batect/abacus/server/middleware"
+	"github.com/batect/abacus/server/validation"
 )
 
 type errorResponse struct {
-	Message          string            `json:"message"`
-	ValidationErrors []validationError `json:"validationErrors,omitempty"`
-}
-
-type validationError struct {
-	Key          string      `json:"key"`
-	Type         string      `json:"type"`
-	InvalidValue interface{} `json:"invalidValue,omitempty"`
-	Message      string      `json:"message"`
+	Message          string             `json:"message"`
+	ValidationErrors []validation.Error `json:"validationErrors,omitempty"`
 }
 
 func badRequest(ctx context.Context, w http.ResponseWriter, message string) {
@@ -45,7 +39,7 @@ func badRequest(ctx context.Context, w http.ResponseWriter, message string) {
 	resp.Write(ctx, w, http.StatusBadRequest)
 }
 
-func invalidBody(ctx context.Context, w http.ResponseWriter, errors []validationError) {
+func invalidBody(ctx context.Context, w http.ResponseWriter, errors []validation.Error) {
 	resp := errorResponse{Message: "Request body has validation errors", ValidationErrors: errors}
 	resp.Write(ctx, w, http.StatusBadRequest)
 }
