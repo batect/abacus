@@ -27,6 +27,7 @@ import (
 
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/storage"
+	"github.com/batect/abacus/server/types"
 	"go.opentelemetry.io/otel/api/kv"
 	"go.opentelemetry.io/otel/api/trace"
 )
@@ -66,7 +67,7 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	session := storage.Session{}
+	session := types.Session{}
 
 	if ok := h.loader.LoadJSON(w, req, &session); !ok {
 		return

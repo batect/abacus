@@ -17,17 +17,16 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package storage
+package types_test
 
 import (
-	"context"
-	"errors"
+	"testing"
 
-	"github.com/batect/abacus/server/types"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-type SessionStore interface {
-	Store(ctx context.Context, session *types.Session) error
+func TestCmd(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Types Suite")
 }
-
-var ErrAlreadyExists = errors.New("the session already exists")

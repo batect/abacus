@@ -17,17 +17,17 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package storage
+package types
 
-import (
-	"context"
-	"errors"
+import "time"
 
-	"github.com/batect/abacus/server/types"
-)
-
-type SessionStore interface {
-	Store(ctx context.Context, session *types.Session) error
+type Session struct {
+	SessionID          string            `json:"sessionId" validate:"required,uuid"`
+	UserID             string            `json:"userId" validate:"required,uuid"`
+	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
+	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
+	IngestionTime      time.Time         `json:"ingestionTime"`
+	ApplicationID      string            `json:"applicationId" validate:"required,applicationId"`
+	ApplicationVersion string            `json:"applicationVersion" validate:"required,version"`
+	Attributes         map[string]string `json:"attributes"`
 }
-
-var ErrAlreadyExists = errors.New("the session already exists")

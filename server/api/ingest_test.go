@@ -31,9 +31,10 @@ import (
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/middleware/testutils"
 	"github.com/batect/abacus/server/storage"
+	"github.com/batect/abacus/server/types"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
+	gomega_types "github.com/onsi/gomega/types"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 )
@@ -266,7 +267,7 @@ var _ = Describe("Ingest endpoint", func() {
 				})
 
 				It("stores the session with the current ingestion time, not the ingestion time in the request", func() {
-					Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+					Expect(store.StoredSessions).To(ConsistOf(types.Session{
 						SessionID:          "11112222-3333-4444-5555-666677778888",
 						UserID:             "99990000-3333-4444-5555-666677778888",
 						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
@@ -324,7 +325,7 @@ var _ = Describe("Ingest endpoint", func() {
 						})
 
 						It("stores the session", func() {
-							Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+							Expect(store.StoredSessions).To(ConsistOf(types.Session{
 								SessionID:          "11112222-3333-4444-5555-666677778888",
 								UserID:             "99990000-3333-4444-5555-666677778888",
 								SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
@@ -412,7 +413,7 @@ var _ = Describe("Ingest endpoint", func() {
 				})
 
 				It("stores the session with an empty set of attributes", func() {
-					Expect(store.StoredSessions).To(ConsistOf(storage.Session{
+					Expect(store.StoredSessions).To(ConsistOf(types.Session{
 						SessionID:          "11112222-3333-4444-5555-666677778888",
 						UserID:             "99990000-3333-4444-5555-666677778888",
 						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
@@ -430,11 +431,11 @@ var _ = Describe("Ingest endpoint", func() {
 
 type mockStore struct {
 	ErrorToReturnFromStore error
-	StoredSessions         []storage.Session
+	StoredSessions         []types.Session
 	SessionExists          bool
 }
 
-func (m *mockStore) Store(_ context.Context, session *storage.Session) error {
+func (m *mockStore) Store(_ context.Context, session *types.Session) error {
 	if m.ErrorToReturnFromStore != nil {
 		return m.ErrorToReturnFromStore
 	}
@@ -452,7 +453,7 @@ func GetMessage(e logrus.Entry) string     { return e.Message }
 func GetData(e logrus.Entry) logrus.Fields { return e.Data }
 func GetLevel(e logrus.Entry) logrus.Level { return e.Level }
 
-func LogEntryWithError(message string, err error) types.GomegaMatcher {
+func LogEntryWithError(message string, err error) gomega_types.GomegaMatcher {
 	return SatisfyAll(
 		WithTransform(GetMessage, Equal(message)),
 		WithTransform(GetData, HaveKeyWithValue(logrus.ErrorKey, err)),
@@ -460,7 +461,7 @@ func LogEntryWithError(message string, err error) types.GomegaMatcher {
 	)
 }
 
-func LogEntryWithWarning(message string) types.GomegaMatcher {
+func LogEntryWithWarning(message string) gomega_types.GomegaMatcher {
 	return SatisfyAll(
 		WithTransform(GetMessage, Equal(message)),
 		WithTransform(GetLevel, Equal(logrus.WarnLevel)),

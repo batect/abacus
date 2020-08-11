@@ -28,10 +28,11 @@ import (
 
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/storage"
+	"github.com/batect/abacus/server/types"
 	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/types"
+	gomega_types "github.com/onsi/gomega/types"
 	"google.golang.org/api/option"
 )
 
@@ -39,7 +40,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 	var bucket *cloudstorage.BucketHandle
 	var store storage.SessionStore
 
-	session := &storage.Session{
+	session := &types.Session{
 		SessionID:          "11112222-3333-4444-5555-666677778888",
 		UserID:             "99990000-3333-4444-5555-666677778888",
 		SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
@@ -115,7 +116,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 			err = store.Store(context.Background(), session)
 			Expect(err).ToNot(HaveOccurred())
 
-			updatedSession := &storage.Session{
+			updatedSession := &types.Session{
 				SessionID:          session.SessionID,
 				UserID:             session.UserID,
 				SessionStartTime:   session.SessionStartTime,
@@ -142,11 +143,11 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 })
 
 type haveContentMatcher struct {
-	expectedContentMatcher types.GomegaMatcher
+	expectedContentMatcher gomega_types.GomegaMatcher
 	actualContent          string
 }
 
-func HaveContent(expectedContentMatcher types.GomegaMatcher) types.GomegaMatcher {
+func HaveContent(expectedContentMatcher gomega_types.GomegaMatcher) gomega_types.GomegaMatcher {
 	return &haveContentMatcher{expectedContentMatcher, ""}
 }
 
@@ -186,7 +187,7 @@ type haveContentTypeMatcher struct {
 	actualContentType   string
 }
 
-func HaveContentType(expectedContentType string) types.GomegaMatcher {
+func HaveContentType(expectedContentType string) gomega_types.GomegaMatcher {
 	return &haveContentTypeMatcher{expectedContentType, ""}
 }
 

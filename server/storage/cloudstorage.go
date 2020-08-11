@@ -26,6 +26,7 @@ import (
 	"net/http"
 
 	cloudstorage "cloud.google.com/go/storage"
+	"github.com/batect/abacus/server/types"
 	"google.golang.org/api/googleapi"
 	"google.golang.org/api/option"
 )
@@ -50,7 +51,7 @@ func NewCloudStorageSessionStore(bucketName string, opts ...option.ClientOption)
 	return &store, nil
 }
 
-func (c *cloudStorageSessionStore) Store(ctx context.Context, session *Session) error {
+func (c *cloudStorageSessionStore) Store(ctx context.Context, session *types.Session) error {
 	w := c.bucket.
 		Object(fmt.Sprintf("v1/%v/%v/%v.json", session.ApplicationID, session.ApplicationVersion, session.SessionID)).
 		If(cloudstorage.Conditions{DoesNotExist: true}).
