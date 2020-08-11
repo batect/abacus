@@ -71,6 +71,10 @@ func CreateValidator() (*validator.Validate, ut.Translator, error) {
 		return nil, nil, fmt.Errorf("could not register attribute name validator: %w", err)
 	}
 
+	if err := RegisterAttributeValueValidation(v, trans); err != nil {
+		return nil, nil, fmt.Errorf("could not register attribute value validator: %w", err)
+	}
+
 	if err := RegisterVersionValidation(v, trans); err != nil {
 		return nil, nil, fmt.Errorf("could not register version validator: %w", err)
 	}
@@ -106,7 +110,7 @@ func ToValidationErrors(errors validator.ValidationErrors, translator ut.Transla
 }
 
 func registerValidation(v *validator.Validate, trans ut.Translator, tag string, errorMessage string, validationFunc validator.Func) error {
-	if err := v.RegisterValidation(tag, validationFunc, false); err != nil {
+	if err := v.RegisterValidation(tag, validationFunc, true); err != nil {
 		return fmt.Errorf("could not register %v validator: %w", tag, err)
 	}
 

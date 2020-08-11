@@ -21,6 +21,7 @@
 package validation_test
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/batect/abacus/server/validation"
@@ -31,7 +32,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Validating attribute names", func() {
+var _ = Describe("Validating attribute values", func() {
 	var v *validator.Validate
 
 	BeforeEach(func() {
@@ -41,38 +42,47 @@ var _ = Describe("Validating attribute names", func() {
 		trans, found := uni.GetTranslator("en")
 		Expect(found).To(BeTrue())
 
-		err := validation.RegisterAttributeNameValidation(v, trans)
+		err := validation.RegisterAttributeValueValidation(v, trans)
 		Expect(err).ToNot(HaveOccurred())
 	})
 
 	type testStruct struct {
-		AttributeName string `validate:"attributeName"`
+		AttributeValue interface{} `validate:"attributeValue"`
 	}
 
-	for _, id := range []string{"a", "abc123", "theThing"} {
+	for _, id := range []interface{}{
+		"a",
+		"abc123",
+		"123",
+		json.Number("0"),
+		json.Number("-1"),
+		json.Number("1"),
+		json.Number("1.5"),
+		true,
+		false,
+		nil,
+	} {
 		testObject := testStruct{id}
 
-		Describe(fmt.Sprintf("given the attribute name '%v'", testObject.AttributeName), func() {
-			It("validates as a permitted attribute name", func() {
+		Describe(fmt.Sprintf("given the attribute value %#v", testObject.AttributeValue), func() {
+			It("validates as a permitted attribute value", func() {
 				Expect(v.Struct(testObject)).ToNot(HaveOccurred())
 			})
 		})
 	}
 
-	Describe("given an empty attribute name", func() {
-		testObject := testStruct{AttributeName: ""}
+	for _, value := range []interface{}{
+		[]string{},
+		[]string{"hello"},
+		map[string]string{
+			"hello": "world",
+		},
+	} {
+		testObject := testStruct{value}
 
-		It("fails validation", func() {
-			Expect(v.Struct(testObject)).To(MatchError("Key: 'testStruct.AttributeName' Error:Field validation for 'AttributeName' failed on the 'attributeName' tag"))
-		})
-	})
-
-	for _, name := range []string{"", "1", "1a", "-", ".", "("} {
-		testObject := testStruct{name}
-
-		Describe(fmt.Sprintf("given the attribute name '%v'", testObject.AttributeName), func() {
+		Describe(fmt.Sprintf("given the attribute value %#v", testObject.AttributeValue), func() {
 			It("fails validation", func() {
-				Expect(v.Struct(testObject)).To(MatchError("Key: 'testStruct.AttributeName' Error:Field validation for 'AttributeName' failed on the 'attributeName' tag"))
+				Expect(v.Struct(testObject)).To(MatchError("Key: 'testStruct.AttributeValue' Error:Field validation for 'AttributeValue' failed on the 'attributeValue' tag"))
 			})
 		})
 	}

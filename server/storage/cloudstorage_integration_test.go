@@ -22,6 +22,7 @@ package storage_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"time"
@@ -48,9 +49,13 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		IngestionTime:      time.Date(2019, 1, 2, 20, 4, 5, 678000000, time.UTC),
 		ApplicationID:      "my-app",
 		ApplicationVersion: "1.0.0",
-		Attributes: map[string]string{
+		Attributes: map[string]interface{}{
 			"operatingSystem": "Mac",
 			"dockerVersion":   "19.3.5",
+			"counter":         json.Number("123"),
+			"duration":        json.Number("1.3"),
+			"isEnabled":       true,
+			"nullValue":       nil,
 		},
 	}
 
@@ -64,7 +69,11 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		"applicationVersion": "1.0.0",
 		"attributes": {
 			"operatingSystem": "Mac",
-			"dockerVersion": "19.3.5"
+			"dockerVersion": "19.3.5",
+			"counter": 123,
+			"duration": 1.3,
+			"isEnabled": true,
+			"nullValue": null
 		}
 	}`
 
@@ -124,7 +133,7 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 				IngestionTime:      session.IngestionTime,
 				ApplicationID:      session.ApplicationID,
 				ApplicationVersion: session.ApplicationVersion,
-				Attributes: map[string]string{
+				Attributes: map[string]interface{}{
 					"some-new-attribute": "some value",
 				},
 			}

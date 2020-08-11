@@ -89,7 +89,7 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	session.IngestionTime = h.timeSource()
 
 	if session.Attributes == nil {
-		session.Attributes = map[string]string{}
+		session.Attributes = map[string]interface{}{}
 	}
 
 	if err := h.sessionStore.Store(ctx, &session); errors.Is(err, storage.ErrAlreadyExists) {

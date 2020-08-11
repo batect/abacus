@@ -22,12 +22,12 @@ package types
 import "time"
 
 type Session struct {
-	SessionID          string            `json:"sessionId" validate:"required,uuid4"`
-	UserID             string            `json:"userId" validate:"required,uuid4"`
-	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
-	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
-	IngestionTime      time.Time         `json:"ingestionTime"`
-	ApplicationID      string            `json:"applicationId" validate:"required,applicationId"`
-	ApplicationVersion string            `json:"applicationVersion" validate:"required,version"`
-	Attributes         map[string]string `json:"attributes" validate:"dive,keys,required,attributeName,endkeys"`
+	SessionID          string                 `json:"sessionId" validate:"required,uuid4"`
+	UserID             string                 `json:"userId" validate:"required,uuid4"`
+	SessionStartTime   time.Time              `json:"sessionStartTime" validate:"required"`
+	SessionEndTime     time.Time              `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
+	IngestionTime      time.Time              `json:"ingestionTime"`
+	ApplicationID      string                 `json:"applicationId" validate:"required,applicationId"`
+	ApplicationVersion string                 `json:"applicationVersion" validate:"required,version"`
+	Attributes         map[string]interface{} `json:"attributes" validate:"dive,keys,required,attributeName,endkeys,attributeValue"`
 }

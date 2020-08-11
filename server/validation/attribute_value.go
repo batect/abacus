@@ -20,18 +20,32 @@
 package validation
 
 import (
-	"regexp"
+	"reflect"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
-func RegisterAttributeNameValidation(v *validator.Validate, trans ut.Translator) error {
-	validationRegex := regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9]*$`)
+func RegisterAttributeValueValidation(v *validator.Validate, trans ut.Translator) error {
+	return registerValidation(v, trans, "attributeValue", "{0} must be a string, integer, boolean or null value", func(fl validator.FieldLevel) bool {
+		switch fl.Field().Kind() {
+		// json.Number is internally represented as a string.
+		case reflect.String:
+			return true
+		case reflect.Bool:
+			return true
+		case reflect.Interface:
+			return fl.Field().IsNil()
+		case reflect.Array, reflect.Chan, reflect.Complex128, reflect.Complex64,
+			reflect.Float32, reflect.Float64, reflect.Func, reflect.Int, reflect.Int16,
+			reflect.Int32, reflect.Int64, reflect.Int8, reflect.Invalid,
+			reflect.Map, reflect.Ptr, reflect.Slice, reflect.Struct, reflect.Uint,
+			reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint8, reflect.Uintptr,
+			reflect.UnsafePointer:
 
-	return registerValidation(v, trans, "attributeName", "{0} must have a valid attribute name", func(fl validator.FieldLevel) bool {
-		value := fl.Field().String()
-
-		return validationRegex.MatchString(value)
+			return false
+		default:
+			return false
+		}
 	})
 }

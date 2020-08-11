@@ -21,10 +21,11 @@
 package types_test
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"time"
 
+	"github.com/batect/abacus/server/decoding"
 	"github.com/batect/abacus/server/types"
 	"github.com/batect/abacus/server/validation"
 	ut "github.com/go-playground/universal-translator"
@@ -47,7 +48,9 @@ var _ = Describe("A session", func() {
 
 		validate := func(sourceJSON string) []validation.Error {
 			session := types.Session{}
-			err := json.Unmarshal([]byte(sourceJSON), &session)
+
+			decoder := decoding.NewJSONDecoder(bytes.NewReader([]byte(sourceJSON)))
+			err := decoder.Decode(&session)
 			Expect(err).ToNot(HaveOccurred())
 
 			err = v.Struct(session)
@@ -71,7 +74,11 @@ var _ = Describe("A session", func() {
 				"applicationVersion": "1.0.0",
 				"attributes": { 
 					"operatingSystem": "Mac",
-					"version1": "abc"
+					"version1": "1.2.3",
+					"isEnabled": true,
+					"count": 123,
+					"duration": 2.3,
+					"nullable": null
 				}
 			}`
 
@@ -200,7 +207,7 @@ var _ = Describe("A session", func() {
 				},
 			},
 			{
-				description: "an invalid attribute name",
+				description: "invalid attribute names",
 				sourceJSON: `{
 					"sessionId": "11112222-3333-4444-a555-666677778888", 
 					"userId": "99990000-3333-4444-a555-666677778888", 
@@ -215,9 +222,38 @@ var _ = Describe("A session", func() {
 					}
 				}`,
 				expectedErrors: []validation.Error{
-					{Key: "attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must be a valid attribute name"},
-					{Key: "attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must be a valid attribute name"},
-					{Key: "attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must be a valid attribute name"},
+					{Key: "attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must have a valid attribute name"},
+					{Key: "attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must have a valid attribute name"},
+					{Key: "attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must have a valid attribute name"},
+				},
+			},
+			{
+				description: "invalid attribute values",
+				sourceJSON: `{
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
+					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+					"applicationId": "test-app", 
+					"applicationVersion": "1.0.0",
+					"attributes": {
+						"attribute1": [],
+						"attribute2": {}
+					}
+				}`,
+				expectedErrors: []validation.Error{
+					{
+						Key:          "attributes[attribute1]",
+						Type:         "attributeValue",
+						InvalidValue: []interface{}{},
+						Message:      "attributes[attribute1] must be a string, integer, boolean or null value",
+					},
+					{
+						Key:          "attributes[attribute2]",
+						Type:         "attributeValue",
+						InvalidValue: map[string]interface{}{},
+						Message:      "attributes[attribute2] must be a string, integer, boolean or null value",
+					},
 				},
 			},
 		}

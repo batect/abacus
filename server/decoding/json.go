@@ -17,21 +17,17 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package validation
+package decoding
 
 import (
-	"regexp"
-
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
+	"encoding/json"
+	"io"
 )
 
-func RegisterAttributeNameValidation(v *validator.Validate, trans ut.Translator) error {
-	validationRegex := regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9]*$`)
+func NewJSONDecoder(r io.Reader) *json.Decoder {
+	decoder := json.NewDecoder(r)
+	decoder.DisallowUnknownFields()
+	decoder.UseNumber()
 
-	return registerValidation(v, trans, "attributeName", "{0} must have a valid attribute name", func(fl validator.FieldLevel) bool {
-		value := fl.Field().String()
-
-		return validationRegex.MatchString(value)
-	})
+	return decoder
 }

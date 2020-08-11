@@ -20,11 +20,11 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/batect/abacus/server/decoding"
 	"github.com/batect/abacus/server/validation"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -57,8 +57,7 @@ func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target i
 		return false
 	}
 
-	decoder := json.NewDecoder(req.Body)
-	decoder.DisallowUnknownFields()
+	decoder := decoding.NewJSONDecoder(req.Body)
 
 	if err := decoder.Decode(&target); err != nil {
 		badRequest(req.Context(), w, fmt.Sprintf("Request body is not valid: %s", strings.TrimPrefix(err.Error(), "json: ")))

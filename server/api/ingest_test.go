@@ -275,7 +275,7 @@ var _ = Describe("Ingest endpoint", func() {
 						IngestionTime:      currentTime,
 						ApplicationID:      "test-app",
 						ApplicationVersion: "1.0.0",
-						Attributes: map[string]string{
+						Attributes: map[string]interface{}{
 							"operatingSystem": "Mac",
 						},
 					}))
@@ -333,7 +333,7 @@ var _ = Describe("Ingest endpoint", func() {
 								IngestionTime:      currentTime,
 								ApplicationID:      "test-app",
 								ApplicationVersion: "1.0.0",
-								Attributes: map[string]string{
+								Attributes: map[string]interface{}{
 									"operatingSystem": "Mac",
 								},
 							}))
@@ -421,7 +421,7 @@ var _ = Describe("Ingest endpoint", func() {
 						IngestionTime:      currentTime,
 						ApplicationID:      "test-app",
 						ApplicationVersion: "1.0.0",
-						Attributes:         map[string]string{},
+						Attributes:         map[string]interface{}{},
 					}))
 				})
 			})
