@@ -63,13 +63,16 @@ var _ = Describe("A session", func() {
 
 		Describe("given a valid session", func() {
 			session := `{
-				"sessionId": "11112222-3333-4444-5555-666677778888", 
-				"userId": "99990000-3333-4444-5555-666677778888", 
+				"sessionId": "11112222-3333-4444-a555-666677778888", 
+				"userId": "99990000-3333-4444-a555-666677778888", 
 				"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 				"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 				"applicationId": "test-app", 
 				"applicationVersion": "1.0.0",
-				"attributes": { "operatingSystem": "Mac" }
+				"attributes": { 
+					"operatingSystem": "Mac",
+					"version1": "abc"
+				}
 			}`
 
 			var errors []validation.Error
@@ -113,15 +116,30 @@ var _ = Describe("A session", func() {
 					"applicationVersion": "1.0.0"
 				}`,
 				expectedErrors: []validation.Error{
-					{Key: "sessionId", Type: "uuid", InvalidValue: "abc123", Message: "sessionId must be a valid UUID"},
-					{Key: "userId", Type: "uuid", InvalidValue: "def456", Message: "userId must be a valid UUID"},
+					{Key: "sessionId", Type: "uuid4", InvalidValue: "abc123", Message: "sessionId must be a valid version 4 UUID"},
+					{Key: "userId", Type: "uuid4", InvalidValue: "def456", Message: "userId must be a valid version 4 UUID"},
+				},
+			},
+			{
+				description: "a non-random UUID for the ID fields",
+				sourceJSON: `{
+					"sessionId": "11112222-3333-4444-5555-666677778888", 
+					"userId": "99990000-3333-4444-5555-666677778888", 
+					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+					"applicationId": "test-app", 
+					"applicationVersion": "1.0.0"
+				}`,
+				expectedErrors: []validation.Error{
+					{Key: "sessionId", Type: "uuid4", InvalidValue: "11112222-3333-4444-5555-666677778888", Message: "sessionId must be a valid version 4 UUID"},
+					{Key: "userId", Type: "uuid4", InvalidValue: "99990000-3333-4444-5555-666677778888", Message: "userId must be a valid version 4 UUID"},
 				},
 			},
 			{
 				description: "the end time after the start time",
 				sourceJSON: `{
-					"sessionId": "11112222-3333-4444-5555-666677778888", 
-					"userId": "99990000-3333-4444-5555-666677778888", 
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
 					"sessionStartTime": "2019-01-04T03:04:05.678Z", 
 					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 					"applicationId": "test-app", 
@@ -139,8 +157,8 @@ var _ = Describe("A session", func() {
 			{
 				description: "an invalid application ID",
 				sourceJSON: `{
-					"sessionId": "11112222-3333-4444-5555-666677778888", 
-					"userId": "99990000-3333-4444-5555-666677778888", 
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
 					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
 					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 					"applicationId": "my-app", 
@@ -148,6 +166,58 @@ var _ = Describe("A session", func() {
 				}`,
 				expectedErrors: []validation.Error{
 					{Key: "applicationId", Type: "applicationId", InvalidValue: "my-app", Message: "applicationId must be a valid application ID"},
+				},
+			},
+			{
+				description: "an invalid application version",
+				sourceJSON: `{
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
+					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+					"applicationId": "test-app", 
+					"applicationVersion": "1."
+				}`,
+				expectedErrors: []validation.Error{
+					{Key: "applicationVersion", Type: "version", InvalidValue: "1.", Message: "applicationVersion must be a valid version"},
+				},
+			},
+			{
+				description: "an empty attribute name",
+				sourceJSON: `{
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
+					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+					"applicationId": "test-app", 
+					"applicationVersion": "1.0.0",
+					"attributes": {
+						"": "blah"
+					}
+				}`,
+				expectedErrors: []validation.Error{
+					{Key: "attributes[]", Type: "required", InvalidValue: nil, Message: "attributes[] is a required field"},
+				},
+			},
+			{
+				description: "an invalid attribute name",
+				sourceJSON: `{
+					"sessionId": "11112222-3333-4444-a555-666677778888", 
+					"userId": "99990000-3333-4444-a555-666677778888", 
+					"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+					"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+					"applicationId": "test-app", 
+					"applicationVersion": "1.0.0",
+					"attributes": {
+						"1": "blah",
+						".": "blah",
+						"-": "blah"
+					}
+				}`,
+				expectedErrors: []validation.Error{
+					{Key: "attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must be a valid attribute name"},
+					{Key: "attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must be a valid attribute name"},
+					{Key: "attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must be a valid attribute name"},
 				},
 			},
 		}

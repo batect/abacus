@@ -67,6 +67,10 @@ func CreateValidator() (*validator.Validate, ut.Translator, error) {
 		return nil, nil, fmt.Errorf("could not register application ID validator: %w", err)
 	}
 
+	if err := RegisterAttributeNameValidation(v, trans); err != nil {
+		return nil, nil, fmt.Errorf("could not register attribute name validator: %w", err)
+	}
+
 	if err := RegisterVersionValidation(v, trans); err != nil {
 		return nil, nil, fmt.Errorf("could not register version validator: %w", err)
 	}

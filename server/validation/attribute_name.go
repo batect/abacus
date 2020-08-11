@@ -17,17 +17,21 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package types
+package validation
 
-import "time"
+import (
+	"regexp"
 
-type Session struct {
-	SessionID          string            `json:"sessionId" validate:"required,uuid4"`
-	UserID             string            `json:"userId" validate:"required,uuid4"`
-	SessionStartTime   time.Time         `json:"sessionStartTime" validate:"required"`
-	SessionEndTime     time.Time         `json:"sessionEndTime" validate:"required,gtefield=SessionStartTime"`
-	IngestionTime      time.Time         `json:"ingestionTime"`
-	ApplicationID      string            `json:"applicationId" validate:"required,applicationId"`
-	ApplicationVersion string            `json:"applicationVersion" validate:"required,version"`
-	Attributes         map[string]string `json:"attributes" validate:"dive,keys,required,attributeName,endkeys"`
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+)
+
+func RegisterAttributeNameValidation(v *validator.Validate, trans ut.Translator) error {
+	validationRegex := regexp.MustCompile(`^[a-zA-Z][a-zA-Z0-9]*$`)
+
+	return registerValidation(v, trans, "attributeName", "{0} must be a valid attribute name", func(fl validator.FieldLevel) bool {
+		value := fl.Field().String()
+
+		return validationRegex.MatchString(value)
+	})
 }
