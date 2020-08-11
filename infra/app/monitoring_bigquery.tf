@@ -18,7 +18,7 @@
 // limitations under the License and the Condition.
 
 locals {
-  bigquery_transfer_log_query        = "resource.type=\"bigquery_resource\" protoPayload.serviceName=\"bigquery.googleapis.com\" protoPayload.methodName=\"jobservice.jobcompleted\""
+  bigquery_transfer_log_query        = "resource.type=\"bigquery_resource\" protoPayload.serviceName=\"bigquery.googleapis.com\" protoPayload.methodName=\"jobservice.jobcompleted\" protoPayload.authenticationInfo.principalEmail:\"gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com\""
   bigquery_transfer_errors_log_query = "${local.bigquery_transfer_log_query} severity=ERROR"
 }
 
@@ -92,12 +92,6 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
     **This alert has fired because there was one or more `$${metric.label.severity}` level log messages written to the `$${metric.label.logName}` for the BigQuery transfer job to `$${metric.label.tableId}`.**
 
     [Quick link to logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.bigquery_transfer_errors_log_query), "+", "%20")}?project=${data.google_project.project.name})
-
-    Log query details: view logs with the following query at https://console.cloud.google.com/logs/query?project=${data.google_project.project.name}:
-
-    ```
-    ${local.bigquery_transfer_errors_log_query}
-    ```
 
     Check the `protoPayload.serviceData.jobCompletedEvent.job.jobStatus` field on the log message for details of the error.
     EOT

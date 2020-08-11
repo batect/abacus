@@ -57,12 +57,6 @@ resource "google_monitoring_alert_policy" "log_errors" {
     **This alert has fired because there was one or more `$${metric.label.severity}` level log messages written to the `$${metric.label.log}` log by `$${resource.label.revision_name}`.**
 
     [Quick link to logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.log_errors_query), "+", "%20")}?project=${data.google_project.project.name})
-
-    Log query details: view logs with the following query at https://console.cloud.google.com/logs/query?project=${data.google_project.project.name}:
-
-    ```
-    ${local.log_errors_query}
-    ```
     EOT
 
     mime_type = "text/markdown"
