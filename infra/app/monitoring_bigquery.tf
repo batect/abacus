@@ -20,6 +20,9 @@
 locals {
   bigquery_transfer_log_query        = "resource.type=\"bigquery_resource\" protoPayload.serviceName=\"bigquery.googleapis.com\" protoPayload.methodName=\"jobservice.jobcompleted\" protoPayload.authenticationInfo.principalEmail:\"gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com\""
   bigquery_transfer_errors_log_query = "${local.bigquery_transfer_log_query} severity=ERROR"
+
+  seconds_in_minute = 60
+  seconds_in_hour   = 60 * local.seconds_in_minute
 }
 
 resource "google_logging_metric" "bigquery_transfer_jobs" {
@@ -77,7 +80,7 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
       }
 
       aggregations {
-        alignment_period     = "60s"
+        alignment_period     = format("%ds", local.batect_transfer_job_interval_hours * local.seconds_in_hour)
         cross_series_reducer = "REDUCE_SUM"
         group_by_fields      = ["metric.label.tableId", "metric.label.severity", "metric.label.logName"]
         per_series_aligner   = "ALIGN_RATE"

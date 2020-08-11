@@ -17,6 +17,10 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+locals {
+  batect_transfer_job_interval_hours = 8
+}
+
 data "google_service_account" "bigquery_transfer_service" {
   account_id = "bigquery-transfer-service"
 }
@@ -102,7 +106,7 @@ resource "google_bigquery_data_transfer_config" "batect_transfer" {
   data_source_id         = "google_cloud_storage"
   destination_dataset_id = google_bigquery_dataset.default.dataset_id
   location               = google_bigquery_dataset.default.location
-  schedule               = "every 8 hours"
+  schedule               = format("every %d hours", local.batect_transfer_job_interval_hours)
   service_account_name   = data.google_service_account.bigquery_transfer_service.email
 
   params = {
