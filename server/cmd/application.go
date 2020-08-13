@@ -26,7 +26,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"time"
 
 	"cloud.google.com/go/profiler"
 	cloudstorage "cloud.google.com/go/storage"
@@ -93,23 +92,19 @@ func initProfiling() {
 }
 
 func initTracing() {
-	exporter, err := texporter.NewExporter(texporter.WithOnError(func(err error) {
-		logrus.WithError(err).Warn("Trace exporter reported error.")
-	}))
-
-	if err != nil {
-		logrus.WithError(err).Fatal("Could not create trace exporter.")
-	}
-
-	traceProvider, err := sdktrace.NewProvider(
-		sdktrace.WithBatcher(exporter, sdktrace.WithBatchTimeout(time.Microsecond), sdktrace.WithMaxExportBatchSize(1)),
+	_, _, err := texporter.InstallNewPipeline(
+		[]texporter.Option{
+			texporter.WithProjectID(getProjectID()),
+			texporter.WithOnError(func(err error) {
+				logrus.WithError(err).Warn("Trace exporter reported error.")
+			}),
+		},
+		sdktrace.WithConfig(sdktrace.Config{DefaultSampler: sdktrace.AlwaysSample()}),
 	)
 
 	if err != nil {
-		logrus.WithError(err).Fatal("Could not create trace provider.")
+		logrus.WithError(err).Fatal("Could not install tracing pipeline.")
 	}
-
-	global.SetTraceProvider(traceProvider)
 
 	w3Propagator := trace.DefaultHTTPPropagator()
 	gcpPropagator := observability.GCPPropagator{}
