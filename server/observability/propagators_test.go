@@ -174,7 +174,15 @@ var _ = Describe("A GCP tracing propagator", func() {
 
 		BeforeEach(func() {
 			headers = http.Header{}
-			tracer := testtrace.NewTracer(testtrace.TracerWithGenerator(&traceIDGenerator{}))
+
+			traceGenerator := func(ctx context.Context) trace.SpanContext {
+				return trace.SpanContext{
+					TraceID: [16]byte{16, 84, 69, 170, 120, 67, 188, 139, 242, 6, 177, 32, 0, 16, 0, 0},
+					SpanID:  [8]byte{255, 0, 0, 0, 0, 0, 0, 123},
+				}
+			}
+
+			tracer := testtrace.NewProvider(testtrace.WithSpanContextFunc(traceGenerator)).Tracer("Tracer")
 			ctx, _ := tracer.Start(context.Background(), "Test trace")
 			propagator.Inject(ctx, headers)
 		})
@@ -184,13 +192,3 @@ var _ = Describe("A GCP tracing propagator", func() {
 		})
 	})
 })
-
-type traceIDGenerator struct{}
-
-func (t *traceIDGenerator) TraceID() trace.ID {
-	return [16]byte{16, 84, 69, 170, 120, 67, 188, 139, 242, 6, 177, 32, 0, 16, 0, 0}
-}
-
-func (t *traceIDGenerator) SpanID() trace.SpanID {
-	return [8]byte{255, 0, 0, 0, 0, 0, 0, 123}
-}

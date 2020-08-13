@@ -70,7 +70,7 @@ var _ = Describe("Trace ID extraction middleware", func() {
 })
 
 func addTraceToRequest(req *http.Request) (*http.Request, string) {
-	ctx, span := testtrace.NewTracer().Start(req.Context(), "My test span")
+	ctx, span := testtrace.NewProvider().Tracer("Tracer").Start(req.Context(), "My test span")
 	traceID := span.SpanContext().TraceID.String()
 	req = req.WithContext(ctx)
 
