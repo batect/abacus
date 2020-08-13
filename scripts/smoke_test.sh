@@ -7,7 +7,6 @@ BASE_URL=${1:-https://$DOMAIN}
 function main() {
   echoBlueText "Generating data..."
 
-  CURRENT_DATE=$(currentDate)
   SESSION_ID=$(randomUUID)
   USER_ID=$(randomUUID)
 
@@ -21,7 +20,13 @@ function main() {
     "applicationVersion": "1.0.0",
     "attributes": {
       "source": "smoke-test"
-    }
+    },
+    "events": [
+      { "type": "TestEvent", "time": "$(currentTime)", "attributes": {} }
+    ],
+    "spans": [
+      { "type": "TestSpan", "startTime": "$(currentTime)", "endTime": "$(currentTime)", "attributes": {} }
+    ]
   }
 EOF
 
@@ -58,10 +63,6 @@ EOF
 
 function randomUUID() {
   uuidgen | tr '[:upper:]' '[:lower:]' | tr -d '\n'
-}
-
-function currentDate() {
-  date -u +"%Y-%m-%d"
 }
 
 function currentTime() {

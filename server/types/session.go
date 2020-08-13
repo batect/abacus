@@ -30,4 +30,19 @@ type Session struct {
 	ApplicationID      string                 `json:"applicationId" validate:"required,applicationId"`
 	ApplicationVersion string                 `json:"applicationVersion" validate:"required,version"`
 	Attributes         map[string]interface{} `json:"attributes" validate:"dive,keys,required,attributeName,endkeys,attributeValue"`
+	Events             []Event                `json:"events" validate:"dive"`
+	Spans              []Span                 `json:"spans" validate:"dive"`
+}
+
+type Event struct {
+	Type       string                 `json:"type" validate:"required"`
+	Time       time.Time              `json:"time" validate:"required"`
+	Attributes map[string]interface{} `json:"attributes" validate:"dive,keys,required,attributeName,endkeys,attributeValue"`
+}
+
+type Span struct {
+	Type       string                 `json:"type" validate:"required"`
+	StartTime  time.Time              `json:"startTime" validate:"required"`
+	EndTime    time.Time              `json:"endTime" validate:"required,gtefield=StartTime"`
+	Attributes map[string]interface{} `json:"attributes" validate:"dive,keys,required,attributeName,endkeys,attributeValue"`
 }

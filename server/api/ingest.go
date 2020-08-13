@@ -86,11 +86,7 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		applicationVersion.String(session.ApplicationVersion),
 	)
 
-	session.IngestionTime = h.timeSource()
-
-	if session.Attributes == nil {
-		session.Attributes = map[string]interface{}{}
-	}
+	session = h.cleanSession(session)
 
 	if err := h.sessionStore.Store(ctx, &session); errors.Is(err, storage.ErrAlreadyExists) {
 		log.Warn("Session already exists, not storing.")
@@ -112,4 +108,34 @@ func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	w.Header().Set("Content-Length", "0")
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *ingestHandler) cleanSession(session types.Session) types.Session {
+	session.IngestionTime = h.timeSource()
+
+	if session.Attributes == nil {
+		session.Attributes = map[string]interface{}{}
+	}
+
+	if session.Events == nil {
+		session.Events = []types.Event{}
+	}
+
+	if session.Spans == nil {
+		session.Spans = []types.Span{}
+	}
+
+	for i, s := range session.Spans {
+		if s.Attributes == nil {
+			session.Spans[i].Attributes = map[string]interface{}{}
+		}
+	}
+
+	for i, e := range session.Events {
+		if e.Attributes == nil {
+			session.Events[i].Attributes = map[string]interface{}{}
+		}
+	}
+
+	return session
 }

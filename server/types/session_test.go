@@ -79,7 +79,34 @@ var _ = Describe("A session", func() {
 					"count": 123,
 					"duration": 2.3,
 					"nullable": null
-				}
+				},
+				"events": [
+					{
+						"type": "ThingHappened", 
+						"time": "2019-01-02T03:04:06.678Z", 
+						"attributes": { 
+							"operatingSystem": "Mac",
+							"isEnabled": true,
+							"count": 123,
+							"duration": 2.3,
+							"nullable": null
+						}
+					}
+				],
+				"spans": [
+					{ 
+						"type": "LoadingThings", 
+						"startTime": "2019-01-02T03:04:07.678Z", 
+						"endTime": "2019-01-02T03:04:08.678Z", 
+						"attributes": { 
+							"operatingSystem": "Mac",
+							"isEnabled": true,
+							"count": 123,
+							"duration": 2.3,
+							"nullable": null
+						}
+					}
+				]
 			}`
 
 			var errors []validation.Error
@@ -92,6 +119,30 @@ var _ = Describe("A session", func() {
 				Expect(errors).To(BeEmpty())
 			})
 		})
+
+		sessionWithEvent := func(event string) string {
+			return fmt.Sprintf(`{
+				"sessionId": "11112222-3333-4444-a555-666677778888", 
+				"userId": "99990000-3333-4444-a555-666677778888", 
+				"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+				"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+				"applicationId": "test-app", 
+				"applicationVersion": "1.0.0",
+				"events": [%v]
+			}`, event)
+		}
+
+		sessionWithSpan := func(span string) string {
+			return fmt.Sprintf(`{
+				"sessionId": "11112222-3333-4444-a555-666677778888", 
+				"userId": "99990000-3333-4444-a555-666677778888", 
+				"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+				"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+				"applicationId": "test-app", 
+				"applicationVersion": "1.0.0",
+				"spans": [%v]
+			}`, span)
+		}
 
 		type invalidCase struct {
 			description    string
@@ -110,6 +161,23 @@ var _ = Describe("A session", func() {
 					{Key: "sessionEndTime", Type: "required", Message: "sessionEndTime is a required field"},
 					{Key: "applicationId", Type: "required", Message: "applicationId is a required field"},
 					{Key: "applicationVersion", Type: "required", Message: "applicationVersion is a required field"},
+				},
+			},
+			{
+				description: "an event with an empty body",
+				sourceJSON:  sessionWithEvent(`{}`),
+				expectedErrors: []validation.Error{
+					{Key: "events[0].type", Type: "required", Message: "type is a required field"},
+					{Key: "events[0].time", Type: "required", Message: "time is a required field"},
+				},
+			},
+			{
+				description: "a span with an empty body",
+				sourceJSON:  sessionWithSpan(`{}`),
+				expectedErrors: []validation.Error{
+					{Key: "spans[0].type", Type: "required", Message: "type is a required field"},
+					{Key: "spans[0].startTime", Type: "required", Message: "startTime is a required field"},
+					{Key: "spans[0].endTime", Type: "required", Message: "endTime is a required field"},
 				},
 			},
 			{
@@ -162,6 +230,22 @@ var _ = Describe("A session", func() {
 				},
 			},
 			{
+				description: "a span with the end time after the start time",
+				sourceJSON: sessionWithSpan(`{
+					"type": "some-span",
+					"startTime": "2019-01-04T03:04:05.678Z", 
+					"endTime": "2019-01-02T09:04:05.678Z"
+				}`),
+				expectedErrors: []validation.Error{
+					{
+						Key:          "spans[0].endTime",
+						Type:         "gtefield",
+						InvalidValue: time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+						Message:      "endTime must be greater than or equal to startTime",
+					},
+				},
+			},
+			{
 				description: "an invalid application ID",
 				sourceJSON: `{
 					"sessionId": "11112222-3333-4444-a555-666677778888", 
@@ -207,6 +291,33 @@ var _ = Describe("A session", func() {
 				},
 			},
 			{
+				description: "an empty attribute name on an event",
+				sourceJSON: sessionWithEvent(`{
+					"type": "the-event",
+					"time": "2019-01-02T03:04:05.678Z",
+					"attributes": {
+						"": "blah"
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{Key: "events[0].attributes[]", Type: "required", InvalidValue: nil, Message: "attributes[] is a required field"},
+				},
+			},
+			{
+				description: "an empty attribute name on a span",
+				sourceJSON: sessionWithSpan(`{
+					"type": "the-event",
+					"startTime": "2019-01-02T03:04:05.678Z", 
+					"endTime": "2019-01-02T09:04:05.678Z", 
+					"attributes": {
+						"": "blah"
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{Key: "spans[0].attributes[]", Type: "required", InvalidValue: nil, Message: "attributes[] is a required field"},
+				},
+			},
+			{
 				description: "invalid attribute names",
 				sourceJSON: `{
 					"sessionId": "11112222-3333-4444-a555-666677778888", 
@@ -225,6 +336,41 @@ var _ = Describe("A session", func() {
 					{Key: "attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must have a valid attribute name"},
 					{Key: "attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must have a valid attribute name"},
 					{Key: "attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must have a valid attribute name"},
+				},
+			},
+			{
+				description: "invalid attribute names on an event",
+				sourceJSON: sessionWithEvent(`{
+					"type": "the-event",
+					"time": "2019-01-02T03:04:05.678Z",
+					"attributes": {
+						"1": "blah",
+						".": "blah",
+						"-": "blah"
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{Key: "events[0].attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must have a valid attribute name"},
+					{Key: "events[0].attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must have a valid attribute name"},
+					{Key: "events[0].attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must have a valid attribute name"},
+				},
+			},
+			{
+				description: "invalid attribute names on a span",
+				sourceJSON: sessionWithSpan(`{
+					"type": "the-event",
+					"startTime": "2019-01-02T03:04:05.678Z", 
+					"endTime": "2019-01-02T09:04:05.678Z", 
+					"attributes": {
+						"1": "blah",
+						".": "blah",
+						"-": "blah"
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{Key: "spans[0].attributes[1]", Type: "attributeName", InvalidValue: "1", Message: "attributes[1] must have a valid attribute name"},
+					{Key: "spans[0].attributes[.]", Type: "attributeName", InvalidValue: ".", Message: "attributes[.] must have a valid attribute name"},
+					{Key: "spans[0].attributes[-]", Type: "attributeName", InvalidValue: "-", Message: "attributes[-] must have a valid attribute name"},
 				},
 			},
 			{
@@ -250,6 +396,57 @@ var _ = Describe("A session", func() {
 					},
 					{
 						Key:          "attributes[attribute2]",
+						Type:         "attributeValue",
+						InvalidValue: map[string]interface{}{},
+						Message:      "attributes[attribute2] must be a string, integer, boolean or null value",
+					},
+				},
+			},
+			{
+				description: "invalid attribute values on an event",
+				sourceJSON: sessionWithEvent(`{
+					"type": "the-event",
+					"time": "2019-01-02T03:04:05.678Z",
+					"attributes": {
+						"attribute1": [],
+						"attribute2": {}
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{
+						Key:          "events[0].attributes[attribute1]",
+						Type:         "attributeValue",
+						InvalidValue: []interface{}{},
+						Message:      "attributes[attribute1] must be a string, integer, boolean or null value",
+					},
+					{
+						Key:          "events[0].attributes[attribute2]",
+						Type:         "attributeValue",
+						InvalidValue: map[string]interface{}{},
+						Message:      "attributes[attribute2] must be a string, integer, boolean or null value",
+					},
+				},
+			},
+			{
+				description: "invalid attribute values on a span",
+				sourceJSON: sessionWithSpan(`{
+					"type": "the-event",
+					"startTime": "2019-01-02T03:04:05.678Z", 
+					"endTime": "2019-01-02T09:04:05.678Z", 
+					"attributes": {
+						"attribute1": [],
+						"attribute2": {}
+					}
+				}`),
+				expectedErrors: []validation.Error{
+					{
+						Key:          "spans[0].attributes[attribute1]",
+						Type:         "attributeValue",
+						InvalidValue: []interface{}{},
+						Message:      "attributes[attribute1] must be a string, integer, boolean or null value",
+					},
+					{
+						Key:          "spans[0].attributes[attribute2]",
 						Type:         "attributeValue",
 						InvalidValue: map[string]interface{}{},
 						Message:      "attributes[attribute2] must be a string, integer, boolean or null value",

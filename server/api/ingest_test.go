@@ -23,6 +23,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -71,6 +72,20 @@ var _ = Describe("Ingest endpoint", func() {
 
 		It("does not store any sessions", func() {
 			Expect(store.StoredSessions).To(BeEmpty())
+		})
+	}
+
+	ItReturnsACreatedResponseAndStoresTheSession := func(description string, expectedSession types.Session) {
+		It("returns a HTTP 201 response", func() {
+			Expect(resp.Code).To(Equal(http.StatusCreated))
+		})
+
+		It("returns an empty body", func() {
+			Expect(resp.Result().ContentLength).To(BeZero())
+		})
+
+		It(fmt.Sprintf("stores the session %v", description), func() {
+			Expect(store.StoredSessions).To(ConsistOf(expectedSession))
 		})
 	}
 
@@ -167,77 +182,26 @@ var _ = Describe("Ingest endpoint", func() {
 			})
 
 			Context("when the request body is valid JSON but has an invalid value for one or more fields", func() {
-				Context("because one or more fields is in an invalid format", func() {
-					BeforeEach(func() {
-						req, _ := createRequest(`{
-							"sessionId": "abc123", 
-							"userId": "def456", 
-							"sessionStartTime": "2019-01-02T03:04:05.678Z", 
-							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-							"applicationId": "test-app", 
-							"applicationVersion": "1.0.0"
-						}`)
-
-						handler.ServeHTTP(resp, req)
-					})
-
-					ItReturnsABadRequestResponseWithBody(`{
-						"message": "Request body has validation errors",
-						"validationErrors": [
-							{ "key": "sessionId", "type": "uuid4", "invalidValue": "abc123", "message": "sessionId must be a valid version 4 UUID" },
-							{ "key": "userId", "type": "uuid4", "invalidValue": "def456", "message": "userId must be a valid version 4 UUID" }
-						]
+				BeforeEach(func() {
+					req, _ := createRequest(`{
+						"sessionId": "abc123", 
+						"userId": "def456", 
+						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+						"applicationId": "test-app", 
+						"applicationVersion": "1.0.0"
 					}`)
+
+					handler.ServeHTTP(resp, req)
 				})
 
-				Context("because the session start time is after the session end time", func() {
-					BeforeEach(func() {
-						req, _ := createRequest(`{
-							"sessionId": "11112222-3333-4444-a555-666677778888", 
-							"userId": "99990000-3333-4444-a555-666677778888", 
-							"sessionStartTime": "2019-01-04T03:04:05.678Z", 
-							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-							"applicationId": "test-app", 
-							"applicationVersion": "1.0.0"
-						}`)
-
-						handler.ServeHTTP(resp, req)
-					})
-
-					ItReturnsABadRequestResponseWithBody(`{
-						"message": "Request body has validation errors",
-						"validationErrors": [
-							{
-								"key": "sessionEndTime", 
-								"type": "gtefield", 
-								"invalidValue": "2019-01-02T09:04:05.678Z", 
-								"message": "sessionEndTime must be greater than or equal to sessionStartTime"
-							}
-						]
-					}`)
-				})
-
-				Context("because the application ID is invalid", func() {
-					BeforeEach(func() {
-						req, _ := createRequest(`{
-							"sessionId": "11112222-3333-4444-a555-666677778888", 
-							"userId": "99990000-3333-4444-a555-666677778888", 
-							"sessionStartTime": "2019-01-02T03:04:05.678Z", 
-							"sessionEndTime": "2019-01-02T09:04:05.678Z", 
-							"applicationId": "my-app", 
-							"applicationVersion": "1.0.0"
-						}`)
-
-						handler.ServeHTTP(resp, req)
-					})
-
-					ItReturnsABadRequestResponseWithBody(`{
-						"message": "Request body has validation errors",
-						"validationErrors": [
-							{ "key": "applicationId", "type": "applicationId", "invalidValue": "my-app", "message": "applicationId must be a valid application ID" }
-						]
-					}`)
-				})
+				ItReturnsABadRequestResponseWithBody(`{
+					"message": "Request body has validation errors",
+					"validationErrors": [
+						{ "key": "sessionId", "type": "uuid4", "invalidValue": "abc123", "message": "sessionId must be a valid version 4 UUID" },
+						{ "key": "userId", "type": "uuid4", "invalidValue": "def456", "message": "userId must be a valid version 4 UUID" }
+					]
+				}`)
 			})
 
 			Context("when the request body is valid JSON but has an extra field", func() {
@@ -266,27 +230,19 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("stores the session with the current ingestion time, not the ingestion time in the request", func() {
-					Expect(store.StoredSessions).To(ConsistOf(types.Session{
-						SessionID:          "11112222-3333-4444-a555-666677778888",
-						UserID:             "99990000-3333-4444-a555-666677778888",
-						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
-						SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
-						IngestionTime:      currentTime,
-						ApplicationID:      "test-app",
-						ApplicationVersion: "1.0.0",
-						Attributes: map[string]interface{}{
-							"operatingSystem": "Mac",
-						},
-					}))
-				})
-
-				It("returns a HTTP 201 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusCreated))
-				})
-
-				It("returns an empty body", func() {
-					Expect(resp.Result().ContentLength).To(BeZero())
+				ItReturnsACreatedResponseAndStoresTheSession("with the current ingestion time, not the ingestion time from the request", types.Session{
+					SessionID:          "11112222-3333-4444-a555-666677778888",
+					UserID:             "99990000-3333-4444-a555-666677778888",
+					SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+					SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+					IngestionTime:      currentTime,
+					ApplicationID:      "test-app",
+					ApplicationVersion: "1.0.0",
+					Attributes: map[string]interface{}{
+						"operatingSystem": "Mac",
+					},
+					Spans:  []types.Span{},
+					Events: []types.Event{},
 				})
 			})
 
@@ -302,7 +258,13 @@ var _ = Describe("Ingest endpoint", func() {
 						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
 						"applicationId": "test-app", 
 						"applicationVersion": "1.0.0",
-						"attributes": { "operatingSystem": "Mac" }
+						"attributes": { "operatingSystem": "Mac" },
+						"events": [
+							{ "type": "ThingHappened", "time": "2019-01-02T03:04:06.678Z", "attributes": { "thingEnabled": true } }
+						],
+						"spans": [
+							{ "type": "LoadingThings", "startTime": "2019-01-02T03:04:07.678Z", "endTime": "2019-01-02T03:04:08.678Z", "attributes": { "nameOfThing": "thing-1" } }
+						]
 					}`)
 				})
 
@@ -316,27 +278,36 @@ var _ = Describe("Ingest endpoint", func() {
 							handler.ServeHTTP(resp, req)
 						})
 
-						It("returns a HTTP 201 response", func() {
-							Expect(resp.Code).To(Equal(http.StatusCreated))
-						})
-
-						It("returns an empty body", func() {
-							Expect(resp.Result().ContentLength).To(BeZero())
-						})
-
-						It("stores the session", func() {
-							Expect(store.StoredSessions).To(ConsistOf(types.Session{
-								SessionID:          "11112222-3333-4444-a555-666677778888",
-								UserID:             "99990000-3333-4444-a555-666677778888",
-								SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
-								SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
-								IngestionTime:      currentTime,
-								ApplicationID:      "test-app",
-								ApplicationVersion: "1.0.0",
-								Attributes: map[string]interface{}{
-									"operatingSystem": "Mac",
+						ItReturnsACreatedResponseAndStoresTheSession("without modification", types.Session{
+							SessionID:          "11112222-3333-4444-a555-666677778888",
+							UserID:             "99990000-3333-4444-a555-666677778888",
+							SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+							SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+							IngestionTime:      currentTime,
+							ApplicationID:      "test-app",
+							ApplicationVersion: "1.0.0",
+							Attributes: map[string]interface{}{
+								"operatingSystem": "Mac",
+							},
+							Events: []types.Event{
+								{
+									Type: "ThingHappened",
+									Time: time.Date(2019, 1, 2, 3, 4, 6, 678000000, time.UTC),
+									Attributes: map[string]interface{}{
+										"thingEnabled": true,
+									},
 								},
-							}))
+							},
+							Spans: []types.Span{
+								{
+									Type:      "LoadingThings",
+									StartTime: time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+									EndTime:   time.Date(2019, 1, 2, 3, 4, 8, 678000000, time.UTC),
+									Attributes: map[string]interface{}{
+										"nameOfThing": "thing-1",
+									},
+								},
+							},
 						})
 					})
 
@@ -388,11 +359,9 @@ var _ = Describe("Ingest endpoint", func() {
 				})
 			})
 
-			Context("when the request body is valid but contains no attributes for the session", func() {
-				var req *http.Request
-
+			Context("when the request body is valid but contains no attributes for the session, no spans and no events", func() {
 				BeforeEach(func() {
-					req, _ = createRequest(`{
+					req, _ := createRequest(`{
 						"sessionId": "11112222-3333-4444-a555-666677778888", 
 						"userId": "99990000-3333-4444-a555-666677778888", 
 						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
@@ -404,25 +373,109 @@ var _ = Describe("Ingest endpoint", func() {
 					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns a HTTP 201 response", func() {
-					Expect(resp.Code).To(Equal(http.StatusCreated))
+				ItReturnsACreatedResponseAndStoresTheSession("with an empty set of attributes, an empty set of spans, and an empty set of events", types.Session{
+					SessionID:          "11112222-3333-4444-a555-666677778888",
+					UserID:             "99990000-3333-4444-a555-666677778888",
+					SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+					SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+					IngestionTime:      currentTime,
+					ApplicationID:      "test-app",
+					ApplicationVersion: "1.0.0",
+					Attributes:         map[string]interface{}{},
+					Events:             []types.Event{},
+					Spans:              []types.Span{},
+				})
+			})
+
+			Context("when the request body is valid but contains no attributes for a span", func() {
+				BeforeEach(func() {
+					req, _ := createRequest(`{
+						"sessionId": "11112222-3333-4444-a555-666677778888", 
+						"userId": "99990000-3333-4444-a555-666677778888", 
+						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+						"applicationId": "test-app", 
+						"applicationVersion": "1.0.0",
+						"spans": [
+							{ "type": "LoadingThings", "startTime": "2019-01-02T03:04:07.678Z", "endTime": "2019-01-02T03:04:08.678Z", "attributes": { "nameOfThing": "thing-1" } },
+							{ "type": "LoadingOtherThings", "startTime": "2019-01-02T03:04:07.678Z", "endTime": "2019-01-02T03:04:08.678Z" }
+						]
+					}`)
+
+					handler.ServeHTTP(resp, req)
 				})
 
-				It("returns an empty body", func() {
-					Expect(resp.Result().ContentLength).To(BeZero())
+				ItReturnsACreatedResponseAndStoresTheSession("with an empty set of attributes for the span", types.Session{
+					SessionID:          "11112222-3333-4444-a555-666677778888",
+					UserID:             "99990000-3333-4444-a555-666677778888",
+					SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+					SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+					IngestionTime:      currentTime,
+					ApplicationID:      "test-app",
+					ApplicationVersion: "1.0.0",
+					Attributes:         map[string]interface{}{},
+					Events:             []types.Event{},
+					Spans: []types.Span{
+						{
+							Type:      "LoadingThings",
+							StartTime: time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+							EndTime:   time.Date(2019, 1, 2, 3, 4, 8, 678000000, time.UTC),
+							Attributes: map[string]interface{}{
+								"nameOfThing": "thing-1",
+							},
+						},
+						{
+							Type:       "LoadingOtherThings",
+							StartTime:  time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+							EndTime:    time.Date(2019, 1, 2, 3, 4, 8, 678000000, time.UTC),
+							Attributes: map[string]interface{}{},
+						},
+					},
+				})
+			})
+
+			Context("when the request body is valid but contains no attributes for an event", func() {
+				BeforeEach(func() {
+					req, _ := createRequest(`{
+						"sessionId": "11112222-3333-4444-a555-666677778888", 
+						"userId": "99990000-3333-4444-a555-666677778888", 
+						"sessionStartTime": "2019-01-02T03:04:05.678Z", 
+						"sessionEndTime": "2019-01-02T09:04:05.678Z", 
+						"applicationId": "test-app", 
+						"applicationVersion": "1.0.0",
+						"events": [
+							{ "type": "DidThing", "time": "2019-01-02T03:04:07.678Z", "attributes": { "nameOfThing": "thing-1" } },
+							{ "type": "DidOtherThing", "time": "2019-01-02T03:04:07.678Z" }
+						]
+					}`)
+
+					handler.ServeHTTP(resp, req)
 				})
 
-				It("stores the session with an empty set of attributes", func() {
-					Expect(store.StoredSessions).To(ConsistOf(types.Session{
-						SessionID:          "11112222-3333-4444-a555-666677778888",
-						UserID:             "99990000-3333-4444-a555-666677778888",
-						SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
-						SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
-						IngestionTime:      currentTime,
-						ApplicationID:      "test-app",
-						ApplicationVersion: "1.0.0",
-						Attributes:         map[string]interface{}{},
-					}))
+				ItReturnsACreatedResponseAndStoresTheSession("with an empty set of attributes for the span", types.Session{
+					SessionID:          "11112222-3333-4444-a555-666677778888",
+					UserID:             "99990000-3333-4444-a555-666677778888",
+					SessionStartTime:   time.Date(2019, 1, 2, 3, 4, 5, 678000000, time.UTC),
+					SessionEndTime:     time.Date(2019, 1, 2, 9, 4, 5, 678000000, time.UTC),
+					IngestionTime:      currentTime,
+					ApplicationID:      "test-app",
+					ApplicationVersion: "1.0.0",
+					Attributes:         map[string]interface{}{},
+					Events: []types.Event{
+						{
+							Type: "DidThing",
+							Time: time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+							Attributes: map[string]interface{}{
+								"nameOfThing": "thing-1",
+							},
+						},
+						{
+							Type:       "DidOtherThing",
+							Time:       time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+							Attributes: map[string]interface{}{},
+						},
+					},
+					Spans: []types.Span{},
 				})
 			})
 		})

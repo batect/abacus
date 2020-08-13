@@ -57,6 +57,33 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 			"isEnabled":       true,
 			"nullValue":       nil,
 		},
+		Events: []types.Event{
+			{
+				Type: "ThingHappened",
+				Time: time.Date(2019, 1, 2, 3, 4, 6, 678000000, time.UTC),
+				Attributes: map[string]interface{}{
+					"operatingSystem": "Mac",
+					"counter":         json.Number("123"),
+					"duration":        json.Number("1.3"),
+					"isEnabled":       true,
+					"nullValue":       nil,
+				},
+			},
+		},
+		Spans: []types.Span{
+			{
+				Type:      "LoadingThings",
+				StartTime: time.Date(2019, 1, 2, 3, 4, 7, 678000000, time.UTC),
+				EndTime:   time.Date(2019, 1, 2, 3, 4, 8, 678000000, time.UTC),
+				Attributes: map[string]interface{}{
+					"operatingSystem": "Mac",
+					"counter":         json.Number("123"),
+					"duration":        json.Number("1.3"),
+					"isEnabled":       true,
+					"nullValue":       nil,
+				},
+			},
+		},
 	}
 
 	expectedJSON := `{
@@ -74,7 +101,34 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 			"duration": 1.3,
 			"isEnabled": true,
 			"nullValue": null
-		}
+		},
+		"events": [
+			{ 
+				"type": "ThingHappened", 
+				"time": "2019-01-02T03:04:06.678Z", 
+				"attributes": { 
+					"operatingSystem": "Mac",
+					"counter": 123,
+					"duration": 1.3,
+					"isEnabled": true,
+					"nullValue": null
+				} 
+			}
+		],
+		"spans": [
+			{ 
+				"type": "LoadingThings", 
+				"startTime": "2019-01-02T03:04:07.678Z", 
+				"endTime": "2019-01-02T03:04:08.678Z", 
+				"attributes": { 
+					"operatingSystem": "Mac",
+					"counter": 123,
+					"duration": 1.3,
+					"isEnabled": true,
+					"nullValue": null
+				} 
+			}
+		]
 	}`
 
 	BeforeEach(func() {
