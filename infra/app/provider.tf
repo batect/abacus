@@ -17,12 +17,26 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+terraform {
+  required_providers {
+    cloudflare = {
+      version = "2.9.0"
+      source  = "terraform-providers/cloudflare"
+    }
+
+    google = {
+      version = "3.34.0"
+      source  = "hashicorp/google"
+    }
+  }
+
+  required_version = ">= 0.13"
+}
+
 provider "google" {
-  version     = "3.32.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_${var.cloud_sdk_config_name}_infra.json"
 }
 
 provider "cloudflare" {
-  version   = "2.9.0"
   api_token = trimspace(file("${path.module}/../../.creds/cloudflare_key"))
 }

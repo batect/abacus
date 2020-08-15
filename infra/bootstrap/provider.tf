@@ -17,12 +17,26 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+terraform {
+  required_providers {
+    google = {
+      version = "3.34.0"
+      source  = "hashicorp/google"
+    }
+
+    google-beta = {
+      version = "3.34.0"
+      source  = "hashicorp/google-beta"
+    }
+  }
+
+  required_version = ">= 0.13"
+}
+
 provider "google" {
-  version     = "3.32.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_${var.cloud_sdk_config_name}_infra.json"
 }
 
 provider "google-beta" {
-  version     = "3.32.0"
   credentials = "${path.module}/../../.creds/gcp_service_account_${var.cloud_sdk_config_name}_infra.json"
 }
