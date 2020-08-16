@@ -1,0 +1,94 @@
+[
+  {
+    "name": "sessionId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "sessionStartTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "sessionEndTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "ingestionTime",
+    "type": "TIMESTAMP",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "userId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "applicationId",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "applicationVersion",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "attributes",
+    "type": "RECORD",
+    "mode": "REQUIRED",
+    "fields": ["replaced in Terraform with session attributes"]
+  },
+  {
+    "name": "events",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "type",
+        "type": "STRING",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "time",
+        "type": "TIMESTAMP",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "attributes",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": ["replaced in Terraform with event attributes"]
+      }
+    ]
+  },
+  {
+    "name": "spans",
+    "type": "RECORD",
+    "mode": "REPEATED",
+    "fields": [
+      {
+        "name": "type",
+        "type": "STRING",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "startTime",
+        "type": "TIMESTAMP",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "endTime",
+        "type": "TIMESTAMP",
+        "mode": "REQUIRED"
+      },
+      {
+        "name": "attributes",
+        "type": "RECORD",
+        "mode": "REQUIRED",
+        "fields": ["replaced in Terraform with span attributes"]
+      }
+    ]
+  }
+]

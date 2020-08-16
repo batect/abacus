@@ -1,0 +1,32 @@
+[
+  {
+    "name": "exception",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "exceptionCaughtAt",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "isUserFacingException",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "currentVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "newVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

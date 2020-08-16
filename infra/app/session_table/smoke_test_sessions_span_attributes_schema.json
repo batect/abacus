@@ -1,6 +1,6 @@
 [
   {
-    "name": "temporary_column_that_will_be_removed",
+    "name": "spanSource",
     "type": "STRING",
     "mode": "NULLABLE"
   }

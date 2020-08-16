@@ -1,0 +1,197 @@
+[
+  {
+    "name": "additionalTaskCommandArgumentCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "cacheType",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "cleanupAfterFailureDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "cleanupAfterSuccessDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "colorOutputDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "commandLineConfigVariableOverrideCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "commandLineImageOverrideCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "commandType",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "consoleSupportsInteractivity",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerConnectionType",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerContainerType",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "exitCode",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "gitVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "jvmName",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "jvmStartTime",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "jvmVendor",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "jvmVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "osArchitecture",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "osName",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "osVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "proxyEnvironmentVariablePropagationDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "requestedOutputStyle",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "shell",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "skippingPrerequisites",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "stdinIsTTY",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "stdoutIsTTY",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "suspectedCISystem",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "suspectRunningOnCI",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "terminal",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "totalTasksToExecute",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "updateNotificationsDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "usingConfigVariablesFile",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "usingExistingDockerNetwork",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "usingNonDefaultConfigurationFileName",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "usingTLSForDockerConnection",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "verifyingTLSForDockerConnection",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "wrapperCacheCleanupDisabled",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "wrapperDidDownload",
+    "type": "BOOL",
+    "mode": "NULLABLE"
+  }
+]

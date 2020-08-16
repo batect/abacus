@@ -22,10 +22,10 @@ function main() {
       "source": "smoke-test"
     },
     "events": [
-      { "type": "TestEvent", "time": "$(currentTime)", "attributes": {} }
+      { "type": "TestEvent", "time": "$(currentTime)", "attributes": { "eventSource": "smoke-test" } }
     ],
     "spans": [
-      { "type": "TestSpan", "startTime": "$(currentTime)", "endTime": "$(currentTime)", "attributes": {} }
+      { "type": "TestSpan", "startTime": "$(currentTime)", "endTime": "$(currentTime)", "attributes": { "spanSource": "smoke-test" } }
     ]
   }
 EOF

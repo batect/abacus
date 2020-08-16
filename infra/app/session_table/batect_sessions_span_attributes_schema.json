@@ -1,0 +1,37 @@
+[
+  {
+    "name": "configVariableCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "containerCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "containersInTask",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "fileIncludeCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "gitIncludeCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "taskCount",
+    "type": "INT64",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "taskOnlyHasPrerequisites",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  }
+]

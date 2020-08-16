@@ -1,0 +1,7 @@
+[
+  {
+    "name": "eventSource",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
