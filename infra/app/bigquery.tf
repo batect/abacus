@@ -18,7 +18,7 @@
 // limitations under the License and the Condition.
 
 locals {
-  transfer_job_interval_hours = 8
+  transfer_job_interval_hours = 1
 }
 
 data "google_service_account" "bigquery_transfer_service" {
