@@ -9,6 +9,7 @@ jobs:
     env:
       TERM: xterm-256color
       BATECT_CACHE_TYPE: directory
+      BATECT_ENABLE_TELEMETRY: true
 
     steps:
       - uses: actions/checkout@v1
