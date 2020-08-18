@@ -311,7 +311,12 @@ func (c *haveContentEncodingMatcher) Match(actual interface{}) (bool, error) {
 }
 
 func (c *haveContentEncodingMatcher) FailureMessage(actual interface{}) string {
-	return fmt.Sprintf("Expected object '%v' to have content encoding '%v', but it was '%v'", actual.(*cloudstorage.ObjectHandle).ObjectName(), c.expectedContentEncoding, c.actualContentEncoding)
+	return fmt.Sprintf(
+		"Expected object '%v' to have content encoding '%v', but it was '%v'",
+		actual.(*cloudstorage.ObjectHandle).ObjectName(),
+		c.expectedContentEncoding,
+		c.actualContentEncoding,
+	)
 }
 
 func (c *haveContentEncodingMatcher) NegatedFailureMessage(actual interface{}) string {
