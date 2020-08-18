@@ -63,17 +63,18 @@ resource "google_logging_metric" "bigquery_transfer_jobs" {
 }
 
 resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
-  display_name = "BigQuery transfer job errors"
+  display_name = "BigQuery transfer jobs"
   combiner     = "OR"
 
   conditions {
-    display_name = "BigQuery transfer job logs"
+    display_name = "BigQuery transfer job error rate"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.bigquery_transfer_jobs.name}\" resource.type=\"global\" metric.label.severity!=INFO"
-      comparison      = "COMPARISON_GT"
-      threshold_value = 0
-      duration        = "0s"
+      filter             = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.bigquery_transfer_jobs.name}\" resource.type=\"global\" metric.label.severity!=INFO"
+      denominator_filter = "metric.type=\"logging.googleapis.com/user/${google_logging_metric.bigquery_transfer_jobs.name}\" resource.type=\"global\""
+      comparison         = "COMPARISON_GT"
+      duration           = "600s"
+      threshold_value    = 0
 
       trigger {
         count = 1
@@ -82,7 +83,14 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
       aggregations {
         alignment_period     = format("%ds", module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields      = ["metric.label.tableId", "metric.label.severity", "metric.label.logName"]
+        group_by_fields      = ["metric.label.tableId", "metric.label.logName"]
+        per_series_aligner   = "ALIGN_RATE"
+      }
+
+      denominator_aggregations {
+        alignment_period     = format("%ds", module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
+        cross_series_reducer = "REDUCE_SUM"
+        group_by_fields      = ["metric.label.tableId", "metric.label.logName"]
         per_series_aligner   = "ALIGN_RATE"
       }
     }
@@ -92,11 +100,12 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
 
   documentation {
     content = <<-EOT
-    **This alert has fired because there was one or more `$${metric.label.severity}` level log messages written to the `$${metric.label.logName}` for the BigQuery transfer job to `$${metric.label.tableId}`.**
+    **This alert has fired because there was one or more non-`INFO` level log messages written to the `$${metric.label.logName}` for the BigQuery transfer job to `$${metric.label.tableId}`.**
 
-    [Quick link to logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.bigquery_transfer_errors_log_query), "+", "%20")}?project=${data.google_project.project.name})
+    [Logs](https://console.cloud.google.com/logs/query;query=${replace(urlencode(local.bigquery_transfer_errors_log_query), "+", "%20")}?project=${data.google_project.project.name}) -
+    check the `protoPayload.serviceData.jobCompletedEvent.job.jobStatus` field on the log message for details of the error.
 
-    Check the `protoPayload.serviceData.jobCompletedEvent.job.jobStatus` field on the log message for details of the error.
+    [Jobs page](https://console.cloud.google.com/bigquery/transfers?project=${data.google_project.project.name})
     EOT
 
     mime_type = "text/markdown"
