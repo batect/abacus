@@ -1,7 +1,7 @@
 [
   {
     "name": "additionalTaskCommandArgumentCount",
-    "type": "INT64",
+    "type": "INTEGER",
     "mode": "NULLABLE"
   },
   {
@@ -11,27 +11,27 @@
   },
   {
     "name": "cleanupAfterFailureDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "cleanupAfterSuccessDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "colorOutputDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "commandLineConfigVariableOverrideCount",
-    "type": "INT64",
+    "type": "INTEGER",
     "mode": "NULLABLE"
   },
   {
     "name": "commandLineImageOverrideCount",
-    "type": "INT64",
+    "type": "INTEGER",
     "mode": "NULLABLE"
   },
   {
@@ -41,7 +41,7 @@
   },
   {
     "name": "consoleSupportsInteractivity",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
@@ -61,7 +61,7 @@
   },
   {
     "name": "exitCode",
-    "type": "INT64",
+    "type": "INTEGER",
     "mode": "NULLABLE"
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "name": "proxyEnvironmentVariablePropagationDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
@@ -121,17 +121,17 @@
   },
   {
     "name": "skippingPrerequisites",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "stdinIsTTY",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "stdoutIsTTY",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
@@ -141,7 +141,7 @@
   },
   {
     "name": "suspectRunningOnCI",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
@@ -151,47 +151,47 @@
   },
   {
     "name": "totalTasksToExecute",
-    "type": "INT64",
+    "type": "INTEGER",
     "mode": "NULLABLE"
   },
   {
     "name": "updateNotificationsDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "usingConfigVariablesFile",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "usingExistingDockerNetwork",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "usingNonDefaultConfigurationFileName",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "usingTLSForDockerConnection",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "verifyingTLSForDockerConnection",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "wrapperCacheCleanupDisabled",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {
     "name": "wrapperDidDownload",
-    "type": "BOOL",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   }
 ]
