@@ -81,14 +81,14 @@ resource "google_monitoring_alert_policy" "bigquery_transfer_errors" {
       }
 
       aggregations {
-        alignment_period     = format("%ds", module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
+        alignment_period     = format("%ds", 2 * module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
         cross_series_reducer = "REDUCE_SUM"
         group_by_fields      = ["metric.label.tableId", "metric.label.logName"]
         per_series_aligner   = "ALIGN_RATE"
       }
 
       denominator_aggregations {
-        alignment_period     = format("%ds", module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
+        alignment_period     = format("%ds", 2 * module.batect_sessions_table.transfer_job_interval_hours * local.seconds_in_hour)
         cross_series_reducer = "REDUCE_SUM"
         group_by_fields      = ["metric.label.tableId", "metric.label.logName"]
         per_series_aligner   = "ALIGN_RATE"
