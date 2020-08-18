@@ -20,6 +20,7 @@
 package storage
 
 import (
+	"compress/gzip"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -56,7 +57,10 @@ func (c *cloudStorageSessionStore) Store(ctx context.Context, session *types.Ses
 		Object(fmt.Sprintf("v1/%v/%v/%v.json", session.ApplicationID, session.ApplicationVersion, session.SessionID)).
 		If(cloudstorage.Conditions{DoesNotExist: true}).
 		NewWriter(ctx)
+
 	w.ContentType = "application/json"
+	w.ContentEncoding = "gzip"
+	gzipper := gzip.NewWriter(w)
 
 	bytes, err := json.Marshal(session)
 
@@ -64,8 +68,12 @@ func (c *cloudStorageSessionStore) Store(ctx context.Context, session *types.Ses
 		return fmt.Errorf("converting session to JSON failed: %w", err)
 	}
 
-	if _, err := w.Write(bytes); err != nil {
+	if _, err := gzipper.Write(bytes); err != nil {
 		return fmt.Errorf("writing to Cloud Storage failed: %w", err)
+	}
+
+	if err := gzipper.Close(); err != nil {
+		return fmt.Errorf("closing gzip stream failed: %w", err)
 	}
 
 	if err := w.Close(); err != nil {

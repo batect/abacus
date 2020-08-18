@@ -170,6 +170,10 @@ var _ = Describe("Saving sessions to Cloud Storage", func() {
 		It("stores the session in the bucket with the JSON media type", func() {
 			Expect(bucket.Object("v1/my-app/1.0.0/11112222-3333-4444-5555-666677778888.json")).To(HaveContentType("application/json"))
 		})
+
+		It("stores the session in the bucket compressed", func() {
+			Expect(bucket.Object("v1/my-app/1.0.0/11112222-3333-4444-5555-666677778888.json")).To(HaveContentEncoding("gzip"))
+		})
 	})
 
 	Describe("given the session already exists", func() {
@@ -279,5 +283,42 @@ func (c *haveContentTypeMatcher) NegatedFailureMessage(actual interface{}) strin
 		actual.(*cloudstorage.ObjectHandle).ObjectName(),
 		c.expectedContentType,
 		c.actualContentType,
+	)
+}
+
+type haveContentEncodingMatcher struct {
+	expectedContentEncoding string
+	actualContentEncoding   string
+}
+
+func HaveContentEncoding(expectedContentEncoding string) gomega_types.GomegaMatcher {
+	return &haveContentEncodingMatcher{expectedContentEncoding, ""}
+}
+
+func (c *haveContentEncodingMatcher) Match(actual interface{}) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	attrs, err := actual.(*cloudstorage.ObjectHandle).Attrs(ctx)
+
+	if err != nil {
+		return false, fmt.Errorf("could not get attributes of object: %w", err)
+	}
+
+	c.actualContentEncoding = attrs.ContentEncoding
+
+	return c.expectedContentEncoding == c.actualContentEncoding, nil
+}
+
+func (c *haveContentEncodingMatcher) FailureMessage(actual interface{}) string {
+	return fmt.Sprintf("Expected object '%v' to have content encoding '%v', but it was '%v'", actual.(*cloudstorage.ObjectHandle).ObjectName(), c.expectedContentEncoding, c.actualContentEncoding)
+}
+
+func (c *haveContentEncodingMatcher) NegatedFailureMessage(actual interface{}) string {
+	return fmt.Sprintf(
+		"Expected object '%v' to not have content encoding '%v', but it was '%v'",
+		actual.(*cloudstorage.ObjectHandle).ObjectName(),
+		c.expectedContentEncoding,
+		c.actualContentEncoding,
 	)
 }
