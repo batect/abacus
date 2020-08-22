@@ -124,8 +124,7 @@ func initTracing() {
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
 
-	// TODO: decorate these with othttp.WithRouteTag()
-	mux.HandleFunc("/ping", api.Ping)
+	mux.Handle("/ping", othttp.WithRouteTag("/ping", http.HandlerFunc(api.Ping)))
 	mux.Handle("/v1/sessions", othttp.WithRouteTag("/v1/sessions", createIngestHandler()))
 
 	wrappedMux := middleware.TraceIDExtractionMiddleware(
