@@ -71,6 +71,9 @@ containers:
     build_directory: .batect/fake-gcs-server
     command: /bin/fake-gcs-server -scheme=http -port=80 -backend=memory -public-host=cloud-storage
 
+  observatory:
+    build_directory: .batect/observatory
+
 tasks:
   setup:
     description: Download all dependencies used by the application.
@@ -357,6 +360,15 @@ tasks:
       environment:
         DOMAIN: <{subdomain}.<{rootDomain}
         CLOUDSDK_ACTIVE_CONFIG_NAME: app-<{gcpProject}
+
+  checkSecurity:
+    description: Check HTTP security of deployed service.
+    group: Test tasks
+    run:
+      container: observatory
+      command: sh -c "observatory $DOMAIN --format report --zero --rescan && observatory $DOMAIN --format report --min-grade A+ --min-score 100"
+      environment:
+        DOMAIN: <{subdomain}.<{rootDomain}
 
 config_variables:
   gcpProject:

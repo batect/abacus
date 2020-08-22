@@ -94,3 +94,7 @@ jobs:
 
       - name: Cleanup credentials
         run: sudo rm -rf .creds .gcloud
+
+      - name: Run HTTP security scan
+        run: ./batect --config-vars-file=batect.prod.yml checkSecurity
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master'
