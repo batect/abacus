@@ -38,7 +38,7 @@ import (
 	"github.com/unrolled/secure"
 	"go.opentelemetry.io/otel/api/propagation"
 	"go.opentelemetry.io/otel/api/trace"
-	"go.opentelemetry.io/otel/instrumentation/othttp"
+	othttp "go.opentelemetry.io/contrib/instrumentation/net/http"
 	"google.golang.org/api/option"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
