@@ -37,8 +37,8 @@ locals {
 
   cloud_storage_known_operations = join(", ", sort(concat(local.cloud_storage_class_a_operations, local.cloud_storage_class_b_operations)))
 
-  fifteen_minutes = format("%ds", 15*local.seconds_in_minute)
-  six_hours       = format("%ds", 6*local.seconds_in_hour)
+  fifteen_minutes = format("%ds", 15 * local.seconds_in_minute)
+  six_hours       = format("%ds", 6 * local.seconds_in_hour)
 }
 
 // FIXME: this policy is project-scoped but the free tier considers all projects attached to the billing account
