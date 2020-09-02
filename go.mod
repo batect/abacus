@@ -17,7 +17,7 @@ require (
 	github.com/unrolled/secure v1.0.8
 	go.opentelemetry.io/otel v0.10.0
 	go.opentelemetry.io/otel/sdk v0.10.0
-	google.golang.org/api v0.30.0
+	google.golang.org/api v0.31.0
 )
 
 // Required until https://github.com/go-playground/validator/pull/601 and https://github.com/go-playground/validator/pull/614 are merged.
