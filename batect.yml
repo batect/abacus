@@ -96,14 +96,14 @@ tasks:
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo -tags unitTests -race -coverprofile=coverage.txt -covermode=atomic server/...
+      command: ginkgo --regexScansFilePath --skip='_integration_test.go$' -race -coverprofile=coverage.txt -covermode=atomic server/...
 
   continuousUnitTest:
     description: Run the unit tests, and re-run them when any code changes are detected.
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo watch -tags unitTests server/...
+      command: ginkgo watch --regexScansFilePath --skip='_integration_test.go$' server/...
 
   integrationTest:
     description: Run the integration tests.
@@ -112,7 +112,7 @@ tasks:
       - cloud-storage
     run:
       container: build-env
-      command: ginkgo -tags integrationTests server/...
+      command: ginkgo --regexScansFilePath --focus='_integration_test.go$' server/...
       environment:
         STORAGE_EMULATOR_HOST: cloud-storage
 

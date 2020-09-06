@@ -1,9 +1,3 @@
-run:
-  build-tags:
-    - unitTests
-    - integrationTests
-    - journeyTests
-
 linters-settings:
   lll:
     line-length: 180
