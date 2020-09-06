@@ -13,7 +13,6 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/onsi/ginkgo v1.14.0
 	github.com/onsi/gomega v1.10.1
-	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/unrolled/secure v1.0.8
 	go.opentelemetry.io/contrib/instrumentation/net/http v0.11.0
