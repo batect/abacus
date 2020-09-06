@@ -69,7 +69,6 @@ containers:
 
   cloud-storage:
     build_directory: .batect/fake-gcs-server
-    command: /bin/fake-gcs-server -scheme=http -port=80 -backend=memory -public-host=cloud-storage
 
   observatory:
     build_directory: .batect/observatory

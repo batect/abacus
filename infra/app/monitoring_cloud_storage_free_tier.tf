@@ -37,8 +37,8 @@ locals {
 
   cloud_storage_known_operations = join(", ", sort(concat(local.cloud_storage_class_a_operations, local.cloud_storage_class_b_operations)))
 
-  five_minutes = "300s"
-  two_hours    = "7200s"
+  fifteen_minutes = format("%ds", 15 * local.seconds_in_minute)
+  six_hours       = format("%ds", 6 * local.seconds_in_hour)
 }
 
 // FIXME: this policy is project-scoped but the free tier considers all projects attached to the billing account
@@ -74,7 +74,7 @@ resource "google_monitoring_alert_policy" "cloud_storage_free_tier" {
     condition_threshold {
       filter          = "metric.type=\"storage.googleapis.com/api/request_count\" resource.type=\"gcs_bucket\" ${local.cloud_storage_filter_to_class_a_operations}"
       comparison      = "COMPARISON_GT"
-      duration        = local.two_hours
+      duration        = local.six_hours
       threshold_value = local.cloud_run_free_tier_alert_threshold_class_a_operations_per_second
 
       trigger {
@@ -82,7 +82,7 @@ resource "google_monitoring_alert_policy" "cloud_storage_free_tier" {
       }
 
       aggregations {
-        alignment_period     = local.five_minutes
+        alignment_period     = local.fifteen_minutes
         cross_series_reducer = "REDUCE_SUM"
         per_series_aligner   = "ALIGN_RATE"
       }
@@ -95,7 +95,7 @@ resource "google_monitoring_alert_policy" "cloud_storage_free_tier" {
     condition_threshold {
       filter          = "metric.type=\"storage.googleapis.com/api/request_count\" resource.type=\"gcs_bucket\" ${local.cloud_storage_filter_to_class_b_operations}"
       comparison      = "COMPARISON_GT"
-      duration        = local.two_hours
+      duration        = local.six_hours
       threshold_value = local.cloud_run_free_tier_alert_threshold_class_b_operations_per_second
 
       trigger {
@@ -103,7 +103,7 @@ resource "google_monitoring_alert_policy" "cloud_storage_free_tier" {
       }
 
       aggregations {
-        alignment_period     = local.five_minutes
+        alignment_period     = local.fifteen_minutes
         cross_series_reducer = "REDUCE_SUM"
         per_series_aligner   = "ALIGN_RATE"
       }
