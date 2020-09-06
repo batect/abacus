@@ -28,7 +28,7 @@ import (
 	"github.com/batect/abacus/server/middleware"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"go.opentelemetry.io/otel/api/trace/testtrace"
+	"go.opentelemetry.io/otel/api/trace/tracetest"
 )
 
 // Based on https://cloud.google.com/run/docs/logging#writing_structured_logs and
@@ -70,7 +70,7 @@ var _ = Describe("Trace ID extraction middleware", func() {
 })
 
 func addTraceToRequest(req *http.Request) (*http.Request, string) {
-	ctx, span := testtrace.NewProvider().Tracer("Tracer").Start(req.Context(), "My test span")
+	ctx, span := tracetest.NewProvider().Tracer("Tracer").Start(req.Context(), "My test span")
 	traceID := span.SpanContext().TraceID.String()
 	req = req.WithContext(ctx)
 
