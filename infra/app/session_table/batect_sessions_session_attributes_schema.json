@@ -76,7 +76,7 @@
   },
   {
     "name": "jvmStartTime",
-    "type": "STRING",
+    "type": "TIMESTAMP",
     "mode": "NULLABLE"
   },
   {
