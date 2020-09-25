@@ -17,7 +17,7 @@ require (
 	github.com/unrolled/secure v1.0.8
 	go.opentelemetry.io/contrib/instrumentation/net/http v0.11.0
 	go.opentelemetry.io/otel v0.12.0
-	go.opentelemetry.io/otel/sdk v0.11.0
+	go.opentelemetry.io/otel/sdk v0.12.0
 	google.golang.org/api v0.32.0
 )
 
