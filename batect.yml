@@ -8,6 +8,9 @@ containers:
       - type: cache
         name: go-cache
         container: /go
+      - type: cache
+        name: golangci-cache
+        container: /home/container-user/.cache/golangci-lint/
     working_directory: /code
     environment:
       GOCACHE: /go/cache
