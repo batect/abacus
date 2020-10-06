@@ -36,9 +36,9 @@ import (
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
-	othttp "go.opentelemetry.io/contrib/instrumentation/net/http"
+	othttp "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/api/propagation"
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/propagators"
 	"google.golang.org/api/option"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
@@ -107,7 +107,7 @@ func initTracing() {
 		logrus.WithError(err).Fatal("Could not install tracing pipeline.")
 	}
 
-	w3Propagator := trace.DefaultHTTPPropagator()
+	w3Propagator := propagators.DefaultHTTPPropagator()
 	gcpPropagator := observability.GCPPropagator{}
 
 	global.SetPropagators(propagation.New(
