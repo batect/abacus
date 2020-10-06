@@ -95,6 +95,11 @@
     "mode": "NULLABLE"
   },
   {
+    "name": "osDetails",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
     "name": "osName",
     "type": "STRING",
     "mode": "NULLABLE"
