@@ -36,9 +36,9 @@ import (
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
-	othttp "go.opentelemetry.io/contrib/instrumentation/net/http"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/api/propagation"
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/propagators"
 	"google.golang.org/api/option"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
@@ -107,7 +107,7 @@ func initTracing() {
 		logrus.WithError(err).Fatal("Could not install tracing pipeline.")
 	}
 
-	w3Propagator := trace.DefaultHTTPPropagator()
+	w3Propagator := propagators.DefaultHTTPPropagator()
 	gcpPropagator := observability.GCPPropagator{}
 
 	global.SetPropagators(propagation.New(
@@ -115,17 +115,17 @@ func initTracing() {
 		propagation.WithExtractors(w3Propagator, gcpPropagator),
 	))
 
-	http.DefaultTransport = othttp.NewTransport(
+	http.DefaultTransport = otelhttp.NewTransport(
 		http.DefaultTransport,
-		othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
-		othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
+		otelhttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
 	)
 }
 
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
-	mux.Handle("/ping", othttp.WithRouteTag("/ping", http.HandlerFunc(api.Ping)))
-	mux.Handle("/v1/sessions", othttp.WithRouteTag("/v1/sessions", createIngestHandler()))
+	mux.Handle("/ping", otelhttp.WithRouteTag("/ping", http.HandlerFunc(api.Ping)))
+	mux.Handle("/v1/sessions", otelhttp.WithRouteTag("/v1/sessions", createIngestHandler()))
 
 	securityHeaders := secure.New(secure.Options{
 		FrameDeny:             true,
@@ -144,11 +144,11 @@ func createServer(port string) *http.Server {
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf(":%s", port),
-		Handler: othttp.NewHandler(
+		Handler: otelhttp.NewHandler(
 			wrappedMux,
 			"Incoming API call",
-			othttp.WithMessageEvents(othttp.ReadEvents, othttp.WriteEvents),
-			othttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
+			otelhttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
 		),
 	}
 

@@ -181,7 +181,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 				}
 			}
 
-			tracer := tracetest.NewProvider(tracetest.WithSpanContextFunc(traceGenerator)).Tracer("Tracer")
+			tracer := tracetest.NewTracerProvider(tracetest.WithSpanContextFunc(traceGenerator)).Tracer("Tracer")
 			ctx, _ := tracer.Start(context.Background(), "Test trace")
 			propagator.Inject(ctx, headers)
 		})
