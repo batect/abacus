@@ -55,6 +55,16 @@
     "mode": "NULLABLE"
   },
   {
+    "name": "dockerDaemonPreferredBuilderVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerDaemonExperimentalFeaturesEnabled",
+    "type": "BOOLEAN",
+    "mode": "NULLABLE"
+  },
+  {
     "name": "dockerVersion",
     "type": "STRING",
     "mode": "NULLABLE"
