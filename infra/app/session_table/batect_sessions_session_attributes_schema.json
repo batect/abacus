@@ -45,6 +45,11 @@
     "mode": "NULLABLE"
   },
   {
+    "name": "dockerBuilderVersionInUse",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
     "name": "dockerConnectionType",
     "type": "STRING",
     "mode": "NULLABLE"
