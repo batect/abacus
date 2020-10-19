@@ -17,12 +17,15 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
+locals {
+  deployers_group_email = "${data.google_project.project.name}-deployers@batect.dev"
+}
+
 resource "google_storage_bucket" "session_storage" {
-  name               = "${var.project_name}-sessions"
-  project            = google_project.project.project_id
-  location           = var.region
-  storage_class      = "STANDARD"
-  bucket_policy_only = true
+  name                        = "${data.google_project.project.name}-sessions"
+  location                    = "us-central1"
+  storage_class               = "STANDARD"
+  uniform_bucket_level_access = true
 
   versioning {
     enabled = true
@@ -36,7 +39,7 @@ resource "google_storage_bucket" "session_storage" {
 resource "google_storage_bucket_iam_binding" "session_storage_creation_access" {
   bucket  = google_storage_bucket.session_storage.name
   role    = "roles/storage.objectCreator"
-  members = ["serviceAccount:${google_service_account.service.email}"]
+  members = ["serviceAccount:${data.google_service_account.service.email}"]
 }
 
 resource "google_storage_bucket_iam_binding" "session_storage_read_access" {
@@ -44,7 +47,7 @@ resource "google_storage_bucket_iam_binding" "session_storage_read_access" {
   role   = "roles/storage.objectViewer"
 
   members = [
-    "group:${local.deployers_group_name}", # For smoke test
-    "serviceAccount:${google_service_account.bigquery_transfer_service.email}",
+    "group:${local.deployers_group_email}", # For smoke test
+    "serviceAccount:${data.google_service_account.bigquery_transfer_service.email}",
   ]
 }
