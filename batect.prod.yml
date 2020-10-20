@@ -1,4 +1,2 @@
 gcpProject: batect-abacus-prod
-gcpBillingAccountId: 011113-23F385-542CC5
-gcpOrganizationId: 31831307074
 subdomain: api.abacus

@@ -32,9 +32,7 @@ containers:
     working_directory: /code
     environment:
       GOOGLE_PROJECT: <{gcpProject}
-      GOOGLE_ORGANIZATION: <{gcpOrganizationId}
       GOOGLE_REGION: <{gcpRegion}
-      GOOGLE_BILLING_ACCOUNT_ID: <{gcpBillingAccountId}
       TF_CLI_ARGS_import: -state=terraform-<{gcpProject}.tfstate
       TF_CLI_ARGS_apply: -state=terraform-<{gcpProject}.tfstate
       TF_CLI_ARGS_plan: -state=terraform-<{gcpProject}.tfstate
@@ -281,12 +279,6 @@ tasks:
 config_variables:
   gcpProject:
     description: GCP project to use.
-
-  gcpBillingAccountId:
-    description: GCP billing account to use.
-
-  gcpOrganizationId:
-    description: GCP organisation to use.
 
   gcpRegion:
     default: us-central1
