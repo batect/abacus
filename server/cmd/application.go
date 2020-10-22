@@ -26,6 +26,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 
 	"cloud.google.com/go/profiler"
 	cloudstorage "cloud.google.com/go/storage"
@@ -50,10 +51,10 @@ import (
 func main() {
 	initLogging()
 	initProfiling()
-	initTracing()
+	flush := initTracing()
 
 	srv := createServer(getPort())
-	runServer(srv)
+	runServer(srv, flush)
 }
 
 func initLogging() {
@@ -92,8 +93,8 @@ func initProfiling() {
 	}
 }
 
-func initTracing() {
-	_, _, err := texporter.InstallNewPipeline(
+func initTracing() func() {
+	_, flush, err := texporter.InstallNewPipeline(
 		[]texporter.Option{
 			texporter.WithProjectID(getProjectID()),
 			texporter.WithOnError(func(err error) {
@@ -120,6 +121,8 @@ func initTracing() {
 		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
 		otelhttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
 	)
+
+	return flush
 }
 
 func createServer(port string) *http.Server {
@@ -192,7 +195,7 @@ func withTracingClient(opts ...option.ClientOption) option.ClientOption {
 	return option.WithHTTPClient(&httpClient)
 }
 
-func runServer(srv *http.Server) {
+func runServer(srv *http.Server, flush func()) {
 	connectionDrainingFinished := shutdownOnInterrupt(srv)
 
 	logrus.WithField("address", srv.Addr).Info("Server starting.")
@@ -203,7 +206,9 @@ func runServer(srv *http.Server) {
 
 	<-connectionDrainingFinished
 
-	logrus.Info("Server shut down.")
+	logrus.Info("HTTP endpoints shut down, flushing remaining traces...")
+	flush()
+	logrus.Info("Flushing complete.")
 }
 
 func shutdownOnInterrupt(srv *http.Server) chan struct{} {
@@ -211,7 +216,7 @@ func shutdownOnInterrupt(srv *http.Server) chan struct{} {
 
 	go func() {
 		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
+		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
 		<-sigint
 
 		logrus.Info("Interrupt received, draining connections...")
