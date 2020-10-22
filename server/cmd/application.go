@@ -51,10 +51,17 @@ import (
 func main() {
 	initLogging()
 	initProfiling()
+
 	flush := initTracing()
 
+	defer func() {
+		logrus.Info("Flushing remaining traces...")
+		flush()
+		logrus.Info("Flushing complete.")
+	}()
+
 	srv := createServer(getPort())
-	runServer(srv, flush)
+	runServer(srv)
 }
 
 func initLogging() {
@@ -195,7 +202,7 @@ func withTracingClient(opts ...option.ClientOption) option.ClientOption {
 	return option.WithHTTPClient(&httpClient)
 }
 
-func runServer(srv *http.Server, flush func()) {
+func runServer(srv *http.Server) {
 	connectionDrainingFinished := shutdownOnInterrupt(srv)
 
 	logrus.WithField("address", srv.Addr).Info("Server starting.")
@@ -206,9 +213,7 @@ func runServer(srv *http.Server, flush func()) {
 
 	<-connectionDrainingFinished
 
-	logrus.Info("HTTP endpoints shut down, flushing remaining traces...")
-	flush()
-	logrus.Info("Flushing complete.")
+	logrus.Info("Server gracefully stopped.")
 }
 
 func shutdownOnInterrupt(srv *http.Server) chan struct{} {
