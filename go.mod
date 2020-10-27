@@ -18,7 +18,7 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.12.0
 	go.opentelemetry.io/otel v0.12.0
 	go.opentelemetry.io/otel/sdk v0.12.0
-	google.golang.org/api v0.33.0
+	google.golang.org/api v0.34.0
 )
 
 // Required until https://github.com/go-playground/validator/pull/601 and https://github.com/go-playground/validator/pull/614 are merged.
