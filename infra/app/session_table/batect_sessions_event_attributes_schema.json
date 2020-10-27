@@ -28,5 +28,15 @@
     "name": "newVersion",
     "type": "STRING",
     "mode": "NULLABLE"
+  },
+  {
+    "name": "proxyCompletionScriptVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "shell",
+    "type": "STRING",
+    "mode": "NULLABLE"
   }
 ]
