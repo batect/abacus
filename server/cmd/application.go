@@ -38,7 +38,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel/api/propagation"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/propagators"
 	"google.golang.org/api/option"
 
@@ -115,13 +115,10 @@ func initTracing() func() {
 		logrus.WithError(err).Fatal("Could not install tracing pipeline.")
 	}
 
-	w3Propagator := propagators.DefaultHTTPPropagator()
+	w3Propagator := propagators.TraceContext{}
 	gcpPropagator := observability.GCPPropagator{}
 
-	global.SetPropagators(propagation.New(
-		propagation.WithInjectors(w3Propagator, gcpPropagator),
-		propagation.WithExtractors(w3Propagator, gcpPropagator),
-	))
+	global.SetTextMapPropagator(otel.NewCompositeTextMapPropagator(w3Propagator, gcpPropagator))
 
 	http.DefaultTransport = otelhttp.NewTransport(
 		http.DefaultTransport,

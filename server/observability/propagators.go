@@ -26,7 +26,7 @@ import (
 	"regexp"
 	"strconv"
 
-	"go.opentelemetry.io/otel/api/propagation"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/api/trace"
 )
 
@@ -34,8 +34,8 @@ const headerName = "X-Cloud-Trace-Context"
 
 type GCPPropagator struct{}
 
-func (c GCPPropagator) Extract(ctx context.Context, supplier propagation.HTTPSupplier) context.Context {
-	headerValue := supplier.Get(headerName)
+func (c GCPPropagator) Extract(ctx context.Context, carrier otel.TextMapCarrier) context.Context {
+	headerValue := carrier.Get(headerName)
 	sc := c.extractSpanContext(headerValue)
 
 	if sc.IsValid() {
@@ -83,7 +83,7 @@ func (c GCPPropagator) extractSpanContext(headerValue string) trace.SpanContext 
 	}
 }
 
-func (c GCPPropagator) Inject(ctx context.Context, supplier propagation.HTTPSupplier) {
+func (c GCPPropagator) Inject(ctx context.Context, carrier otel.TextMapCarrier) {
 	sc := trace.SpanFromContext(ctx).SpanContext()
 	sid := binary.BigEndian.Uint64(sc.SpanID[:])
 	headerValue := fmt.Sprintf("%v/%v", sc.TraceID.String(), sid)
@@ -92,5 +92,9 @@ func (c GCPPropagator) Inject(ctx context.Context, supplier propagation.HTTPSupp
 		headerValue += ";o=1"
 	}
 
-	supplier.Set(headerName, headerValue)
+	carrier.Set(headerName, headerValue)
+}
+
+func (c GCPPropagator) Fields() []string {
+	return []string{headerName}
 }
