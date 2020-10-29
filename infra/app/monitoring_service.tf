@@ -29,7 +29,7 @@ resource "google_monitoring_alert_policy" "service_responses" {
     display_name = "Errors (%)"
 
     condition_threshold {
-      filter             = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\" metric.label.\"response_code_class\"!=\"2xx\""
+      filter             = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\" metric.label.\"response_code_class\"!=\"2xx\" metric.label.\"response_code_class\"!=\"3xx\""
       denominator_filter = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
       comparison         = "COMPARISON_GT"
       duration           = "600s"

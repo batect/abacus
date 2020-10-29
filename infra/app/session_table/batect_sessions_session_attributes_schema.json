@@ -45,6 +45,11 @@
     "mode": "NULLABLE"
   },
   {
+    "name": "dockerBuilderVersionInUse",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
     "name": "dockerConnectionType",
     "type": "STRING",
     "mode": "NULLABLE"
@@ -52,6 +57,16 @@
   {
     "name": "dockerContainerType",
     "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerDaemonPreferredBuilderVersion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "dockerDaemonExperimentalFeaturesEnabled",
+    "type": "BOOLEAN",
     "mode": "NULLABLE"
   },
   {

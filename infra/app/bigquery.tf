@@ -30,6 +30,10 @@ resource "google_bigquery_dataset" "default" {
     role          = "WRITER"
     user_by_email = "service-${data.google_project.project.number}@gcp-sa-bigquerydatatransfer.iam.gserviceaccount.com"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 module "smoke_test_sessions_table" {
@@ -44,4 +48,8 @@ module "batect_sessions_table" {
   dataset_id     = google_bigquery_dataset.default.dataset_id
   table_id       = "batect_sessions"
   application_id = "batect"
+}
+
+data "google_service_account" "bigquery_transfer_service" {
+  account_id = "bigquery-transfer-service"
 }

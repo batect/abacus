@@ -32,9 +32,7 @@ containers:
     working_directory: /code
     environment:
       GOOGLE_PROJECT: <{gcpProject}
-      GOOGLE_ORGANIZATION: <{gcpOrganizationId}
       GOOGLE_REGION: <{gcpRegion}
-      GOOGLE_BILLING_ACCOUNT_ID: <{gcpBillingAccountId}
       TF_CLI_ARGS_import: -state=terraform-<{gcpProject}.tfstate
       TF_CLI_ARGS_apply: -state=terraform-<{gcpProject}.tfstate
       TF_CLI_ARGS_plan: -state=terraform-<{gcpProject}.tfstate
@@ -250,100 +248,6 @@ tasks:
       container: terraform
       command: terraform fmt -recursive infra
 
-  setupGCPProject:
-    description: Create the GCP project if it is missing.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: ./infra/scripts/setup_project.sh
-
-  setupBootstrapTerraform:
-    description: Initialise Terraform.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: sh -c './scripts/generate_vars.sh && terraform init -input=false -reconfigure -backend-config="bucket=$GOOGLE_PROJECT-bootstrap-terraform-state" -backend-config="credentials=../../.creds/gcp_service_account_${CLOUDSDK_ACTIVE_CONFIG_NAME}_infra.json"'
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  applyBootstrapTerraform:
-    description: Run Terraform to provision infrastructure.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: sh -c "./scripts/generate_vars.sh && terraform apply -input=false -auto-approve"
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  planBootstrapTerraform:
-    description: Plan changes required to bring infrastructure to desired state.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: sh -c "./scripts/generate_vars.sh && terraform plan -input=false"
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  destroyBootstrapTerraform:
-    description: Run Terraform to provision infrastructure.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: sh -c "./scripts/generate_vars.sh && terraform destroy -input=false -auto-approve"
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  createGCPBootstrapServiceAccount:
-    description: Create service account for use when bootstrapping an environment.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: infra/scripts/create_bootstrap_service_account.sh
-
-  createGCPDeployerServiceAccount:
-    description: Create service account for use when deploying to an environment.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: infra/scripts/create_deployer_service_account.sh
-      environment:
-        SERVICE_ACCOUNT_NAME: $SERVICE_ACCOUNT_NAME
-
-  setupGCPBootstrapServiceAccount:
-    description: Store credentials used to access GCP when bootstrapping the application, or checking the state of the bootstrapped infrastructure.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: infra/scripts/setup_service_account.sh
-      environment:
-        GCP_SERVICE_ACCOUNT_EMAIL: $GCP_SERVICE_ACCOUNT_EMAIL
-        GCP_SERVICE_ACCOUNT_KEY: $GCP_SERVICE_ACCOUNT_KEY
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  importBootstrapState:
-    description: Import existing state of bootstrap infrastructure.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: ./scripts/import_state.sh
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
-  checkBootstrapState:
-    description: Check that the bootstrap infrastructure matches the desired state.
-    group: Infrastructure bootstrapping tasks
-    run:
-      container: terraform
-      command: terraform plan -detailed-exitcode -input=false -lock=false
-      working_directory: /code/infra/bootstrap
-      environment:
-        CLOUDSDK_ACTIVE_CONFIG_NAME: bootstrap-<{gcpProject}
-
   pushImage:
     description: Push the application image to GCP.
     group: Deployment tasks
@@ -368,19 +272,13 @@ tasks:
     group: Test tasks
     run:
       container: observatory
-      command: sh -c "observatory $DOMAIN --format report --zero --rescan && observatory $DOMAIN --format report --min-grade A+ --min-score 100"
+      command: sh -c "observatory $DOMAIN --format report --zero --rescan && observatory $DOMAIN --format report --min-grade A+ --min-score 100 --attempts 20"
       environment:
         DOMAIN: <{subdomain}.<{rootDomain}
 
 config_variables:
   gcpProject:
     description: GCP project to use.
-
-  gcpBillingAccountId:
-    description: GCP billing account to use.
-
-  gcpOrganizationId:
-    description: GCP organisation to use.
 
   gcpRegion:
     default: us-central1
