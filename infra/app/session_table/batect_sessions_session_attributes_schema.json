@@ -213,5 +213,10 @@
     "name": "wrapperDidDownload",
     "type": "BOOLEAN",
     "mode": "NULLABLE"
+  },
+  {
+    "name": "maximumLevelOfParallelism",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
   }
 ]
