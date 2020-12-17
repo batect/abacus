@@ -1,6 +1,6 @@
 # This Dockerfile is intentionally structured to share as many layers as possible between push-env and terraform.
 
-FROM alpine:3.12.2
+FROM alpine:3.12.3
 
 RUN apk add --no-cache \
     bash \
