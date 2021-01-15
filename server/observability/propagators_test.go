@@ -26,8 +26,8 @@ import (
 	"github.com/batect/abacus/server/observability"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"go.opentelemetry.io/otel/api/trace"
-	"go.opentelemetry.io/otel/api/trace/tracetest"
+	"go.opentelemetry.io/otel/oteltest"
+	"go.opentelemetry.io/otel/trace"
 )
 
 // Based on test cases from https://github.com/census-ecosystem/opencensus-go-exporter-stackdriver/blob/master/propagation/http_test.go
@@ -181,7 +181,7 @@ var _ = Describe("A GCP tracing propagator", func() {
 				}
 			}
 
-			tracer := tracetest.NewTracerProvider(tracetest.WithSpanContextFunc(traceGenerator)).Tracer("Tracer")
+			tracer := oteltest.NewTracerProvider(oteltest.WithSpanContextFunc(traceGenerator)).Tracer("Tracer")
 			ctx, _ := tracer.Start(context.Background(), "Test trace")
 			propagator.Inject(ctx, headers)
 		})

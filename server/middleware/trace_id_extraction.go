@@ -25,7 +25,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func extractTraceID(req *http.Request) string {
