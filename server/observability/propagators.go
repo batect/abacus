@@ -26,15 +26,15 @@ import (
 	"regexp"
 	"strconv"
 
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/propagation"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const headerName = "X-Cloud-Trace-Context"
 
 type GCPPropagator struct{}
 
-func (c GCPPropagator) Extract(ctx context.Context, carrier otel.TextMapCarrier) context.Context {
+func (c GCPPropagator) Extract(ctx context.Context, carrier propagation.TextMapCarrier) context.Context {
 	headerValue := carrier.Get(headerName)
 	sc := c.extractSpanContext(headerValue)
 
@@ -52,19 +52,19 @@ func (c GCPPropagator) extractSpanContext(headerValue string) trace.SpanContext 
 	segments := regex.FindStringSubmatch(headerValue)
 
 	if segments == nil {
-		return trace.EmptySpanContext()
+		return trace.SpanContext{}
 	}
 
-	tid, err := trace.IDFromHex(segments[1])
+	tid, err := trace.TraceIDFromHex(segments[1])
 
 	if err != nil {
-		return trace.EmptySpanContext()
+		return trace.SpanContext{}
 	}
 
 	sid, err := strconv.ParseUint(segments[2], 10, 64)
 
 	if err != nil {
-		return trace.EmptySpanContext()
+		return trace.SpanContext{}
 	}
 
 	sidBytes := trace.SpanID{}
@@ -83,7 +83,7 @@ func (c GCPPropagator) extractSpanContext(headerValue string) trace.SpanContext 
 	}
 }
 
-func (c GCPPropagator) Inject(ctx context.Context, carrier otel.TextMapCarrier) {
+func (c GCPPropagator) Inject(ctx context.Context, carrier propagation.TextMapCarrier) {
 	sc := trace.SpanFromContext(ctx).SpanContext()
 	sid := binary.BigEndian.Uint64(sc.SpanID[:])
 	headerValue := fmt.Sprintf("%v/%v", sc.TraceID.String(), sid)

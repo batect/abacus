@@ -28,7 +28,7 @@ import (
 	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
-	"go.opentelemetry.io/otel/api/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.opentelemetry.io/otel/label"
 )
 
