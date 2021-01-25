@@ -58,7 +58,7 @@ jobs:
 
       - name: Log in to GCP
         run: ./batect --config-vars-file=batect.prod.yml setupGCPServiceAccount
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: github-actions@batect-abacus-prod.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
