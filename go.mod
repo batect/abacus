@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go v0.76.0
-	cloud.google.com/go/storage v1.12.0
+	cloud.google.com/go/storage v1.13.0
 	github.com/DataDog/sketches-go v0.0.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.16.0
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1
