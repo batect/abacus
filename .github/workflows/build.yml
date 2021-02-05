@@ -58,36 +58,36 @@ jobs:
 
       - name: Log in to GCP
         run: ./batect --config-vars-file=batect.prod.yml setupGCPServiceAccount
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           GCP_SERVICE_ACCOUNT_EMAIL: github-actions@batect-abacus-prod.iam.gserviceaccount.com
           GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
       - name: Push image
         run: ./batect --config-vars-file=batect.prod.yml pushImage
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
 
       - name: Setup Cloudflare key
         run: ./batect --config-vars-file=batect.prod.yml setupCloudflareKey
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
           CLOUDFLARE_KEY: ${{ secrets.CLOUDFLARE_KEY }}
 
       - name: Setup Terraform
         run: ./batect --config-vars-file=batect.prod.yml setupTerraform
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
 
       - name: Apply Terraform
         run: ./batect --config-vars-file=batect.prod.yml applyTerraform
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
 
       - name: Run smoke test
         run: ./batect --config-vars-file=batect.prod.yml smokeTest
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
 
       - name: Cleanup credentials
         run: sudo rm -rf .creds .gcloud
 
       - name: Run HTTP security scan
         run: ./batect --config-vars-file=batect.prod.yml checkSecurity
-        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/master' && github.event_name == 'push'
+        if: github.repository == 'batect/abacus' && github.ref == 'refs/heads/main' && github.event_name == 'push'
