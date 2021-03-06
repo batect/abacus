@@ -1,0 +1,32 @@
+{
+  "extends": ["github>batect/renovate-config:default"],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "batect",
+        "batect-wrapper",
+        "dockerfile"
+      ],
+      "automerge": true
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchPackagePatterns": [
+        "^go.opentelemetry.io/",
+        "^github.com/GoogleCloudPlatform/opentelemetry-operations-go/"
+      ],
+      "groupName": "OpenTelemetry packages",
+      "automerge": true
+    },
+    {
+      "matchManagers": ["gomod"],
+      "matchPackageNames": [
+        "github.com/google/uuid",
+        "github.com/onsi/ginkgo",
+        "github.com/onsi/gomega",
+        "google.golang.org/api"
+      ],
+      "automerge": true
+    }
+  ]
+}
