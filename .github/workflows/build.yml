@@ -13,16 +13,16 @@ jobs:
       DOCKER_BUILDKIT: 1
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2.3.4
 
       - name: Cache Batect
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.4
         with:
           path: ~/.batect/cache
           key: batect-${{ hashFiles('batect') }}
 
       - name: Cache Golang dependencies
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.4
         with:
           path: .batect/caches/go-cache
           key: golang-${{ hashFiles('go.sum') }}
