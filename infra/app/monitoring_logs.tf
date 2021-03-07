@@ -32,7 +32,7 @@ resource "google_monitoring_alert_policy" "log_errors" {
     display_name = "Log entries for service"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" ${local.log_severities_for_metrics_query}"
+      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" metric.label.log!=\"monitoring.googleapis.com/ViolationAutoResolveEventv1\" ${local.log_severities_for_metrics_query}"
       comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "0s"
