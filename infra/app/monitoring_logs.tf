@@ -21,7 +21,12 @@ locals {
   log_severities_to_ignore         = ["NOTICE", "INFO", "DEBUG", "WARNING"]
   log_severities_for_log_query     = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
   log_severities_for_metrics_query = join(" ", formatlist("metric.label.severity!=\"%s\"", local.log_severities_to_ignore))
-  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} logName!=\"projects/${data.google_project.project.name}/logs/cloudaudit.googleapis.com%2Factivity\" logName!=\"projects/${data.google_project.project.name}/logs/run.googleapis.com%2Frequests\""
+
+  log_names_to_ignore = ["cloudaudit.googleapis.com/activity", "run.googleapis.com/requests", "monitoring.googleapis.com/ViolationAutoResolveEventv1"]
+  log_names_for_log_query = join(" ", formatlist("logName!=\"projects/${data.google_project.project.name}/logs/%s\"", [for v in local.log_names_to_ignore: replace(v, "/", "%2F")]))
+  log_names_for_metrics_query = join(" ", formatlist("metric.label.log!=\"%s\"", local.log_names_to_ignore))
+
+  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} ${local.log_names_for_log_query}"
 }
 
 resource "google_monitoring_alert_policy" "log_errors" {
@@ -32,7 +37,7 @@ resource "google_monitoring_alert_policy" "log_errors" {
     display_name = "Log entries for service"
 
     condition_threshold {
-      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" metric.label.log!=\"cloudaudit.googleapis.com/activity\" metric.label.log!=\"run.googleapis.com/requests\" metric.label.log!=\"monitoring.googleapis.com/ViolationAutoResolveEventv1\" ${local.log_severities_for_metrics_query}"
+      filter          = "metric.type=\"logging.googleapis.com/log_entry_count\" resource.type=\"cloud_run_revision\" resource.label.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_names_for_metrics_query} ${local.log_severities_for_metrics_query}"
       comparison      = "COMPARISON_GT"
       threshold_value = 0
       duration        = "0s"
