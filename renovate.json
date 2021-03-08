@@ -44,7 +44,7 @@
       "prCreation": "not-pending"
     },
     {
-      "matchManagers": ["github-releases"],
+      "matchManagers": ["regex"],
       "matchPackageNames": ["hashicorp/terraform"],
       "extractVersion": "^v(?<version>.*)$",
       "fileMatch": ["(^|/)Dockerfile$"]
