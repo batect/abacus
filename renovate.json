@@ -37,6 +37,11 @@
       "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
       "additionalBranchPrefix": "",
       "branchTopic": "gcloud-{{{newMajor}}}.{{{newMinor}}}"
+    },
+    {
+      "matchManagers": ["terraform"],
+      "stabilityDays": 1,
+      "prCreation": "not-pending"
     }
   ],
   "regexManagers": [
