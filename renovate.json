@@ -40,7 +40,11 @@
         "cloudSdkVersion:\\s*\\n\\s*default:\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
-      "datasourceTemplate": "docker"
+      "datasourceTemplate": "docker",
+      "commitMessageTopic": "gcloud",
+      "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
+      "additionalBranchPrefix": "",
+      "branchTopic": "gcloud-{{{newMajor}}}.{{{newMinor}}}"
     }
   ]
 }
