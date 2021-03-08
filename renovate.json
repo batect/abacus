@@ -40,5 +40,8 @@
       "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
       "datasourceTemplate": "docker"
     }
-  ]
+  ],
+  "major": {
+    "enabled": true
+  }
 }
