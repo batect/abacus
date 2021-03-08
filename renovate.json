@@ -29,6 +29,14 @@
         "google.golang.org/api"
       ],
       "automerge": true
+    },
+    {
+      "matchManagers": ["regex"],
+      "matchPackageNames": ["gcr.io/google.com/cloudsdktool/cloud-sdk"],
+      "commitMessageTopic": "gcloud",
+      "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
+      "additionalBranchPrefix": "",
+      "branchTopic": "gcloud-{{{newMajor}}}.{{{newMinor}}}"
     }
   ],
   "regexManagers": [
@@ -40,11 +48,7 @@
         "cloudSdkVersion:\\s*\\n\\s*default:\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
-      "datasourceTemplate": "docker",
-      "commitMessageTopic": "gcloud",
-      "commitMessageExtra": "to {{#if isSingleVersion}}v{{{newVersion}}}{{else}}{{{newValue}}}{{/if}}",
-      "additionalBranchPrefix": "",
-      "branchTopic": "gcloud-{{{newMajor}}}.{{{newMinor}}}"
+      "datasourceTemplate": "docker"
     }
   ]
 }
