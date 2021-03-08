@@ -42,6 +42,12 @@
       "matchManagers": ["terraform"],
       "stabilityDays": 1,
       "prCreation": "not-pending"
+    },
+    {
+      "matchManagers": ["github-releases"],
+      "matchPackageNames": ["hashicorp/terraform"],
+      "extractVersion": "^v(?<version>.*)$",
+      "fileMatch": ["(^|/)Dockerfile$"]
     }
   ],
   "regexManagers": [
