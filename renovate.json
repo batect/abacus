@@ -47,13 +47,23 @@
   "regexManagers": [
     {
       "fileMatch": [
-        "batect.yml"
+        "(^|/)batect.yml$"
       ],
       "matchStrings": [
         "cloudSdkVersion:\\s*\\n\\s*default:\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
       "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": [
+        "(^|/)Dockerfile$"
+      ],
+      "matchStrings": [
+        "^ENV TERRAFORM_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
+      ],
+      "depNameTemplate": "hashicorp/terraform",
+      "datasourceTemplate": "github-releases"
     }
   ]
 }
