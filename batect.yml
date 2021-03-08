@@ -272,7 +272,7 @@ tasks:
     group: Test tasks
     run:
       container: observatory
-      command: sh -c "observatory $DOMAIN --format report --zero --rescan && observatory $DOMAIN --format report --min-grade A+ --min-score 100 --attempts 20"
+      command: sh -c "observatory $DOMAIN --format report --zero --rescan --attempts 20 && observatory $DOMAIN --format report --min-grade A+ --min-score 100 --attempts 20"
       environment:
         DOMAIN: <{subdomain}.<{rootDomain}
 
