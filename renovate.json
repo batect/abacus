@@ -60,7 +60,7 @@
         "(^|/)Dockerfile$"
       ],
       "matchStrings": [
-        "^ENV TERRAFORM_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
+        "ENV TERRAFORM_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "depNameTemplate": "hashicorp/terraform",
       "datasourceTemplate": "github-releases"
@@ -70,7 +70,7 @@
         "(^|/)Dockerfile$"
       ],
       "matchStrings": [
-        "^RUN npm install -g (?<depName>[a-zA-Z0-9_-]+)@(?<currentValue>\\d+\\.\\d+\\.\\d+)$"
+        "RUN npm install -g (?<depName>[a-zA-Z0-9_-]+)@(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "npm"
     }
