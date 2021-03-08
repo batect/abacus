@@ -1,7 +1,6 @@
 {
   "extends": [
-    "github>batect/renovate-config:default",
-    "docker:enableMajor"
+    "github>batect/renovate-config:default"
   ],
   "packageRules": [
     {
@@ -43,5 +42,10 @@
       "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
       "datasourceTemplate": "docker"
     }
-  ]
+  ],
+  "docker": {
+    "major": {
+      "enabled": true
+    }
+  }
 }
