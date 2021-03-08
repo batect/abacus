@@ -28,5 +28,17 @@
       ],
       "automerge": true
     }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "batect.yml"
+      ],
+      "matchStrings": [
+        "cloudSdkVersion:\\s*\\n\\s*default:\\s+(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "gcr.io/google.com/cloudsdktool/cloud-sdk",
+      "datasourceTemplate": "docker"
+    }
   ]
 }
