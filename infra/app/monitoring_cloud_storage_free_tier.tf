@@ -37,6 +37,7 @@ locals {
 
   cloud_storage_known_operations = join(", ", sort(concat(local.cloud_storage_class_a_operations, local.cloud_storage_class_b_operations)))
 
+  ten_minutes     = format("%ds", 10 * local.seconds_in_minute)
   fifteen_minutes = format("%ds", 15 * local.seconds_in_minute)
   six_hours       = format("%ds", 6 * local.seconds_in_hour)
 }

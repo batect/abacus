@@ -19,6 +19,7 @@
 
 locals {
   one_percent = 0.01
+  ten_percent = 0.10
 }
 
 resource "google_monitoring_alert_policy" "service_responses" {
@@ -26,13 +27,41 @@ resource "google_monitoring_alert_policy" "service_responses" {
   combiner     = "OR"
 
   conditions {
-    display_name = "Errors (%)"
+    display_name = "4xx errors (%)"
 
     condition_threshold {
-      filter             = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\" metric.label.\"response_code_class\"!=\"2xx\" metric.label.\"response_code_class\"!=\"3xx\""
+      filter             = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\" metric.label.\"response_code_class\"=\"4xx\""
       denominator_filter = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
       comparison         = "COMPARISON_GT"
-      duration           = local.fifteen_minutes
+      duration           = local.ten_minutes
+      threshold_value    = local.ten_percent
+
+      trigger {
+        count = 1
+      }
+
+      aggregations {
+        alignment_period     = "300s"
+        cross_series_reducer = "REDUCE_SUM"
+        per_series_aligner   = "ALIGN_RATE"
+      }
+
+      denominator_aggregations {
+        alignment_period     = "300s"
+        cross_series_reducer = "REDUCE_SUM"
+        per_series_aligner   = "ALIGN_RATE"
+      }
+    }
+  }
+
+  conditions {
+    display_name = "5xx errors (%)"
+
+    condition_threshold {
+      filter             = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\" metric.label.\"response_code_class\"=\"5xx\""
+      denominator_filter = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
+      comparison         = "COMPARISON_GT"
+      duration           = local.ten_minutes
       threshold_value    = local.one_percent
 
       trigger {
@@ -59,7 +88,7 @@ resource "google_monitoring_alert_policy" "service_responses" {
     condition_threshold {
       filter          = "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
       comparison      = "COMPARISON_GT"
-      duration        = "600s"
+      duration        = local.ten_minutes
       threshold_value = 500
 
       trigger {
