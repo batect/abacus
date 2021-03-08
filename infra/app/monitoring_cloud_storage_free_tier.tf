@@ -119,11 +119,11 @@ resource "google_monitoring_alert_policy" "cloud_storage_free_tier" {
 
     * ${local.cloud_storage_free_tier_class_a_operations_per_month} class A requests per calendar month (${format("%.6f", local.cloud_storage_free_tier_class_a_operations_per_second)} requests per second)
 
-      This alert fires when the request rate exceeds ${local.alert_threshold_percentage}% of the request rate required to exceed the free tier threshold.
+        This alert fires when the request rate exceeds ${local.alert_threshold_percentage}% of the request rate required to exceed the free tier threshold.
 
     * ${local.cloud_storage_free_tier_class_b_operations_per_month} class B requests per calendar month (${format("%.6f", local.cloud_storage_free_tier_class_b_operations_per_second)} requests per second)
 
-      This alert fires when the request rate exceeds ${local.alert_threshold_percentage}% of the request rate required to exceed the free tier threshold.
+        This alert fires when the request rate exceeds ${local.alert_threshold_percentage}% of the request rate required to exceed the free tier threshold.
 
     Note that this alert will count any operations it doesn't know about (anything other than ${local.cloud_storage_known_operations}) as both a class A and a class B request.
 
