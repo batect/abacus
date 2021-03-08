@@ -22,11 +22,11 @@ locals {
   log_severities_for_log_query     = join(" ", formatlist("severity!=\"%s\"", local.log_severities_to_ignore))
   log_severities_for_metrics_query = join(" ", formatlist("metric.label.severity!=\"%s\"", local.log_severities_to_ignore))
 
-  log_names_to_ignore = ["cloudaudit.googleapis.com/activity", "run.googleapis.com/requests", "monitoring.googleapis.com/ViolationAutoResolveEventv1"]
-  log_names_for_log_query = join(" ", formatlist("logName!=\"projects/${data.google_project.project.name}/logs/%s\"", [for v in local.log_names_to_ignore: replace(v, "/", "%2F")]))
+  log_names_to_ignore         = ["cloudaudit.googleapis.com/activity", "run.googleapis.com/requests", "monitoring.googleapis.com/ViolationAutoResolveEventv1"]
+  log_names_for_log_query     = join(" ", formatlist("logName!=\"projects/${data.google_project.project.name}/logs/%s\"", [for v in local.log_names_to_ignore : replace(v, "/", "%2F")]))
   log_names_for_metrics_query = join(" ", formatlist("metric.label.log!=\"%s\"", local.log_names_to_ignore))
 
-  log_errors_query                 = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} ${local.log_names_for_log_query}"
+  log_errors_query = "resource.type=\"cloud_run_revision\" resource.labels.service_name=\"${google_cloud_run_service.service.name}\" ${local.log_severities_for_log_query} ${local.log_names_for_log_query}"
 }
 
 resource "google_monitoring_alert_policy" "log_errors" {
