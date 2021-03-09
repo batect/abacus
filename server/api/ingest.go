@@ -28,7 +28,7 @@ import (
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
 	"github.com/batect/service-observability/middleware"
-	"go.opentelemetry.io/otel/label"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -40,10 +40,10 @@ type ingestHandler struct {
 
 type timeSource func() time.Time
 
-const sessionID label.Key = label.Key("session.sessionId")
-const userID label.Key = label.Key("session.userId")
-const applicationID label.Key = label.Key("session.applicationId")
-const applicationVersion label.Key = label.Key("session.applicationVersion")
+const sessionID = attribute.Key("session.sessionId")
+const userID = attribute.Key("session.userId")
+const applicationID = attribute.Key("session.applicationId")
+const applicationVersion = attribute.Key("session.applicationVersion")
 
 func NewIngestHandler(sessionStore storage.SessionStore) (http.Handler, error) {
 	return NewIngestHandlerWithTimeSource(sessionStore, time.Now)
