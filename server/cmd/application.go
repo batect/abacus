@@ -21,54 +21,35 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 
-	"cloud.google.com/go/profiler"
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/storage"
+	"github.com/batect/service-observability/graceful"
 	"github.com/batect/service-observability/middleware"
-	"github.com/batect/service-observability/propagators"
+	"github.com/batect/service-observability/startup"
 	"github.com/batect/service-observability/tracing"
-	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/api/option"
-
-	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	htransport "google.golang.org/api/transport/http"
 )
 
 func main() {
-	initLogging()
-	initProfiling()
+	flush, err := startup.InitialiseObservability(getServiceName(), getVersion(), getProjectID())
 
-	flush := initTracing()
+	if err != nil {
+		logrus.WithError(err).Fatal("Could not initialise observability.")
+	}
 
-	defer func() {
-		logrus.Info("Flushing remaining traces...")
-		flush()
-		logrus.Info("Flushing complete.")
-	}()
+	defer flush()
 
 	srv := createServer(getPort())
-	runServer(srv)
-}
-
-func initLogging() {
-	logrus.SetFormatter(stackdriver.NewFormatter(
-		stackdriver.WithService(getServiceName()),
-		stackdriver.WithVersion(getVersion()),
-	))
+	graceful.RunServerWithGracefulShutdown(srv)
 }
 
 func getServiceName() string {
@@ -85,48 +66,6 @@ func getEnvOrDefault(name string, fallback string) string {
 	}
 
 	return fallback
-}
-
-func initProfiling() {
-	err := profiler.Start(profiler.Config{
-		Service:        getServiceName(),
-		ServiceVersion: getVersion(),
-		ProjectID:      getProjectID(),
-		MutexProfiling: true,
-	})
-
-	if err != nil {
-		logrus.WithError(err).Fatal("Could not create profiler.")
-	}
-}
-
-func initTracing() func() {
-	_, flush, err := texporter.InstallNewPipeline(
-		[]texporter.Option{
-			texporter.WithProjectID(getProjectID()),
-			texporter.WithOnError(func(err error) {
-				logrus.WithError(err).Warn("Trace exporter reported error.")
-			}),
-		},
-		sdktrace.WithConfig(sdktrace.Config{DefaultSampler: sdktrace.AlwaysSample()}),
-	)
-
-	if err != nil {
-		logrus.WithError(err).Fatal("Could not install tracing pipeline.")
-	}
-
-	w3Propagator := propagation.TraceContext{}
-	gcpPropagator := propagators.GCPPropagator{}
-
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(w3Propagator, gcpPropagator))
-
-	http.DefaultTransport = otelhttp.NewTransport(
-		http.DefaultTransport,
-		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
-		otelhttp.WithSpanNameFormatter(tracing.NameHTTPRequestSpan),
-	)
-
-	return flush
 }
 
 func createServer(port string) *http.Server {
@@ -197,38 +136,4 @@ func withTracingClient(opts ...option.ClientOption) option.ClientOption {
 	}
 
 	return option.WithHTTPClient(&httpClient)
-}
-
-func runServer(srv *http.Server) {
-	connectionDrainingFinished := shutdownOnInterrupt(srv)
-
-	logrus.WithField("address", srv.Addr).Info("Server starting.")
-
-	if err := srv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-		logrus.WithError(err).Fatal("Could not start HTTP server.")
-	}
-
-	<-connectionDrainingFinished
-
-	logrus.Info("Server gracefully stopped.")
-}
-
-func shutdownOnInterrupt(srv *http.Server) chan struct{} {
-	connectionDrainingFinished := make(chan struct{})
-
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, syscall.SIGINT, syscall.SIGTERM)
-		<-sigint
-
-		logrus.Info("Interrupt received, draining connections...")
-
-		if err := srv.Shutdown(context.Background()); err != nil {
-			logrus.WithError(err).Error("Shutting down HTTP server failed.")
-		}
-
-		close(connectionDrainingFinished)
-	}()
-
-	return connectionDrainingFinished
 }
