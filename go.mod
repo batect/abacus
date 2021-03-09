@@ -13,9 +13,9 @@ require (
 	github.com/onsi/gomega v1.11.0
 	github.com/sirupsen/logrus v1.8.0
 	github.com/unrolled/secure v1.0.8
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.17.0
-	go.opentelemetry.io/otel v0.17.0
-	go.opentelemetry.io/otel/trace v0.17.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.18.0
+	go.opentelemetry.io/otel v0.18.0
+	go.opentelemetry.io/otel/trace v0.18.0
 	google.golang.org/api v0.40.0
 )
 
