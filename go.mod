@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	cloud.google.com/go/storage v1.14.0
-	github.com/batect/service-observability v0.4.0
+	github.com/batect/service-observability v0.4.1
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.4.1
