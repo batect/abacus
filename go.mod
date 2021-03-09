@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go v0.78.0
 	cloud.google.com/go/storage v1.14.0
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v0.16.0
+	github.com/batect/service-observability v0.1.0
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1
 	github.com/go-playground/locales v0.13.0
 	github.com/go-playground/universal-translator v0.17.0
@@ -17,7 +18,6 @@ require (
 	github.com/unrolled/secure v1.0.8
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.17.0
 	go.opentelemetry.io/otel v0.17.0
-	go.opentelemetry.io/otel/oteltest v0.17.0
 	go.opentelemetry.io/otel/sdk v0.17.0
 	go.opentelemetry.io/otel/trace v0.17.0
 	google.golang.org/api v0.40.0

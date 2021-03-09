@@ -25,9 +25,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/batect/abacus/server/middleware"
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
+	"github.com/batect/service-observability/middleware"
 	"go.opentelemetry.io/otel/label"
 	"go.opentelemetry.io/otel/trace"
 )

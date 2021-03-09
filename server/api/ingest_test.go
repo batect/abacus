@@ -29,9 +29,9 @@ import (
 	"time"
 
 	"github.com/batect/abacus/server/api"
-	"github.com/batect/abacus/server/middleware/testutils"
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
+	"github.com/batect/service-observability/middleware/testutils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	gomega_types "github.com/onsi/gomega/types"

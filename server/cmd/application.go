@@ -31,9 +31,10 @@ import (
 	"cloud.google.com/go/profiler"
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
-	"github.com/batect/abacus/server/middleware"
-	"github.com/batect/abacus/server/observability"
 	"github.com/batect/abacus/server/storage"
+	"github.com/batect/service-observability/middleware"
+	"github.com/batect/service-observability/propagators"
+	"github.com/batect/service-observability/tracing"
 	stackdriver "github.com/charleskorn/logrus-stackdriver-formatter"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
@@ -115,14 +116,14 @@ func initTracing() func() {
 	}
 
 	w3Propagator := propagation.TraceContext{}
-	gcpPropagator := observability.GCPPropagator{}
+	gcpPropagator := propagators.GCPPropagator{}
 
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(w3Propagator, gcpPropagator))
 
 	http.DefaultTransport = otelhttp.NewTransport(
 		http.DefaultTransport,
 		otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
-		otelhttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+		otelhttp.WithSpanNameFormatter(tracing.NameHTTPRequestSpan),
 	)
 
 	return flush
@@ -154,7 +155,7 @@ func createServer(port string) *http.Server {
 			wrappedMux,
 			"Incoming API call",
 			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
-			otelhttp.WithSpanNameFormatter(observability.NameHTTPRequestSpan),
+			otelhttp.WithSpanNameFormatter(tracing.NameHTTPRequestSpan),
 		),
 	}
 

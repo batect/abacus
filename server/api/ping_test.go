@@ -24,7 +24,7 @@ import (
 	"net/http/httptest"
 
 	"github.com/batect/abacus/server/api"
-	"github.com/batect/abacus/server/middleware/testutils"
+	"github.com/batect/service-observability/middleware/testutils"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
