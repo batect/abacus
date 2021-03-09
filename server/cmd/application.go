@@ -23,7 +23,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
@@ -50,22 +49,6 @@ func main() {
 
 	srv := createServer(getPort())
 	graceful.RunServerWithGracefulShutdown(srv)
-}
-
-func getServiceName() string {
-	return getEnvOrDefault("K_SERVICE", "abacus")
-}
-
-func getVersion() string {
-	return getEnvOrDefault("K_REVISION", "local")
-}
-
-func getEnvOrDefault(name string, fallback string) string {
-	if value, ok := os.LookupEnv(name); ok {
-		return value
-	}
-
-	return fallback
 }
 
 func createServer(port string) *http.Server {

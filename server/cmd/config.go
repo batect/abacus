@@ -25,6 +25,22 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func getServiceName() string {
+	return getEnvOrDefault("K_SERVICE", "abacus")
+}
+
+func getVersion() string {
+	return getEnvOrDefault("K_REVISION", "local")
+}
+
+func getEnvOrDefault(name string, fallback string) string {
+	if value, ok := os.LookupEnv(name); ok {
+		return value
+	}
+
+	return fallback
+}
+
 func getPort() string {
 	return getEnvOrExit("PORT")
 }
