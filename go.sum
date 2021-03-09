@@ -50,6 +50,8 @@ github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d/go.mod h1:3eOhrU
 github.com/TV4/logrus-stackdriver-formatter v0.1.0/go.mod h1:wwS7hOiBvP6SBD0UXCa767+VhHkaXrfX0MzUojYcN0Q=
 github.com/batect/service-observability v0.4.0 h1:5YBePXMEdjBLjbllfuDvKwcTaOAmaXxCOndsWjWdv1k=
 github.com/batect/service-observability v0.4.0/go.mod h1:2X95d0vzLorTiCwg3eLfIYDZJwtrPtefLUZIO+Mgl9k=
+github.com/batect/service-observability v0.4.1 h1:8K4mpAdt3o62QYboc4OtUFvL5RA6f18YJwQm3x7LQaY=
+github.com/batect/service-observability v0.4.1/go.mod h1:2X95d0vzLorTiCwg3eLfIYDZJwtrPtefLUZIO+Mgl9k=
 github.com/benbjohnson/clock v1.0.3 h1:vkLuvpK4fmtSCuo60+yC63p7y0BmQ8gm5ZXGuBCJyXg=
 github.com/benbjohnson/clock v1.0.3/go.mod h1:bGMdMPoPVvcYyt1gHDf4J2KE153Yf9BuiUKYMaxlTDM=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
