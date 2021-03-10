@@ -20,6 +20,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -65,7 +66,9 @@ func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target i
 	}
 
 	if err := l.validator.Struct(target); err != nil {
-		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+		var validationErrors validator.ValidationErrors
+
+		if errors.As(err, &validationErrors) {
 			invalidBody(req.Context(), w, validation.ToValidationErrors(validationErrors, l.translator))
 			return false
 		}

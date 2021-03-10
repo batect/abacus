@@ -60,6 +60,7 @@ var _ = Describe("A session", func() {
 
 			Expect(err).To(BeAssignableToTypeOf(validator.ValidationErrors{}))
 
+			// nolint:errorlint
 			return validation.ToValidationErrors(err.(validator.ValidationErrors), trans)
 		}
 

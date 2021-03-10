@@ -23,6 +23,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -77,7 +78,9 @@ func (c *cloudStorageSessionStore) Store(ctx context.Context, session *types.Ses
 	}
 
 	if err := w.Close(); err != nil {
-		if gerr, ok := err.(*googleapi.Error); ok && gerr.Code == http.StatusPreconditionFailed {
+		var gerr *googleapi.Error
+
+		if errors.As(err, &gerr) && gerr.Code == http.StatusPreconditionFailed {
 			return ErrAlreadyExists
 		}
 

@@ -9,7 +9,6 @@ require (
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/google/uuid v1.2.0
-	github.com/magefile/mage v1.10.0 // indirect
 	github.com/onsi/ginkgo v1.15.1
 	github.com/onsi/gomega v1.11.0
 	github.com/sirupsen/logrus v1.8.1
