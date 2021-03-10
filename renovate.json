@@ -85,7 +85,7 @@
         "(^|/)Dockerfile$"
       ],
       "matchStrings": [
-        "ENV GOLANGCI_LINT_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+        "ARG GOLANGCI_LINT_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "depNameTemplate": "golangci/golangci-lint",
       "datasourceTemplate": "github-releases"
