@@ -18,9 +18,8 @@
 // limitations under the License and the Condition.
 
 locals {
-  one_percent    = 0.01
-  ten_percent    = 0.10
-  twenty_percent = 0.20
+  one_percent = 0.01
+  ten_percent = 0.10
 }
 
 resource "google_monitoring_alert_policy" "service_responses" {
@@ -35,7 +34,7 @@ resource "google_monitoring_alert_policy" "service_responses" {
       denominator_filter = "metric.type=\"run.googleapis.com/request_count\" resource.type=\"cloud_run_revision\" resource.label.\"service_name\"=\"${google_cloud_run_service.service.name}\""
       comparison         = "COMPARISON_GT"
       duration           = local.ten_minutes
-      threshold_value    = local.twenty_percent
+      threshold_value    = local.ten_percent
 
       trigger {
         count = 1
