@@ -42,11 +42,11 @@ function getValueOrDefault($value, $default) {^
 
 ^
 
-$DownloadUrlRoot = getValueOrDefault $env:BATECT_DOWNLOAD_URL_ROOT "https://dl.bintray.com/batect/batect"^
+$DownloadUrlRoot = getValueOrDefault $env:BATECT_DOWNLOAD_URL_ROOT "https://updates.batect.dev/v1/files"^
 
 $UrlEncodedVersion = [Uri]::EscapeDataString($Version)^
 
-$DownloadUrl = getValueOrDefault $env:BATECT_DOWNLOAD_URL "$DownloadUrlRoot/$UrlEncodedVersion/bin/batect-$UrlEncodedVersion.jar"^
+$DownloadUrl = getValueOrDefault $env:BATECT_DOWNLOAD_URL "$DownloadUrlRoot/$UrlEncodedVersion/batect-$UrlEncodedVersion.jar"^
 
 $ExpectedChecksum = getValueOrDefault $env:BATECT_DOWNLOAD_CHECKSUM '6cda23817ea711daf39500877bd53c9038923a478bd913f02bb980b07834bc6f'^
 
