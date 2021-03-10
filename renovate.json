@@ -45,7 +45,7 @@
     },
     {
       "matchManagers": ["regex"],
-      "matchPackageNames": ["hashicorp/terraform"],
+      "matchPackageNames": ["hashicorp/terraform", "golangci/golangci-lint"],
       "extractVersion": "^v(?<version>.*)$",
       "fileMatch": ["(^|/)Dockerfile$"]
     }
@@ -79,6 +79,16 @@
         "RUN npm install -g (?<depName>[a-zA-Z0-9_-]+)@(?<currentValue>\\d+\\.\\d+\\.\\d+)"
       ],
       "datasourceTemplate": "npm"
+    },
+    {
+      "fileMatch": [
+        "(^|/)Dockerfile$"
+      ],
+      "matchStrings": [
+        "ENV GOLANGCI_LINT_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"
+      ],
+      "depNameTemplate": "golangci/golangci-lint",
+      "datasourceTemplate": "github-releases"
     }
   ]
 }
