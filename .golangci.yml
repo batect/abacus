@@ -61,7 +61,6 @@ linters:
     - prealloc
     - predeclared
     - rowserrcheck
-    - scopelint
     - sqlclosecheck
     - staticcheck
     - structcheck
