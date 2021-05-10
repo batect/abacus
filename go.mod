@@ -12,7 +12,7 @@ require (
 	github.com/onsi/ginkgo v1.16.2
 	github.com/onsi/gomega v1.12.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/unrolled/secure v1.0.8
+	github.com/unrolled/secure v1.0.9
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.20.0
 	go.opentelemetry.io/otel v0.20.0
 	go.opentelemetry.io/otel/trace v0.20.0
