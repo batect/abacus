@@ -12,6 +12,11 @@ jobs:
       BATECT_ENABLE_TELEMETRY: true
       DOCKER_BUILDKIT: 1
 
+    concurrency:
+      # Don't try to run multiple builds for the same branch in parallel.
+      # This prevents race conditions between deployments from the main branch - the first commit will always be built and deployed first.
+      group: build-${{ github.repository }}-${{ github.ref }}
+
     steps:
       - uses: actions/checkout@v2.3.4
 
