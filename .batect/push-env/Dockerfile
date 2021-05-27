@@ -5,7 +5,7 @@ FROM alpine:3.13.5
 RUN apk add --no-cache \
     bash==5.1.0-r0 \
     ca-certificates==20191127-r5 \
-    curl==7.76.1-r0 \
+    curl==7.77.0-r0 \
     python3==3.8.10-r0
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
