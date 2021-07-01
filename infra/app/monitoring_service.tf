@@ -21,7 +21,7 @@ locals {
   one_percent = 0.01
   ten_percent = 0.10
 
-  ten_minutes     = format("%ds", 10 * local.seconds_in_minute)
+  ten_minutes = format("%ds", 10 * local.seconds_in_minute)
 }
 
 resource "google_monitoring_alert_policy" "service_responses" {
