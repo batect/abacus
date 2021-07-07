@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.6.1
 	github.com/google/uuid v1.2.0
 	github.com/onsi/ginkgo v1.16.4
-	github.com/onsi/gomega v1.13.0
+	github.com/onsi/gomega v1.14.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/unrolled/secure v1.0.9
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.20.0
