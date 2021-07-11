@@ -53,6 +53,7 @@ func main() {
 
 func createServer(port string) *http.Server {
 	mux := http.NewServeMux()
+	mux.Handle("/", otelhttp.WithRouteTag("/", http.HandlerFunc(api.Home)))
 	mux.Handle("/ping", otelhttp.WithRouteTag("/ping", http.HandlerFunc(api.Ping)))
 	mux.Handle("/v1/sessions", otelhttp.WithRouteTag("/v1/sessions", createIngestHandler()))
 
