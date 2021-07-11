@@ -37,7 +37,7 @@ linters:
     # Disabled: - gofumpt (would be good to turn this on if the "No empty lines before a simple error check" rule could be disabled
     - goheader
     - goimports
-    - golint
+    # Deprecated: - golint
     # Disabled: - gomnd
     # Disabled: - gomodguard
     - goprintffuncname
@@ -47,9 +47,10 @@ linters:
     - ifshort
     - importas
     - ineffassign
-    # Disabled: - interfacer
+    # Deprecated: - interfacer
     - lll
-    # Disabled: - maligned
+    - makezero
+    # Deprecated: - maligned
     - misspell
     - nakedret
     - nestif
@@ -60,6 +61,8 @@ linters:
     # Disabled: - paralleltest
     - prealloc
     - predeclared
+    - promlinter
+    - revive
     - rowserrcheck
     - sqlclosecheck
     - staticcheck

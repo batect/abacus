@@ -123,11 +123,7 @@ func registerValidation(v *validator.Validate, trans ut.Translator, tag string, 
 
 func registrationFunc(tag string, translation string) validator.RegisterTranslationsFunc {
 	return func(ut ut.Translator) error {
-		if err := ut.Add(tag, translation, false); err != nil {
-			return err
-		}
-
-		return nil
+		return ut.Add(tag, translation, false)
 	}
 }
 
