@@ -1,2 +1,2 @@
-FROM node:16.9.1-alpine3.12
+FROM node:16.10.0-alpine3.12
 RUN npm install -g observatory-cli@0.7.1
