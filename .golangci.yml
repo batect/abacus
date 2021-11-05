@@ -9,6 +9,8 @@ linters:
   enable:
     - asciicheck
     - bodyclose
+    - bidichk
+    - contextcheck
     # Disabled: - cyclop
     - deadcode
     - depguard
@@ -55,6 +57,7 @@ linters:
     - nakedret
     - nestif
     - nilerr
+    - nilnil
     # Disabled: - nlreturn
     - noctx
     - nolintlint
@@ -68,6 +71,7 @@ linters:
     - staticcheck
     - structcheck
     - stylecheck
+    - tenv
     - testpackage
     - thelper
     - tparallel
@@ -76,6 +80,7 @@ linters:
     - unparam
     - unused
     - varcheck
+    # Disabled: - varnamelen
     - wastedassign
     - whitespace
     # Disabled: - wrapcheck
