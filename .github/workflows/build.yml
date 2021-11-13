@@ -40,12 +40,6 @@ jobs:
       - name: Build application
         run: ./batect build
 
-      - name: Lint code
-        run: ./batect lint
-
-      - name: Check code files have license header
-        run: ./batect checkLicenseHeader
-
       - name: Run unit tests
         run: ./batect unitTest
 
@@ -57,6 +51,12 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: server
+
+      - name: Lint code
+        run: ./batect lint
+
+      - name: Check code files have license header
+        run: ./batect checkLicenseHeader
 
       - name: Lint Terraform files
         run: ./batect --config-vars-file=batect.prod.yml lintTerraform
