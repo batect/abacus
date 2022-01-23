@@ -25,7 +25,7 @@ import (
 
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/service-observability/middleware/testutils"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 

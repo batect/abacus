@@ -75,7 +75,7 @@ tasks:
     group: Setup tasks
     run:
       container: build-env
-      command: sh -c 'go mod download && go get github.com/onsi/ginkgo/ginkgo'
+      command: sh -c 'go mod download && go install github.com/onsi/ginkgo/v2/ginkgo'
 
   build:
     description: Build the application.
@@ -92,14 +92,14 @@ tasks:
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo --regexScansFilePath --skip='_integration_test.go$' -race -coverprofile=coverage.txt -covermode=atomic server/...
+      command: ginkgo --skip-file='_integration_test.go$' -race -coverprofile=coverage.txt -covermode=atomic server/...
 
   continuousUnitTest:
     description: Run the unit tests, and re-run them when any code changes are detected.
     group: Test tasks
     run:
       container: build-env
-      command: ginkgo watch --regexScansFilePath --skip='_integration_test.go$' server/...
+      command: ginkgo watch --skip-file='_integration_test.go$' server/...
 
   integrationTest:
     description: Run the integration tests.
@@ -108,7 +108,7 @@ tasks:
       - cloud-storage
     run:
       container: build-env
-      command: ginkgo --regexScansFilePath --focus='_integration_test.go$' server/...
+      command: ginkgo --focus-file='_integration_test.go$' server/...
       environment:
         STORAGE_EMULATOR_HOST: cloud-storage
 
