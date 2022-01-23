@@ -30,7 +30,7 @@ import (
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
 	"github.com/google/uuid"
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	gomega_types "github.com/onsi/gomega/types"
 	"google.golang.org/api/option"
