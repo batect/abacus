@@ -273,10 +273,12 @@ func (c *haveContentTypeMatcher) Match(actual interface{}) (bool, error) {
 }
 
 func (c *haveContentTypeMatcher) FailureMessage(actual interface{}) string {
+	//nolint:forcetypeassert
 	return fmt.Sprintf("Expected object '%v' to have content type '%v', but it was '%v'", actual.(*cloudstorage.ObjectHandle).ObjectName(), c.expectedContentType, c.actualContentType)
 }
 
 func (c *haveContentTypeMatcher) NegatedFailureMessage(actual interface{}) string {
+	//nolint:forcetypeassert
 	return fmt.Sprintf(
 		"Expected object '%v' to not have content type '%v', but it was '%v'",
 		actual.(*cloudstorage.ObjectHandle).ObjectName(),
@@ -310,6 +312,7 @@ func (c *haveContentEncodingMatcher) Match(actual interface{}) (bool, error) {
 }
 
 func (c *haveContentEncodingMatcher) FailureMessage(actual interface{}) string {
+	//nolint:forcetypeassert
 	return fmt.Sprintf(
 		"Expected object '%v' to have content encoding '%v', but it was '%v'",
 		actual.(*cloudstorage.ObjectHandle).ObjectName(),
@@ -319,6 +322,7 @@ func (c *haveContentEncodingMatcher) FailureMessage(actual interface{}) string {
 }
 
 func (c *haveContentEncodingMatcher) NegatedFailureMessage(actual interface{}) string {
+	//nolint:forcetypeassert
 	return fmt.Sprintf(
 		"Expected object '%v' to not have content encoding '%v', but it was '%v'",
 		actual.(*cloudstorage.ObjectHandle).ObjectName(),
