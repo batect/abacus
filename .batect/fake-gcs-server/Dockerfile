@@ -1,4 +1,4 @@
-FROM fsouza/fake-gcs-server:1.33.1
+FROM fsouza/fake-gcs-server:1.34.0
 RUN apk add --no-cache bash curl
 COPY healthcheck.sh /bin/healthcheck.sh
 HEALTHCHECK --interval=1s CMD /bin/healthcheck.sh
