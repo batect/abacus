@@ -25,7 +25,7 @@ RUN wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TER
     rm /tmp/terraform.zip
 
 RUN apk add --no-cache \
-    bind-tools==9.16.22-r4 \
+    bind-tools==9.16.25-r0 \
     jq==1.6-r1 \
     moreutils==0.66-r1 \
     # For tput:
