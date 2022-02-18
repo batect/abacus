@@ -3,7 +3,7 @@ module github.com/batect/abacus
 go 1.13
 
 require (
-	cloud.google.com/go/storage v1.20.0
+	cloud.google.com/go/storage v1.21.0
 	github.com/batect/service-observability v0.14.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
