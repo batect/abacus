@@ -76,7 +76,7 @@ func createServer(port string) *http.Server {
 		Addr: fmt.Sprintf(":%s", port),
 		Handler: otelhttp.NewHandler(
 			wrappedMux,
-			"Incoming API call",
+			"Abacus",
 			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
 			otelhttp.WithSpanNameFormatter(tracing.NameHTTPRequestSpan),
 		),
