@@ -5,6 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 APP_IMAGE_DIR="$SCRIPT_DIR/../../.batect/app"
 
+git config --global --add safe.directory /code # Workaround for change in Git v2.34.2 - this is safe as we control everything.
 HASH=$(git rev-parse HEAD)
 IMAGE_HOST="$GOOGLE_REGION-docker.pkg.dev"
 IMAGE_NAME="$IMAGE_HOST/$GOOGLE_PROJECT/images/service"
