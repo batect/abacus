@@ -31,7 +31,7 @@ import (
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/storage"
 	"github.com/batect/abacus/server/types"
-	"github.com/batect/service-observability/middleware/testutils"
+	"github.com/batect/services-common/middleware/testutils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	gomega_types "github.com/onsi/gomega/types"

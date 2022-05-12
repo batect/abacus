@@ -26,7 +26,7 @@ import (
 	"net/http"
 
 	"github.com/batect/abacus/server/validation"
-	"github.com/batect/service-observability/middleware"
+	"github.com/batect/services-common/middleware"
 )
 
 type errorResponse struct {

@@ -23,14 +23,15 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
 	"github.com/batect/abacus/server/storage"
-	"github.com/batect/service-observability/graceful"
-	"github.com/batect/service-observability/middleware"
-	"github.com/batect/service-observability/startup"
-	"github.com/batect/service-observability/tracing"
+	"github.com/batect/services-common/graceful"
+	"github.com/batect/services-common/middleware"
+	"github.com/batect/services-common/startup"
+	"github.com/batect/services-common/tracing"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -48,7 +49,7 @@ func main() {
 	defer flush()
 
 	srv := createServer(getPort())
-	graceful.RunServerWithGracefulShutdown(srv)
+	runServer(srv)
 }
 
 func createServer(port string) *http.Server {
@@ -120,4 +121,11 @@ func withTracingClient(opts ...option.ClientOption) option.ClientOption {
 	}
 
 	return option.WithHTTPClient(&httpClient)
+}
+
+func runServer(srv *http.Server) {
+	if err := graceful.RunServerWithGracefulShutdown(srv); err != nil {
+		logrus.WithError(err).Error("Could not run server.")
+		os.Exit(1)
+	}
 }
