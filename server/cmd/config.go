@@ -20,16 +20,45 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
 )
 
+type serviceConfig struct {
+	ServiceName    string
+	ServiceVersion string
+	Port           string
+	ProjectID      string
+}
+
+func getConfig() (*serviceConfig, error) {
+	port, err := getPort()
+
+	if err != nil {
+		return nil, fmt.Errorf("could not get port for service to listen to: %w", err)
+	}
+
+	projectID, err := getProjectID()
+
+	if err != nil {
+		return nil, fmt.Errorf("could not get project ID: %w", err)
+	}
+
+	return &serviceConfig{
+		ServiceName:    getServiceName(),
+		ServiceVersion: getServiceVersion(),
+		Port:           port,
+		ProjectID:      projectID,
+	}, nil
+}
+
 func getServiceName() string {
 	return getEnvOrDefault("K_SERVICE", "abacus")
 }
 
-func getVersion() string {
+func getServiceVersion() string {
 	return getEnvOrDefault("K_REVISION", "local")
 }
 
@@ -41,12 +70,12 @@ func getEnvOrDefault(name string, fallback string) string {
 	return fallback
 }
 
-func getPort() string {
-	return getEnvOrExit("PORT")
+func getPort() (string, error) {
+	return getEnv("PORT")
 }
 
-func getProjectID() string {
-	return getEnvOrExit("GOOGLE_PROJECT")
+func getProjectID() (string, error) {
+	return getEnv("GOOGLE_PROJECT")
 }
 
 func getCredentialsFilePath() string {
@@ -60,12 +89,12 @@ func getCredentialsFilePath() string {
 	return value
 }
 
-func getEnvOrExit(name string) string {
+func getEnv(name string) (string, error) {
 	value := os.Getenv(name)
 
 	if value == "" {
-		logrus.WithField("variable", name).Fatal("Environment variable is not set.")
+		return "", fmt.Errorf("environment variable '%v' is not set", name)
 	}
 
-	return value
+	return value, nil
 }

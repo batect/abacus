@@ -40,23 +40,51 @@ import (
 )
 
 func main() {
-	flush, err := startup.InitialiseObservability(getServiceName(), getVersion(), getProjectID())
+	config, err := getConfig()
 
 	if err != nil {
-		logrus.WithError(err).Fatal("Could not initialise observability.")
+		logrus.WithError(err).Error("Could not load application configuration.")
+		os.Exit(1)
+	}
+
+	flush, err := startup.InitialiseObservability(config.ServiceName, config.ServiceVersion, config.ProjectID)
+
+	if err != nil {
+		logrus.WithError(err).Error("Could not initialise observability tooling.")
+		os.Exit(1)
 	}
 
 	defer flush()
 
-	srv := createServer(getPort())
-	runServer(srv)
+	runServer(config)
 }
 
-func createServer(port string) *http.Server {
+func runServer(config *serviceConfig) {
+	srv, err := createServer(config)
+
+	if err != nil {
+		logrus.WithError(err).Error("Could not create server.")
+		os.Exit(1)
+	}
+
+	if err := graceful.RunServerWithGracefulShutdown(srv); err != nil {
+		logrus.WithError(err).Error("Could not run server.")
+		os.Exit(1)
+	}
+}
+
+func createServer(config *serviceConfig) (*http.Server, error) {
 	mux := http.NewServeMux()
 	mux.Handle("/", otelhttp.WithRouteTag("/", http.HandlerFunc(api.Home)))
 	mux.Handle("/ping", otelhttp.WithRouteTag("/ping", http.HandlerFunc(api.Ping)))
-	mux.Handle("/v1/sessions", otelhttp.WithRouteTag("/v1/sessions", createIngestHandler()))
+
+	ingestHandler, err := createIngestHandler(config)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create ingest endpoint handler: %w", err)
+	}
+
+	mux.Handle("/v1/sessions", otelhttp.WithRouteTag("/v1/sessions", ingestHandler))
 
 	securityHeaders := secure.New(secure.Options{
 		FrameDeny:             true,
@@ -68,13 +96,13 @@ func createServer(port string) *http.Server {
 	wrappedMux := middleware.TraceIDExtractionMiddleware(
 		middleware.LoggerMiddleware(
 			logrus.StandardLogger(),
-			getProjectID(),
+			config.ProjectID,
 			securityHeaders.Handler(mux),
 		),
 	)
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", port),
+		Addr: fmt.Sprintf(":%s", config.Port),
 		Handler: otelhttp.NewHandler(
 			wrappedMux,
 			"Abacus",
@@ -83,49 +111,47 @@ func createServer(port string) *http.Server {
 		),
 	}
 
-	return srv
+	return srv, nil
 }
 
-func createIngestHandler() http.Handler {
+func createIngestHandler(config *serviceConfig) (http.Handler, error) {
 	scopesOption := option.WithScopes(cloudstorage.ScopeReadWrite)
 	credsOption := option.WithCredentialsFile(getCredentialsFilePath())
-	tracingClientOption := withTracingClient(scopesOption, credsOption)
-	bucketName := fmt.Sprintf("%v-sessions", getProjectID())
+	tracingClientOption, err := withTracingClient(scopesOption, credsOption)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create tracing client: %w", err)
+	}
+
+	bucketName := fmt.Sprintf("%v-sessions", config.ProjectID)
 	store, err := storage.NewCloudStorageSessionStore(bucketName, tracingClientOption)
 
 	if err != nil {
-		logrus.WithError(err).Fatal("Could not create session store.")
+		return nil, fmt.Errorf("could not create session store: %w", err)
 	}
 
 	handler, err := api.NewIngestHandler(store)
 
 	if err != nil {
-		logrus.WithError(err).Fatal("Could not create ingest API handler.")
+		return nil, fmt.Errorf("could not instantiate ingest API handler: %w", err)
 	}
 
-	return handler
+	return handler, nil
 }
 
-func withTracingClient(opts ...option.ClientOption) option.ClientOption {
+func withTracingClient(opts ...option.ClientOption) (option.ClientOption, error) {
 	// We have to do this because setting http.DefaultTransport to a non-default implementation causes something deep in the bowels of the
 	// Google Cloud SDK to ignore it and create a fresh transport with many of the settings copied across from DefaultTransport.
 	// Being explicit about the client forces the SDK to use the transport.
 	trans, err := htransport.NewTransport(context.Background(), http.DefaultTransport, opts...)
 
 	if err != nil {
-		logrus.WithError(err).Fatal("could not create transport")
+		return nil, fmt.Errorf("could not create transport: %w", err)
 	}
 
 	httpClient := http.Client{
 		Transport: trans,
 	}
 
-	return option.WithHTTPClient(&httpClient)
-}
-
-func runServer(srv *http.Server) {
-	if err := graceful.RunServerWithGracefulShutdown(srv); err != nil {
-		logrus.WithError(err).Error("Could not run server.")
-		os.Exit(1)
-	}
+	return option.WithHTTPClient(&httpClient), nil
 }

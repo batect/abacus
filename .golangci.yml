@@ -5,6 +5,10 @@ linters-settings:
   wsl:
     allow-cuddle-declarations: true
 
+  forbidigo:
+    forbid:
+      - \.Fatal.*
+
 linters:
   enable:
     - asciicheck
