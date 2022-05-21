@@ -27,10 +27,11 @@ import (
 )
 
 type serviceConfig struct {
-	ServiceName    string
-	ServiceVersion string
-	Port           string
-	ProjectID      string
+	ServiceName     string
+	ServiceVersion  string
+	Port            string
+	ProjectID       string
+	HoneycombAPIKey string
 }
 
 func getConfig() (*serviceConfig, error) {
@@ -46,11 +47,18 @@ func getConfig() (*serviceConfig, error) {
 		return nil, fmt.Errorf("could not get project ID: %w", err)
 	}
 
+	honeycombAPIKey, err := getHoneycombAPIKey()
+
+	if err != nil {
+		return nil, fmt.Errorf("could not get Honeycomb API key: %w", err)
+	}
+
 	return &serviceConfig{
-		ServiceName:    getServiceName(),
-		ServiceVersion: getServiceVersion(),
-		Port:           port,
-		ProjectID:      projectID,
+		ServiceName:     getServiceName(),
+		ServiceVersion:  getServiceVersion(),
+		Port:            port,
+		ProjectID:       projectID,
+		HoneycombAPIKey: honeycombAPIKey,
 	}, nil
 }
 
@@ -76,6 +84,10 @@ func getPort() (string, error) {
 
 func getProjectID() (string, error) {
 	return getEnv("GOOGLE_PROJECT")
+}
+
+func getHoneycombAPIKey() (string, error) {
+	return getEnv("HONEYCOMB_API_KEY")
 }
 
 func getCredentialsFilePath() string {

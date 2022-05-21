@@ -62,6 +62,7 @@ containers:
       PORT: 8080
       GOOGLE_PROJECT: <{gcpProject}
       GOOGLE_APPLICATION_CREDENTIALS: /creds/gcp.json
+      HONEYCOMB_API_KEY: <{honeycombAPIKey}
 
   cloud-storage:
     build_directory: .batect/fake-gcs-server
@@ -287,3 +288,6 @@ config_variables:
 
   subdomain:
     description: Subdomain (under rootDomain) to host the application at.
+
+  honeycombAPIKey:
+    description: API key used to upload traces to Honeycomb.

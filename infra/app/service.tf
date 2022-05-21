@@ -43,6 +43,16 @@ resource "google_cloud_run_service" "service" {
           name  = "GOOGLE_PROJECT"
           value = data.google_project.project.name
         }
+
+        env {
+          name = "HONEYCOMB_API_KEY"
+          value_from {
+            secret_key_ref {
+              name = google_secret_manager_secret.honeycomb_api_key.secret_id
+              key  = "latest"
+            }
+          }
+        }
       }
     }
 
@@ -71,4 +81,18 @@ resource "google_cloud_run_service_iam_policy" "allow_invoke_by_all" {
   service  = google_cloud_run_service.service.name
 
   policy_data = data.google_iam_policy.allow_invoke_by_all.policy_data
+}
+
+resource "google_secret_manager_secret" "honeycomb_api_key" {
+  secret_id = "honeycomb-api-key"
+
+  replication {
+    automatic = true
+  }
+}
+
+resource "google_secret_manager_secret_iam_binding" "honeycomb_api_key" {
+  secret_id = google_secret_manager_secret.honeycomb_api_key.secret_id
+  role      = "roles/secretmanager.secretAccessor"
+  members   = ["serviceAccount:${data.google_service_account.service.email}"]
 }

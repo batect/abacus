@@ -47,7 +47,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	flush, err := startup.InitialiseObservability(config.ServiceName, config.ServiceVersion, config.ProjectID)
+	flush, err := startup.InitialiseObservability(config.ServiceName, config.ServiceVersion, config.ProjectID, config.HoneycombAPIKey)
 
 	if err != nil {
 		logrus.WithError(err).Error("Could not initialise observability tooling.")
