@@ -23,4 +23,4 @@ RUN gcloud components install beta
 
 RUN apk add --no-cache \
     docker==20.10.16-r0 \
-    git==2.34.2-r0
+    git==2.36.1-r0

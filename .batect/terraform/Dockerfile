@@ -30,8 +30,8 @@ RUN ARCH=$(uname -m | sed 's/aarch64/arm64/g' | sed 's/x86_64/amd64/g') && \
 RUN apk add --no-cache \
     bind-tools==9.16.29-r0 \
     jq==1.6-r1 \
-    moreutils==0.66-r1 \
+    moreutils==0.67-r0 \
     # For tput:
-    ncurses==6.3_p20211120-r0 \
+    ncurses==6.3_p20220521-r0 \
     # For uuidgen:
-    util-linux==2.37.4-r0
+    util-linux==2.38-r1
