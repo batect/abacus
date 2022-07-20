@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 
 	cloudstorage "cloud.google.com/go/storage"
 	"github.com/batect/abacus/server/api"
@@ -109,6 +110,7 @@ func createServer(config *serviceConfig) (*http.Server, error) {
 			otelhttp.WithMessageEvents(otelhttp.ReadEvents, otelhttp.WriteEvents),
 			otelhttp.WithSpanNameFormatter(tracing.NameHTTPRequestSpan),
 		),
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
 	return srv, nil
