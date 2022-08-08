@@ -23,7 +23,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"time"
 
 	cloudstorage "cloud.google.com/go/storage"
@@ -229,7 +229,7 @@ func (c *haveContentMatcher) Match(actual interface{}) (bool, error) {
 
 	defer reader.Close()
 
-	actualBytes, err := ioutil.ReadAll(reader)
+	actualBytes, err := io.ReadAll(reader)
 
 	if err != nil {
 		return false, fmt.Errorf("could not read content of object: %w", err)
