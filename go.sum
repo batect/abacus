@@ -79,8 +79,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapp
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/TV4/logrus-stackdriver-formatter v0.1.0/go.mod h1:wwS7hOiBvP6SBD0UXCa767+VhHkaXrfX0MzUojYcN0Q=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/batect/services-common v0.29.0 h1:WDMjaDFIidqkjk/TEPjxBb2yzRX9DiAJ3JLDHNfGe8Y=
-github.com/batect/services-common v0.29.0/go.mod h1:0/UXe705h3ZrUl5ol7Qi/tsCZiF8ndWvQ6Vy5TWrZf4=
+github.com/batect/services-common v0.30.0 h1:TJlBp4wVEvD6J/y9k3xP6puqMGbync5xm/O3c6GaAS4=
+github.com/batect/services-common v0.30.0/go.mod h1:0/UXe705h3ZrUl5ol7Qi/tsCZiF8ndWvQ6Vy5TWrZf4=
 github.com/benbjohnson/clock v1.3.0 h1:ip6w0uFQkncKQ979AypyG0ER7mqUSBdKLOgAle/AT8A=
 github.com/cenkalti/backoff/v4 v4.1.3 h1:cFAlzYUlVYDysBEH2T5hyJZMh3+5+WCBvSnK6Q8UtC4=
 github.com/cenkalti/backoff/v4 v4.1.3/go.mod h1:scbssz8iZGpm3xbr14ovlUdkxfGXNInqkPWOWmG2CLw=
