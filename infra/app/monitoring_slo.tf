@@ -17,17 +17,33 @@
 // See both the License and the Condition for the specific language governing permissions and
 // limitations under the License and the Condition.
 
-package api
+data "google_monitoring_service" "service" {
 
-import (
-	"net/http"
-)
-
-func Home(w http.ResponseWriter, req *http.Request) {
-	//nolint:contextcheck
-	if !requireMethod(w, req, http.MethodGet) {
-		return
-	}
-
-	w.WriteHeader(http.StatusNoContent)
 }
+
+resource "google_monitoring_slo" "availability" {
+  display_name = "Availability - Rolling 28 days"
+  service      = "cloudRun:${google_cloud_run_service.service.name}"
+  goal         = 0.999
+
+  rolling_period_days = 28
+
+  basic_sli {
+    availability {
+
+    }
+  }
+}
+
+/*
+{
+  "displayName": "99.9% - Availability - Rolling 28 days",
+  "goal": 0.999,
+  "rollingPeriod": "2419200s",
+  "serviceLevelIndicator": {
+    "basicSli": {
+      "availability": {}
+    }
+  }
+}
+*/

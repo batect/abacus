@@ -136,7 +136,7 @@ tasks:
     group: Linting tasks
     run:
       container: build-env
-      command: golangci-lint run --timeout=2m server/...
+      command: golangci-lint run --timeout=5m server/...
 
   lintFix:
     description: Fix linting errors in Golang files.
