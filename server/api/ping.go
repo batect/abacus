@@ -25,6 +25,7 @@ import (
 )
 
 func Ping(w http.ResponseWriter, req *http.Request) {
+	//nolint:contextcheck
 	if !requireMethod(w, req, http.MethodGet) {
 		return
 	}
