@@ -16,7 +16,7 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.34.0
 	go.opentelemetry.io/otel v1.9.0
 	go.opentelemetry.io/otel/trace v1.9.0
-	google.golang.org/api v0.94.0
+	google.golang.org/api v0.95.0
 )
 
 require (
