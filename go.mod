@@ -7,7 +7,7 @@ require (
 	github.com/batect/services-common v0.38.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
-	github.com/go-playground/validator/v10 v10.11.0
+	github.com/go-playground/validator/v10 v10.11.1
 	github.com/google/uuid v1.3.0
 	github.com/onsi/ginkgo/v2 v2.1.6
 	github.com/onsi/gomega v1.20.2
