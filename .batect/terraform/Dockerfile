@@ -21,7 +21,7 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 
 RUN gcloud components install beta
 
-ENV TERRAFORM_VERSION=1.2.9
+ENV TERRAFORM_VERSION=1.3.0
 RUN ARCH=$(uname -m | sed 's/aarch64/arm64/g' | sed 's/x86_64/amd64/g') && \
     wget -q -O /tmp/terraform.zip https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_$ARCH.zip && \
     unzip /tmp/terraform.zip -d /usr/local/bin && \
