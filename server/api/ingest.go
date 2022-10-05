@@ -64,14 +64,12 @@ func NewIngestHandlerWithTimeSource(sessionStore storage.SessionStore, timeSourc
 }
 
 func (h *ingestHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	//nolint:contextcheck
 	if !requireMethod(w, req, http.MethodPut) {
 		return
 	}
 
 	session := types.Session{}
 
-	//nolint:contextcheck
 	if ok := h.loader.LoadJSON(w, req, &session); !ok {
 		return
 	}
