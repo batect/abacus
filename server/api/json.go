@@ -65,6 +65,7 @@ func (l *jsonLoader) LoadJSON(w http.ResponseWriter, req *http.Request, target i
 		return false
 	}
 
+	//nolint:contextcheck
 	if err := l.validator.Struct(target); err != nil {
 		var validationErrors validator.ValidationErrors
 
