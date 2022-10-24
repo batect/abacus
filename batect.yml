@@ -280,7 +280,7 @@ config_variables:
     default: us-central1
 
   cloudSdkVersion:
-    default: 405.0.0
+    default: 405.0.1
 
   rootDomain:
     description: Root domain name registered with Cloudflare.
