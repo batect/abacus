@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 golang:1.19.1-buster
+FROM --platform=linux/amd64 golang:1.19.2-buster
 
 ARG GOLANGCI_LINT_VERSION=1.50.0
 
