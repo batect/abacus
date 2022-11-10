@@ -7,7 +7,7 @@ RUN apk add --no-cache \
     ca-certificates==20220614-r0 \
     curl==7.83.1-r4 \
     libc6-compat==1.2.3-r1 \
-    python3==3.10.5-r0
+    python3==3.10.8-r0
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
 ARG CLOUD_SDK_VERSION
