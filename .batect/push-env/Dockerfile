@@ -1,13 +1,13 @@
 # This Dockerfile is intentionally structured to share as many layers as possible between push-env and terraform.
 
-FROM alpine:3.16.3
+FROM alpine:3.17.0
 
 RUN apk add --no-cache \
-    bash==5.1.16-r2 \
-    ca-certificates==20220614-r0 \
-    curl==7.83.1-r4 \
-    libc6-compat==1.2.3-r2 \
-    python3==3.10.8-r0
+    bash==5.2.9-r0 \
+    ca-certificates==20220614-r2 \
+    curl==7.86.0-r1 \
+    libc6-compat==1.2.3-r4 \
+    python3==3.10.8-r3
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
 ARG CLOUD_SDK_VERSION
@@ -22,5 +22,5 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 RUN gcloud components install beta
 
 RUN apk add --no-cache \
-    docker==20.10.20-r0 \
-    git==2.36.3-r0
+    docker==20.10.21-r1 \
+    git==2.38.1-r0
