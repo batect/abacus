@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/storage v1.28.0
-	github.com/batect/services-common v0.46.0
+	github.com/batect/services-common v0.47.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.11.1
@@ -28,9 +28,9 @@ require (
 	cloud.google.com/go/profiler v0.3.0 // indirect
 	cloud.google.com/go/trace v1.3.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go v1.8.0 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.34.1 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.10.1 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.34.1 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.34.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.10.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.34.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
@@ -63,7 +63,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.11.1 // indirect
 	go.opentelemetry.io/otel/sdk/metric v0.33.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
-	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.2.0 // indirect
