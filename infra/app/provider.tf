@@ -20,7 +20,7 @@
 terraform {
   required_providers {
     cloudflare = {
-      version = "3.30.0"
+      version = "3.31.0"
       source  = "cloudflare/cloudflare"
     }
 
