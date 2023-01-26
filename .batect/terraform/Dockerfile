@@ -28,7 +28,7 @@ RUN ARCH=$(uname -m | sed 's/aarch64/arm64/g' | sed 's/x86_64/amd64/g') && \
     rm /tmp/terraform.zip
 
 RUN apk add --no-cache \
-    bind-tools==9.18.10-r0 \
+    bind-tools==9.18.11-r0 \
     jq==1.6-r2 \
     moreutils==0.67-r0 \
     # For tput:
