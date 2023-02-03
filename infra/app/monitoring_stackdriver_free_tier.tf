@@ -109,7 +109,7 @@ resource "google_monitoring_alert_policy" "stackdriver_metrics_free_tier" {
     condition_threshold {
       filter          = "metric.type=\"monitoring.googleapis.com/billing/bytes_ingested\" resource.type=\"global\""
       comparison      = "COMPARISON_GT"
-      duration        = "1800s"
+      duration        = "3600s"
       threshold_value = local.metrics_chargeable_ingestion_free_tier_bytes_per_second * local.alert_threshold_decimal
 
       trigger {
