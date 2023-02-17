@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/storage v1.29.0
-	github.com/batect/services-common v0.55.0
+	github.com/batect/services-common v0.56.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.11.2
@@ -28,9 +28,9 @@ require (
 	cloud.google.com/go/profiler v0.3.1 // indirect
 	cloud.google.com/go/trace v1.8.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go v1.8.0 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.35.1 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.11.1 // indirect
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.35.1 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.35.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.11.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.35.2 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
 	github.com/charleskorn/logrus-stackdriver-formatter v0.3.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
