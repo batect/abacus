@@ -240,11 +240,11 @@ func (c *haveContentMatcher) Match(actual interface{}) (bool, error) {
 	return c.expectedContentMatcher.Match(c.actualContent)
 }
 
-func (c *haveContentMatcher) FailureMessage(actual interface{}) string {
+func (c *haveContentMatcher) FailureMessage(_ interface{}) string {
 	return c.expectedContentMatcher.FailureMessage(c.actualContent)
 }
 
-func (c *haveContentMatcher) NegatedFailureMessage(actual interface{}) string {
+func (c *haveContentMatcher) NegatedFailureMessage(_ interface{}) string {
 	return c.expectedContentMatcher.NegatedFailureMessage(c.actualContent)
 }
 
