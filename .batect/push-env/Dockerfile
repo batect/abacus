@@ -22,5 +22,5 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 RUN gcloud components install beta
 
 RUN apk add --no-cache \
-    docker==20.10.21-r3 \
+    docker==20.10.24-r0 \
     git==2.38.4-r1
