@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/storage v1.30.1
-	github.com/batect/services-common v0.60.2
+	github.com/batect/services-common v0.60.3
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.12.0

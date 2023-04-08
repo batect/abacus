@@ -63,8 +63,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapp
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/TV4/logrus-stackdriver-formatter v0.1.0/go.mod h1:wwS7hOiBvP6SBD0UXCa767+VhHkaXrfX0MzUojYcN0Q=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/batect/services-common v0.60.2 h1:mSl4pc7w9JG0ZtD+2qcsnAkSdZOPY131aTNWfi3hJEQ=
-github.com/batect/services-common v0.60.2/go.mod h1:NuV6zF8vlYZzDcW3h37aMr81bXY/jR8+CgqgtrMu1co=
+github.com/batect/services-common v0.60.3 h1:JjHmGAB0rRldUtACNt8zFa23VeLTO9MDoECyqSZiyrU=
+github.com/batect/services-common v0.60.3/go.mod h1:FqFjS9aAS+2LY0vz4WbPM6wYAidjafELuC85ozBTZbU=
 github.com/cenkalti/backoff/v4 v4.2.0 h1:HN5dHm3WBOgndBH6E8V0q2jIYIR3s9yglV8k/+MN3u4=
 github.com/cenkalti/backoff/v4 v4.2.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
