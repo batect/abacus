@@ -32,6 +32,6 @@ RUN apk add --no-cache \
     jq==1.6-r2 \
     moreutils==0.67-r0 \
     # For tput:
-    ncurses==6.3_p20221119-r0 \
+    ncurses==6.4_p20230506-r0 \
     # For uuidgen:
     util-linux==2.38.1-r1
