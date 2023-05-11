@@ -3,11 +3,11 @@
 FROM alpine:3.18.0
 
 RUN apk add --no-cache \
-    bash==5.2.15-r0 \
+    bash==5.2.15-r3 \
     ca-certificates==20230506-r0 \
-    curl==8.0.1-r0 \
-    libc6-compat==1.2.3-r4 \
-    python3==3.10.11-r0
+    curl==8.0.1-r2 \
+    libc6-compat==1.2.4-r0 \
+    python3==3.11.3-r11
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
 ARG CLOUD_SDK_VERSION
@@ -28,10 +28,10 @@ RUN ARCH=$(uname -m | sed 's/aarch64/arm64/g' | sed 's/x86_64/amd64/g') && \
     rm /tmp/terraform.zip
 
 RUN apk add --no-cache \
-    bind-tools==9.18.13-r0 \
-    jq==1.6-r2 \
+    bind-tools==9.18.14-r1 \
+    jq==1.6-r3 \
     moreutils==0.67-r0 \
     # For tput:
-    ncurses==6.3_p20221119-r0 \
+    ncurses==6.4_p20230506-r0 \
     # For uuidgen:
-    util-linux==2.38.1-r1
+    util-linux==2.38.1-r7

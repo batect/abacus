@@ -3,11 +3,11 @@
 FROM alpine:3.18.0
 
 RUN apk add --no-cache \
-    bash==5.2.15-r0 \
+    bash==5.2.15-r3 \
     ca-certificates==20230506-r0 \
-    curl==8.0.1-r0 \
-    libc6-compat==1.2.3-r4 \
-    python3==3.10.11-r0
+    curl==8.0.1-r2 \
+    libc6-compat==1.2.4-r0 \
+    python3==3.11.3-r11
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
 ARG CLOUD_SDK_VERSION
@@ -22,5 +22,5 @@ ENV PATH /google-cloud-sdk/bin:$PATH
 RUN gcloud components install beta
 
 RUN apk add --no-cache \
-    docker==20.10.24-r2 \
-    git==2.38.5-r0
+    docker==23.0.6-r1 \
+    git==2.40.1-r0
