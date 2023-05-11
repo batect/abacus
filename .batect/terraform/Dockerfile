@@ -34,4 +34,4 @@ RUN apk add --no-cache \
     # For tput:
     ncurses==6.3_p20221119-r0 \
     # For uuidgen:
-    util-linux==2.38.1-r1
+    util-linux==2.38.1-r7
