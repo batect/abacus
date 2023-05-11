@@ -3,7 +3,7 @@
 FROM alpine:3.17.3
 
 RUN apk add --no-cache \
-    bash==5.2.15-r0 \
+    bash==5.2.15-r3 \
     ca-certificates==20230506-r0 \
     curl==8.0.1-r0 \
     libc6-compat==1.2.3-r4 \
