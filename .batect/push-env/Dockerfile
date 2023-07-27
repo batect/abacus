@@ -6,7 +6,7 @@ RUN apk add --no-cache \
     bash==5.2.15-r5 \
     ca-certificates==20230506-r0 \
     curl==8.2.1-r0 \
-    libc6-compat==1.2.4-r0 \
+    libc6-compat==1.2.4-r1 \
     python3==3.11.4-r0
 
 # Based on https://github.com/GoogleCloudPlatform/cloud-sdk-docker/blob/master/alpine/Dockerfile.
